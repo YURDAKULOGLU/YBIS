@@ -10,6 +10,12 @@ $ARGUMENTS
 
 1. Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute.
 
+1.5. **PRE-IMPLEMENTATION QUALITY GATE**: Run `.specify/scripts/bash/validate-quality.sh` to ensure:
+   - Pattern consistency compliance
+   - Test coverage requirements met
+   - No architecture drift violations
+   - Change impact analysis completed
+
 2. Load and analyze the implementation context:
    - **REQUIRED**: Read tasks.md for the complete task list and execution plan
    - **REQUIRED**: Read plan.md for tech stack, architecture, and file structure

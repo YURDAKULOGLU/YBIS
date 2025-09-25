@@ -10,6 +10,12 @@ $ARGUMENTS
 
 Goal: Detect and reduce ambiguity or missing decision points in the active feature specification and record the clarifications directly in the spec file.
 
+**ENHANCED**: Include pattern choice clarifications:
+- State management approach (Context vs Redux vs Zustand)
+- UI component strategy (library choice, custom components)
+- Testing requirements (unit vs integration vs e2e)
+- Architecture scalability decisions (monolith vs microservices preparation)
+
 Note: This clarification workflow is expected to run (and be completed) BEFORE invoking `/plan`. If the user explicitly states they are skipping clarification (e.g., exploratory spike), you may proceed, but must warn that downstream rework risk increases.
 
 Execution steps:
