@@ -2,5 +2,5 @@ description = "Executes the BMad Task: Risk Profile"
 prompt = """
 CRITICAL: You are to execute the BMad Task defined below.
 
-@{.bmad-core/tasks/risk-profile.md}
+@{.YBIS_Dev/Veriler/tasks/risk-profile.md}
 """

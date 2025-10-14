@@ -1,0 +1,14 @@
+{
+  "name": "@ybis/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'Web app stubbed for Open Beta'",
+    "build": "echo 'Web app stubbed for Open Beta'",
+    "start": "echo 'Web app stubbed for Open Beta'",
+    "lint": "echo 'Web app stubbed for Open Beta'",
+    "type-check": "echo 'Web app stubbed for Open Beta'"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

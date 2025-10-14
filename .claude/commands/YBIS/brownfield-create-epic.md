@@ -1,0 +1,13 @@
+---
+description: Create epic for brownfield projects with existing system context
+---
+
+This command creates epics for existing systems.
+
+**Original Command**: See `.YBIS_Dev/Veriler/Commands/brownfield-create-epic.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.

@@ -1,54 +1,52 @@
 {
-  "name": "ybis",
-  "version": "1.0.0",
-  "description": "Modern JavaScript/TypeScript project with quality development tools",
-  "main": "dist/index.js",
-  "type": "module",
+  "name": "ybis-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "YBIS - Your Business Intelligence System",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "nodemon src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "lint": "eslint src/**/*.{js,ts}",
-    "lint:fix": "eslint src/**/*.{js,ts} --fix",
-    "format": "prettier --write src/**/*.{js,ts,json,md}",
-    "format:check": "prettier --check src/**/*.{js,ts,json,md}",
-    "typecheck": "tsc --noEmit",
-    "prepare": "husky install",
-    "pre-commit": "lint-staged"
+    "mobile": "cd apps/mobile && npm start",
+    "mobile:ios": "cd apps/mobile && npm run ios",
+    "mobile:android": "cd apps/mobile && npm run android",
+    "mobile:web": "cd apps/mobile && npm run web",
+    "web": "cd apps/web && npm run dev",
+    "backend": "cd apps/backend && npm run dev",
+    "backend:deploy": "cd apps/backend && npm run deploy",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "type-check": "npm run type-check --workspaces --if-present",
+    "prepare": "husky install"
   },
-  "keywords": ["typescript", "nodejs", "development"],
-  "author": "",
-  "license": "ISC",
+  "dependencies": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
   "devDependencies": {
-    "@types/node": "^20.10.0",
-    "@typescript-eslint/eslint-plugin": "^6.13.0",
-    "@typescript-eslint/parser": "^6.13.0",
-    "@commitlint/cli": "^18.4.0",
-    "@commitlint/config-conventional": "^18.4.0",
-    "eslint": "^8.54.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "husky": "^8.0.3",
-    "jest": "^29.7.0",
-    "@types/jest": "^29.5.8",
-    "ts-jest": "^29.1.1",
-    "lint-staged": "^15.1.0",
-    "nodemon": "^3.0.2",
-    "prettier": "^3.1.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.3.0"
+    "@babel/plugin-transform-export-namespace-from": "^7.27.1",
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^6.1.1",
+    "expo": "~54.0.12",
+    "husky": "^9.1.7",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
   },
-  "dependencies": {},
-  "lint-staged": {
-    "*.{js,ts}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md}": [
-      "prettier --write"
-    ]
-  }
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YURDAKULOGLU/YBIS.git"
+  },
+  "author": "",
+  "license": "ISC"
 }

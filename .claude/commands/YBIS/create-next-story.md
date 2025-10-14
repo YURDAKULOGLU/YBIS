@@ -1,0 +1,13 @@
+---
+description: Create next user story from sharded documentation
+---
+
+This command creates user stories from sharded docs.
+
+**Original Command**: See `.YBIS_Dev/Veriler/Commands/create-next-story.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.

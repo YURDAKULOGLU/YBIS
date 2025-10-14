@@ -1,0 +1,150 @@
+{
+  "i": "kelime:merhaba",
+  "k": "kelime",
+  "tt": "Merhaba",
+  "d": "Türkçe selamlama kelimesi. Karşılaşmalarda ve iletişimin başında kullanılan nezaket ifadesi.",
+  "tg": ["türkçe", "selamlama", "nezaket", "gündelik-dil"],
+  "v": "1.0.0",
+  "s": "active",
+
+  "m": {
+    "g": 1,
+    "n": {
+      "c": "documentation",
+      "d": "Dil öğrenimi ve kelime bilgisi yönetimi için kelime veri yapısı oluşturmak"
+    },
+    "p": null,
+    "ca": "2025-10-02T00:00:00Z",
+    "cb": "claude",
+    "ua": "2025-10-02T00:00:00Z",
+    "type_version": "1.0.0"
+  },
+
+  "c": {
+    "fmt": "json",
+    "enc": "utf-8",
+    "st": {
+      "t": "inline",
+      "b": "ybis_root"
+    },
+    "int": {
+      "a": "sha256",
+      "h": null,
+      "va": null
+    },
+    "m": {
+      "sz": null,
+      "lc": null,
+      "lm": "2025-10-02T00:00:00Z"
+    }
+  },
+
+  "access": {
+    "visibility": "public",
+    "ai_visible": true,
+    "ui_visible": true
+  },
+
+  "quality": {
+    "maturity": "production",
+    "score": 9.0,
+    "completeness": 1.0,
+    "tested": true,
+    "checklist": {
+      "has_definition": true,
+      "has_examples": true,
+      "has_etymology": true,
+      "verified_usage": true
+    }
+  },
+
+  "metrics": {
+    "usage_count": 0,
+    "success_rate": null,
+    "last_used": null
+  },
+
+  "dep": {
+    "t": [],
+    "e": [],
+    "f": []
+  },
+
+  "vg": {
+    "cur": "1.0.0",
+    "prv": null,
+    "mig": []
+  },
+
+  "cl": [
+    {
+      "v": "1.0.0",
+      "dt": "2025-10-02",
+      "ch": ["Initial kelime type implementation", "Added linguistic properties"],
+      "br": false
+    }
+  ],
+
+  "x": {
+    "linguistic_properties": {
+      "language": "tr",
+      "word_class": "isim",
+      "phonetic": "mer-ha-ba",
+      "syllable_count": 3,
+      "stress_pattern": "2"
+    },
+    "semantic_data": {
+      "definition": "Bir kimseyle karşılaşıldığında söylenen selam sözü, selam",
+      "synonyms": ["selam", "esselamu aleyküm", "günaydın", "iyi günler"],
+      "antonyms": ["hoşça kal", "elveda", "güle güle"],
+      "usage_level": "gündelik",
+      "formality": "nötr"
+    },
+    "etymology": {
+      "origin": "Arapça 'merhaba' (hoş geldin) kelimesinden",
+      "root_language": "ar",
+      "entry_date": "eski dönem",
+      "evolution_notes": "Türkçeye erken dönemde geçmiş, yaygın kullanım kazanmış"
+    },
+    "usage_examples": [
+      {
+        "sentence": "Merhaba, nasılsınız?",
+        "context": "gündelik selamlama",
+        "register": "standart"
+      },
+      {
+        "sentence": "Merhaba arkadaşlar!",
+        "context": "grup selamlama",
+        "register": "samimi"
+      }
+    ],
+    "collocations": [
+      "merhaba demek",
+      "merhaba çakmak",
+      "merhaba der gibi olmak"
+    ],
+    "frequency_data": {
+      "corpus_frequency": "yüksek",
+      "spoken_frequency": "çok yüksek",
+      "written_frequency": "yüksek",
+      "domain_specific": false
+    },
+    "learning_metadata": {
+      "cefr_level": "A1",
+      "difficulty": "kolay",
+      "priority": "kritik",
+      "teaching_order": 1
+    }
+  },
+
+  "tc": {
+    "req_m": ["i", "k", "tt", "d", "v", "m.n.c", "m.n.d"],
+    "req_c": ["c.fmt", "c.st.t"],
+    "req_x": ["x.linguistic_properties", "x.semantic_data", "x.usage_examples"],
+    "val": {
+      "word_pattern": "^[a-züğışçö]+$",
+      "min_examples": 1,
+      "required_linguistic_fields": ["language", "word_class"]
+    }
+  }
+}

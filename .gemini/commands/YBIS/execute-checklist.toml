@@ -1,0 +1,16 @@
+description = "execute-checklist.md"
+prompt = """
+---
+description: Execute validation checklist on artifacts
+---
+
+This command executes validation checklists.
+
+**Original Command**: See `.YBIS_Dev/Veriler/Commands/execute-checklist.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.
+"""

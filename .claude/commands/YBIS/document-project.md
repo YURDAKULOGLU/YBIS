@@ -1,0 +1,13 @@
+---
+description: Create comprehensive project documentation and analysis
+---
+
+This command generates comprehensive project documentation.
+
+**Original Command**: See `.YBIS_Dev/Veriler/Commands/document-project.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.

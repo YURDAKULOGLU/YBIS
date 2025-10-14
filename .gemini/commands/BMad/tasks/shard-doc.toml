@@ -2,5 +2,5 @@ description = "Executes the BMad Task: Shard Doc"
 prompt = """
 CRITICAL: You are to execute the BMad Task defined below.
 
-@{.bmad-core/tasks/shard-doc.md}
+@{.YBIS_Dev/Veriler/tasks/shard-doc.md}
 """

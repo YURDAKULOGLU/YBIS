@@ -1,0 +1,56 @@
+# YBIS AI Workflow Constitution
+
+## Purpose
+- Centralize the mandatory onboarding rules for every AI or IDE assistant operating in `C:\Projeler\YBIS`.
+- Replace previous `.spec` / `.bmad` entry points with a single, authoritative workflow primer.
+- Ensure the owner’s active tool memberships (Cursor IDE, GitHub Copilot) are considered when assigning or triaging work between agents.
+
+## Tooling & Membership Context
+- **Cursor IDE (active membership)**  
+  - Best suited for rapid navigation, repository-wide edits, and real-time pair programming.  
+  - When using Cursor, prefer invoking `@agent` directives to switch roles quickly and keep conversations scoped per agent.  
+  - Ideal for tasks that require simultaneous code browsing plus inline execution (debugging, large refactors).
+- **GitHub Copilot (active membership)**  
+  - Augments VS Code workflows with boilerplate generation, quick suggestions, and conversational chat via Copilot Chat.  
+  - Use Copilot for fast scaffolding, pattern completion, or when lightweight assistance is needed without invoking full multi-agent workflows.  
+  - Ensure Copilot suggestions comply with constitutional rules (no `any`, `@ts-ignore`, `--force`, Tamagui shorthands).
+
+## Instruction Precedence
+1. **This constitution** – baseline rules for all environments and agents.
+2. `docs/Güncel/constitution.md` – product and architecture principles.
+3. `docs/Güncel/DEVELOPMENT_GUIDELINES.md` – zero-tolerance technical rules.
+4. Active story or task directives (`docs/stories/*`, `docs/prd/*`, `docs/architecture/*`, `docs/qa/*`).
+5. Agent-specific guides (`AGENTS.md`, `GEMINI.md`, `CODEX.md`, `.cursor/`, `.github/` instructions).
+6. Command or user-level instructions issued during the session.
+
+## Required Startup Checklist (per session)
+1. Review `.YBIS_Dev/Veriler/memory/session-context.md` for current focus, decisions, and quality standards.
+2. Skim `docs/Güncel/START_HERE.md`, `tech-stack.md`, `package-structure.md`, and `quality-standards.md` to confirm the environment locks are still valid.
+3. Confirm whether the session uses Cursor, Copilot, or CLI-only workflows; adapt collaboration style accordingly.
+4. Identify the active story assets in `docs/stories` or planning shards in `docs/prd`, `docs/architecture`, `docs/qa`.
+5. Restate priorities, blockers, and validation plans before modifying code.
+
+## Quality & Safety Mandates
+- Never bypass TypeScript strictness, ESLint rules, or constitutional prohibitions (`--force`, `--legacy-peer-deps`, `@ts-ignore`, Tamagui shorthands, `any`).
+- Maintain port-by-port architecture. Adapters must fulfill the corresponding `*Port` interfaces without leaking vendor-specific code into app layers.
+- Run linting, type checks, and relevant tests before marking work items as complete; log outcomes alongside code changes.
+- Document decisions and deviations in `.specify/memory/session-context.md` and update `docs/Güncel/DEVELOPMENT_LOG.md` when stories progress.
+- Halt and escalate if instructions conflict, required assets are missing, or validation fails three times consecutively.
+
+## Agent Directory & Linking
+- **General agent matrix:** `AGENTS.md` (CLI orchestration, overview of all available assistants).  
+- **Gemini-specific workflow:** `GEMINI.md` (usage guidance for Google Gemini CLI).  
+- **Codex-specific workflow:** `CODEX.md` (CLI coding agent expectations).  
+- **Cursor rules:** `.cursor/rules/*.md` (if present, align IDE behavior with this constitution).  
+- **GitHub Copilot instructions:** `.github/copilot-instructions.md` (ensure Copilot prompts reference this constitution).
+
+All agent-specific documents **must** include a prominent link back to this constitution so every session starts from a consistent rule set.
+
+## Collaboration Notes
+- Use numbered options when presenting alternatives to maintain compatibility with downstream automations.
+- Favor conversational clarity: restate assumptions, surface blockers early, and request confirmation before any destructive operation.
+- Keep architecture, QA, and PRD artifacts synchronized when implementations diverge from planned designs. Escalate mismatches immediately.
+
+## Revision Protocol
+- Update this document whenever tooling memberships change, new agents are introduced, or constitutional rules evolve.
+- Record significant updates in `docs/Güncel/DEVELOPMENT_LOG.md` and `.specify/memory/session-context.md` so future sessions inherit the latest guidance.

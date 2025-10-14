@@ -2,5 +2,5 @@ description = "Executes the BMad Task: Correct Course"
 prompt = """
 CRITICAL: You are to execute the BMad Task defined below.
 
-@{.bmad-core/tasks/correct-course.md}
+@{.YBIS_Dev/Veriler/tasks/correct-course.md}
 """

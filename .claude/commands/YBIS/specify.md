@@ -1,0 +1,13 @@
+---
+description: Create or update feature specification from natural language description
+---
+
+This command creates feature specifications.
+
+**Original Command**: See `.YBIS_Dev/Veriler/Commands/specify.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.

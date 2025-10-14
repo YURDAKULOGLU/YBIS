@@ -1,0 +1,13 @@
+---
+description: Systematic code restructuring with intelligent refactoring patterns
+---
+
+This command performs intelligent code refactoring using established patterns and best practices.
+
+**Original Command**: See `.YBIS_Dev/Veriler/commands/sc-refactor.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.

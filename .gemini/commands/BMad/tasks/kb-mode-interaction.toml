@@ -2,5 +2,5 @@ description = "Executes the BMad Task: Kb Mode Interaction"
 prompt = """
 CRITICAL: You are to execute the BMad Task defined below.
 
-@{.bmad-core/tasks/kb-mode-interaction.md}
+@{.YBIS_Dev/Veriler/tasks/kb-mode-interaction.md}
 """

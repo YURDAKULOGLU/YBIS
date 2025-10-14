@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.pnpm-debug.log
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+.cache/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Expo
+.expo/
+.expo-shared/
+
+# Android
+*.apk
+*.aab
+*.ap_
+*.dex
+*.iml
+.gradle/
+local.properties
+**/android/build/
+**/android/.gradle/
+**/android/app/build/
+
+# iOS
+*.ipa
+*.xcworkspace
+*.xcuserdata
+**/ios/Pods/
+**/ios/build/
+**/ios/*.xcworkspace/
+
+# Testing
+coverage/
+*.log
+
+# Misc
+*.orig
+.npmrc.local

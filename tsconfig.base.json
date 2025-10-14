@@ -1,0 +1,116 @@
+{
+  // YBIS Project - Root TypeScript Configuration
+  // Version: 1.0.0
+  // Strategy: Strictest possible settings from Day 1
+
+  "compilerOptions": {
+    // ========================================
+    // Type Checking (ALL STRICT OPTIONS ON)
+    // ========================================
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+
+    // Additional Checks
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+
+    // ========================================
+    // Modules
+    // ========================================
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+
+    // ========================================
+    // Emit
+    // ========================================
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "noEmit": false,
+    "outDir": "./dist",
+
+    // ========================================
+    // JavaScript Support
+    // ========================================
+    "allowJs": false,
+    "checkJs": false,
+
+    // ========================================
+    // Editor Support
+    // ========================================
+    "incremental": true,
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.cache/tsconfig.tsbuildinfo",
+
+    // ========================================
+    // Interop Constraints
+    // ========================================
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    // ========================================
+    // Language and Environment
+    // ========================================
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-native",
+    "useDefineForClassFields": true,
+
+    // ========================================
+    // Path Mapping (Monorepo)
+    // ========================================
+    "baseUrl": ".",
+    "paths": {
+      "@ybis/ui": ["packages/ui/src/index.ts"],
+      "@ybis/ui/*": ["packages/ui/src/*"],
+      "@ybis/core": ["packages/core/src/index.ts"],
+      "@ybis/core/*": ["packages/core/src/*"],
+      "@ybis/chat": ["packages/chat/src/index.ts"],
+      "@ybis/chat/*": ["packages/chat/src/*"],
+      "@ybis/auth": ["packages/auth/src/index.ts"],
+      "@ybis/auth/*": ["packages/auth/src/*"],
+      "@ybis/database": ["packages/database/src/index.ts"],
+      "@ybis/database/*": ["packages/database/src/*"],
+      "@ybis/llm": ["packages/llm/src/index.ts"],
+      "@ybis/llm/*": ["packages/llm/src/*"],
+      "@ybis/theme": ["packages/theme/src/index.ts"],
+      "@ybis/theme/*": ["packages/theme/src/*"],
+      "@ybis/i18n": ["packages/i18n/src/index.ts"],
+      "@ybis/i18n/*": ["packages/i18n/src/*"]
+    }
+  },
+
+  // ========================================
+  // Global Excludes
+  // ========================================
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    ".expo",
+    ".next",
+    "android",
+    "ios",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx"
+  ]
+}

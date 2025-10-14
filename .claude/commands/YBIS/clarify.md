@@ -1,0 +1,13 @@
+---
+description: Identify and clarify underspecified areas in specifications
+---
+
+This command analyzes specifications and identifies areas needing clarification.
+
+**Original Command**: See `.YBIS_Dev/Veriler/Commands/clarify.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.

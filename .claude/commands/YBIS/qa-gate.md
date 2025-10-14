@@ -1,0 +1,13 @@
+---
+description: Run quality gate validation on implementation
+---
+
+This command executes quality gate checks.
+
+**Original Command**: See `.YBIS_Dev/Veriler/Commands/qa-gate.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.

@@ -1,0 +1,13 @@
+---
+description: Implement features using full conversation context and project understanding
+---
+
+This command analyzes entire chat history to understand requirements, then implements with full project context.
+
+**Original Command**: See `.YBIS_Dev/Veriler/commands/context-implement.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.

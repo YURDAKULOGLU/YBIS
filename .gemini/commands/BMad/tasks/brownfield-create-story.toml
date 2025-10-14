@@ -2,5 +2,5 @@ description = "Executes the BMad Task: Brownfield Create Story"
 prompt = """
 CRITICAL: You are to execute the BMad Task defined below.
 
-@{.bmad-core/tasks/brownfield-create-story.md}
+@{.YBIS_Dev/Veriler/tasks/brownfield-create-story.md}
 """

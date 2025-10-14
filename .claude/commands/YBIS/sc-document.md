@@ -1,0 +1,13 @@
+---
+description: Generate comprehensive documentation that stays current with code
+---
+
+This command creates API docs, updates READMEs, and maintains architecture documentation.
+
+**Original Command**: See `.YBIS_Dev/Veriler/commands/sc-document.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.

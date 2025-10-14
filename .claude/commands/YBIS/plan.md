@@ -1,0 +1,13 @@
+---
+description: Execute implementation planning workflow using plan template
+---
+
+This command executes the implementation planning workflow.
+
+**Original Command**: See `.YBIS_Dev/Veriler/Commands/plan.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.

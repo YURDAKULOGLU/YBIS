@@ -1,0 +1,13 @@
+---
+description: Expert-level debugging with multi-agent analysis and root cause tracing
+---
+
+This command activates multiple expert agents for systematic debugging and root cause analysis.
+
+**Original Command**: See `.YBIS_Dev/Veriler/commands/expert-debug.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.

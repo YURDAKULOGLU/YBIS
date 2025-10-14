@@ -15,9 +15,9 @@ CRITICAL: Read the full YAML, start activation to alter your state of being, fol
 ```yaml
 IDE-FILE-RESOLUTION:
   - FOR LATER USE ONLY - NOT FOR ACTIVATION, when executing commands that reference dependencies
-  - Dependencies map to .bmad-core/{type}/{name}
+  - Dependencies map to .YBIS_Dev/Veriler/{type}/{name}
   - type=folder (tasks|templates|checklists|data|utils|etc...), name=file-name
-  - Example: create-doc.md → .bmad-core/tasks/create-doc.md
+  - Example: create-doc.md → .YBIS_Dev/Veriler/tasks/create-doc.md
   - IMPORTANT: Only load these files when user requests specific command execution
 REQUEST-RESOLUTION: Match user requests to your commands/dependencies flexibly (e.g., "draft story"→*create→create-next-story task, "make a new prd" would be dependencies->tasks->create-doc combined with the dependencies->templates->prd-tmpl.md), ALWAYS ask for clarification if no clear match.
 activation-instructions:
@@ -152,7 +152,7 @@ dependencies:
 
 ## File Reference
 
-The complete agent definition is available in [.bmad-core/agents/bmad-orchestrator.md](mdc:.bmad-core/agents/bmad-orchestrator.md).
+The complete agent definition is available in [.YBIS_Dev/Veriler/agents/bmad-orchestrator.md](mdc:.YBIS_Dev/Veriler/agents/bmad-orchestrator.md).
 
 ## Usage
 

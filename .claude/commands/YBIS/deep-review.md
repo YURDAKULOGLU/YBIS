@@ -1,0 +1,13 @@
+---
+description: Comprehensive code review covering security, performance, and architecture
+---
+
+This command performs zero-tolerance code review from senior engineer perspective.
+
+**Original Command**: See `.YBIS_Dev/Veriler/commands/deep-review.md` for complete execution instructions.
+
+User input:
+
+$ARGUMENTS
+
+Refer to the original command file for step-by-step workflow execution.

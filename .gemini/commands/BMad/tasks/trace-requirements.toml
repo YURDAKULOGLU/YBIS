@@ -2,5 +2,5 @@ description = "Executes the BMad Task: Trace Requirements"
 prompt = """
 CRITICAL: You are to execute the BMad Task defined below.
 
-@{.bmad-core/tasks/trace-requirements.md}
+@{.YBIS_Dev/Veriler/tasks/trace-requirements.md}
 """
