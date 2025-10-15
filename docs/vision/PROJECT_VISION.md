@@ -101,23 +101,32 @@ Example:
   - Cost-aware auto-routing
 ```
 
-**Plugin System (Feature Expansion Infrastructure):**
+**Plugin System (3-Wave Strategy):**
 ```
-Architecture: Registry-based plugin system
-Purpose: Vertical feature readiness WITHOUT commitment
+WAVE 1 (Closed Beta - Week 5-6): Infrastructure Foundation
+  - Plugin Registry System (manifest schema, registration/loading)
+  - Component Abstraction Layer (screen registry, widget slots)
+  - Plugin API Foundation (basic interface, event system)
+  - Security Sandbox (basic permissions)
+  - NO complex plugins shipped (foundation only)
 
-Closed Beta: Plugin infrastructure foundation
-Open Beta: Plugin system operational
-MVP Release: Production plugin registry
+WAVE 2 (Open Beta - Month 2-3): Basic Plugins + Testing
+  - Simple Internal Plugins (markdown editor, advanced calendar)
+  - Plugin System Testing (loading/unloading, performance)
+  - Plugin Management UI (enable/disable, settings)
+  - User Experience Validation (plugin interaction testing)
 
-Supported Expansions (IF market demands):
-  - Finance Plugin (budget tracking, investments)
-  - Student Plugin (flashcards, study tools)
-  - Health Plugin (medical records, fitness)
-  - Custom Plugins (user/community created)
+WAVE 3 (MVP Release - Month 4+): Full Ecosystem
+  - Vertical Plugins (Finance, Student, Health, CRM)
+  - Plugin Marketplace (third-party support, discovery)
+  - Advanced Features (dependencies, updates, analytics)
+  - Production Plugin System (enterprise-ready)
 
-Decision: Post-release feedback + market demand
-Commitment: ZERO - just infrastructure ready
+Strategy Rationale:
+  ✅ User value first (core features before plugins)
+  ✅ Timeline safe (infrastructure only in Closed Beta)
+  ✅ Future-proof (foundation ready for expansion)
+  ✅ Risk managed (no complex plugins in Closed Beta)
 ```
 
 **Post-Release Evolution:**

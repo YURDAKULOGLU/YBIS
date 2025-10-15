@@ -17,8 +17,14 @@ import { useMockAuth } from '../src/stores/useMockAuth';
  * - Status bar configuration
  *
  * Architecture:
- * - useThemeStore: Persistent theme selection (zustand + AsyncStorage)
+ * - useThemeStore: Persistent theme selection (zustand + expo-secure-store)
  * - No ThemePort: Internal logic, not vendor swap (AD-024)
+ * - Theme changes are reactive (useThemeStore triggers re-render)
+ *
+ * Performance:
+ * - currentTheme from zustand triggers re-render on change
+ * - TamaguiProvider defaultTheme updates with currentTheme
+ * - Theme component propagates theme to all children
  *
  * @note Using mock auth for UI testing (Story 1.1)
  *       Real auth will be implemented in Story 2.1 (Supabase Auth)
@@ -27,7 +33,7 @@ export default function RootLayout() {
   const segments = useSegments();
   const router = useRouter();
 
-  // Theme state (persistent)
+  // Theme state (persistent, reactive to changes)
   const { currentTheme } = useThemeStore();
 
   // Mock auth state (DEMO MODE)

@@ -46,10 +46,21 @@ export interface AuthPort {
   initialize(): Promise<void>;
 
   /**
-   * Sign in with OAuth provider
-   * @param provider OAuth provider (google, github, apple)
+   * Gets the provider-specific configuration required by the UI to initiate an OAuth flow.
+   * For Expo, this would be the config for the `useAuthRequest` hook.
+   * @param provider The OAuth provider to get configuration for.
    */
-  signInWithOAuth(provider: 'google' | 'github' | 'apple'): Promise<SignInResult>;
+  getOAuthRequestConfig(provider: 'google' | 'github' | 'apple'): Promise<unknown>;
+
+  /**
+   * Processes the response from an OAuth flow after the user has been prompted.
+   * @param provider The OAuth provider that was used.
+   * @param response The response object from the OAuth flow (e.g., from `useAuthRequest`).
+   */
+  processOAuthResponse(
+    provider: 'google' | 'github' | 'apple',
+    response: unknown
+  ): Promise<SignInResult>;
 
   /**
    * Sign out current user

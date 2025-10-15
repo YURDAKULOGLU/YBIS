@@ -1,34 +1,56 @@
-import { Tabs } from 'expo-router';
+import { useState } from 'react';
+import { Tabs, useRouter } from 'expo-router';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Menu, Bell, User } from '@tamagui/lucide-icons';
+import { useTheme } from 'tamagui';
+import { DrawerMenu } from '../components/DrawerMenu';
 
 /**
  * Main Navigation Layout
  *
  * Custom header with:
- * - Left: "Home" title (centered)
- * - Right: Navigation buttons (Menu, Notifications, Profile)
- * - No bottom tab bar
+ * - Title: "Home" (centered)
+ * - Left: Menu icon (drawer toggle)
+ * - Right: Notifications + Settings buttons
+ * - No bottom tab bar (hidden screens accessible via navigation)
+ *
+ * Navigation:
+ * - Menu icon → Open drawer menu
+ * - Bell icon → (tabs)/notifications (placeholder)
+ * - User icon → (tabs)/settings
+ *
+ * Theme Support:
+ * - Header background uses theme tokens (background)
+ * - Border uses theme tokens (borderColor)
+ * - Icons use theme tokens (color)
+ * - Dynamic theme switching supported
  */
 export default function TabLayout() {
+  const theme = useTheme();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: true,
-        tabBarStyle: {
-          display: 'none',
-          height: 0,
-          position: 'absolute',
-        }, // Completely hide bottom tab bar
-        headerStyle: {
-          backgroundColor: '#ffffff',
-          elevation: 0,
-          shadowOpacity: 0,
-          borderBottomWidth: 1,
-          borderBottomColor: '#e5e5e5',
-        },
-      }}
-    >
+    <>
+      <Tabs
+        screenOptions={{
+          headerShown: true,
+          tabBarStyle: {
+            display: 'none',
+            height: 0,
+            position: 'absolute',
+          }, // Completely hide bottom tab bar
+          headerStyle: {
+            backgroundColor: theme.background.val,
+            elevation: 0,
+            shadowOpacity: 0,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.borderColor.val,
+          },
+          headerTitleStyle: {
+            color: theme.color.val,
+          },
+        }}
+      >
       <Tabs.Screen
         name="index"
         options={{
@@ -38,30 +60,8 @@ export default function TabLayout() {
             fontSize: 20,
             fontWeight: '600',
           },
-          headerLeft: () => (
-            <TouchableOpacity
-              style={styles.menuButton}
-              onPress={() => console.log('Menu pressed')}
-            >
-              <Menu size={24} color="#000" />
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <View style={styles.headerRight}>
-              <TouchableOpacity
-                style={styles.iconButton}
-                onPress={() => console.log('Notifications pressed')}
-              >
-                <Bell size={22} color="#000" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.iconButton}
-                onPress={() => console.log('Profile pressed')}
-              >
-                <User size={22} color="#000" />
-              </TouchableOpacity>
-            </View>
-          ),
+          headerLeft: () => <MenuButton onPress={() => setDrawerOpen(true)} />,
+          headerRight: () => <HeaderActions />,
         }}
       />
       {/* Other screens hidden but accessible via navigation */}
@@ -80,10 +80,68 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          href: null,
+          title: 'Settings',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontSize: 20,
+            fontWeight: '600',
+          },
+          href: null, // Hide from tab bar, but accessible via navigation
         }}
       />
     </Tabs>
+
+    {/* Drawer Menu */}
+    <DrawerMenu open={drawerOpen} onOpenChange={setDrawerOpen} />
+  </>
+  );
+}
+
+/**
+ * Menu Button (Left header)
+ * Opens drawer navigation
+ */
+interface MenuButtonProps {
+  onPress: () => void;
+}
+
+function MenuButton({ onPress }: MenuButtonProps) {
+  const theme = useTheme();
+
+  return (
+    <TouchableOpacity
+      style={styles.menuButton}
+      onPress={onPress}
+    >
+      <Menu size={24} color={theme.color.val} />
+    </TouchableOpacity>
+  );
+}
+
+/**
+ * Header Actions (Right header)
+ * - Bell: Notifications (placeholder)
+ * - User: Settings screen
+ */
+function HeaderActions() {
+  const router = useRouter();
+  const theme = useTheme();
+
+  return (
+    <View style={styles.headerRight}>
+      <TouchableOpacity
+        style={styles.iconButton}
+        onPress={() => console.log('Notifications not implemented yet')}
+      >
+        <Bell size={22} color={theme.color.val} />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.iconButton}
+        onPress={() => router.push('/(tabs)/settings')}
+      >
+        <User size={22} color={theme.color.val} />
+      </TouchableOpacity>
+    </View>
   );
 }
 

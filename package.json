@@ -2,24 +2,27 @@
   "name": "ybis-monorepo",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "YBIS - Your Business Intelligence System",
+  "packageManager": "pnpm@10.18.1",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "mobile": "cd apps/mobile && npm start",
-    "mobile:ios": "cd apps/mobile && npm run ios",
-    "mobile:android": "cd apps/mobile && npm run android",
-    "mobile:web": "cd apps/mobile && npm run web",
-    "web": "cd apps/web && npm run dev",
-    "backend": "cd apps/backend && npm run dev",
-    "backend:deploy": "cd apps/backend && npm run deploy",
-    "build": "npm run build --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
-    "lint": "npm run lint --workspaces --if-present",
+    "preinstall": "npx only-allow pnpm",
+    "mobile": "cd apps/mobile && pnpm start",
+    "mobile:ios": "cd apps/mobile && pnpm run ios",
+    "mobile:android": "cd apps/mobile && pnpm run android",
+    "mobile:web": "cd apps/mobile && pnpm run web",
+    "web": "cd apps/web && pnpm run dev",
+    "backend": "cd apps/backend && pnpm run dev",
+    "backend:deploy": "cd apps/backend && pnpm run deploy",
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test",
+    "lint": "pnpm -r run lint",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
-    "type-check": "npm run type-check --workspaces --if-present",
+    "type-check": "pnpm -r run type-check",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -40,8 +43,8 @@
     "typescript": "^5.3.3"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "node": ">=20.11.0",
+    "pnpm": ">=9.0.0"
   },
   "repository": {
     "type": "git",

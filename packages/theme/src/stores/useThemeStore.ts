@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { expoSecureStorage } from '../adapters/expoSecureStorage';
 
 /**
  * Theme Store
@@ -13,6 +13,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
  * - Adding new themes doesn't require code changes (just add to availableThemes)
  * - Tamagui handles theme rendering
  * - Store just manages current selection
+ *
+ * Storage:
+ * - expo-secure-store via custom adapter (Expo managed workflow compatible)
+ * - More secure than AsyncStorage (Keychain/EncryptedSharedPreferences)
  */
 
 // Phase 0: Light + Dark only
@@ -46,13 +50,18 @@ export interface ThemeStore {
 }
 
 /**
- * Zustand store with AsyncStorage persistence
+ * Zustand store with expo-secure-store persistence
  *
  * Why zustand (not ported):
  * - Already portable (works everywhere)
  * - Stable API
  * - No vendor lock-in
  * - Swap to Redux/Context is trivial if needed
+ *
+ * Why expo-secure-store (not AsyncStorage):
+ * - Expo managed workflow compatible
+ * - More secure storage (Keychain on iOS, EncryptedSharedPreferences on Android)
+ * - No native linking required
  */
 export const useThemeStore = create<ThemeStore>()(
   persist(
@@ -76,8 +85,8 @@ export const useThemeStore = create<ThemeStore>()(
       },
     }),
     {
-      name: 'ybis-theme-storage', // AsyncStorage key
-      storage: createJSONStorage(() => AsyncStorage),
+      name: 'ybis-theme-storage', // SecureStore key
+      storage: createJSONStorage(() => expoSecureStorage),
     }
   )
 );

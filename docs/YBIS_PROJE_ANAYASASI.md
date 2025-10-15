@@ -35,6 +35,13 @@ Bu bölümdeki kurallar tartışılamaz ve asla esnetilemez.
 - **UI İzolasyonu:** Tüm UI bileşenleri, `@ybis/ui` paketi üzerinden kullanılmalıdır. Doğrudan `tamagui` veya başka bir UI kütüphanesinden bileşen import etmek yasaktır.
 - **"Build for Scale, Ship Minimal" Prensibi:** Phase 0'da infrastructure, gelecekteki genişlemeleri destekleyecek şekilde (multi-theme, multi-provider, multi-language) tasarlanmalı, ancak sadece minimal özellikler (dark/light theme, tek LLM, TR+EN) ship edilmelidir. Yeni özellik (vertical, theme, LLM provider) eklemek, core kodunda değişiklik gerektirmemelidir.
 
+- **"Fix the Abstraction" Prensibi (No Patch, No Shortcut):** Bir alt seviye teknoloji (örn: React Hook kullanan bir kütüphane) ile üst seviye bir soyutlama (örn: Port arayüzü) arasında mimari bir uyumsuzluk tespit edildiğinde, sorun ara katmanlar, yardımcı dosyalar veya geçici çözümler ile "yamalanmamalıdır". Bunun yerine, soyutlamanın kendisi, altta yatan teknolojinin gerçekliğini doğru bir şekilde modelleyecek şekilde yeniden tasarlanmalıdır.
+  - **Örnek (`AuthPort` Refactoring):**
+    - **Problem:** `ExpoAuthAdapter`, bir class içinde çağrılamayacak olan `useAuthRequest` React Hook'unu kullanmak zorundaydı. Orijinal tek metodlu `signInWithOAuth()` arayüzü, bu iki fazlı (Hook + Action) yapı için mimari olarak yanlıştı.
+    - **Hatalı Çözüm ("Patch"):** Test edilebilirliği sağlamak için ara `helpers.ts` dosyaları oluşturmak veya UI katmanını implementasyon detaylarını bilmeye zorlamak. Bu, asıl problemi gizler.
+    - **Doğru Çözüm ("Fix the Abstraction"):** `AuthPort` arayüzünü, sürecin iki fazını (UI hazırlığı ve mantık işlemi) yansıtacak şekilde `getOAuthRequestConfig()` ve `processOAuthResponse()` olarak iki metoda ayırmak. Bu, soyutlamayı temiz, test edilebilir ve teknolojiyle uyumlu hale getirir.
+  - **Kural:** Belirtiyi implementasyonda değil, kök nedeni soyutlama katmanında çöz.
+
 ## 4. Geliştirme Akışı Kuralları
 
 - **Test Zorunluluğu:** Önemli değişiklikler içeren veya yeni bir özellik ekleyen her kod parçası, ilgili testlerle (birim, entegrasyon) birlikte sunulmalıdır. Kod, lint ve tür kontrolünden (`npm run lint`, `npm run type-check`) hatasız geçmeden tamamlanmış sayılmaz.

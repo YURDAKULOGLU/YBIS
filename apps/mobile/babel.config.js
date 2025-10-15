@@ -23,8 +23,8 @@ module.exports = function (api) {
           logTimings: true,
         },
       ],
-      // Reanimated plugin must be last (resolve from workspace root)
-      require.resolve('react-native-reanimated/plugin', { paths: [workspaceRoot] }),
+      // ✅ Reanimated plugin auto-included in babel-preset-expo (SDK 54+)
+      // No need to manually add react-native-reanimated/plugin
     ],
   };
 };

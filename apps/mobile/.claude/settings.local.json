@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Projeler/YBIS/**)",
+      "WebSearch",
+      "Bash(pnpm run type-check)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -7,8 +7,8 @@
 
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
-import type { AuthPort, User, OAuthCredentials, SignInResult } from '@ybis/core';
 import { AuthError } from '@ybis/core';
+import type { AuthPort, User, OAuthCredentials, SignInResult } from '@ybis/core';
 
 // Warm up browser for faster OAuth (iOS optimization)
 WebBrowser.maybeCompleteAuthSession();
@@ -23,6 +23,13 @@ export interface ExpoAuthConfig {
   redirectUri?: string;
 }
 
+// This is now a static configuration, not a dynamic hook call.
+const discovery: AuthSession.DiscoveryDocument = {
+  authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
+  tokenEndpoint: 'https://oauth2.googleapis.com/token',
+  revocationEndpoint: 'https://oauth2.googleapis.com/revoke',
+};
+
 export class ExpoAuthAdapter implements AuthPort {
   private currentUser: User | null = null;
   private credentials: OAuthCredentials | null = null;
@@ -34,12 +41,10 @@ export class ExpoAuthAdapter implements AuthPort {
   }
 
   async initialize(): Promise<void> {
-    // Check for existing session in secure storage
     // TODO: Load from expo-secure-store in future implementation
-    console.log('[ExpoAuthAdapter] Initialized');
   }
 
-  async signInWithOAuth(provider: 'google' | 'github' | 'apple'): Promise<SignInResult> {
+  async getOAuthRequestConfig(provider: 'google' | 'github' | 'apple'): Promise<unknown> {
     if (provider !== 'google') {
       throw new AuthError(
         `Provider ${provider} not supported in Closed Beta`,
@@ -47,78 +52,82 @@ export class ExpoAuthAdapter implements AuthPort {
       );
     }
 
-    try {
-      // Create OAuth request
-      const redirectUri = this.config.redirectUri || AuthSession.makeRedirectUri({
-        scheme: 'ybis',
-        path: 'auth/callback',
-      });
+    const redirectUri = this.config.redirectUri ?? AuthSession.makeRedirectUri({
+      scheme: 'ybis',
+      path: 'auth/callback',
+    });
 
-      const discovery = {
-        authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
-        tokenEndpoint: 'https://oauth2.googleapis.com/token',
-        revocationEndpoint: 'https://oauth2.googleapis.com/revoke',
-      };
+    // This method now returns a plain config object for the UI to use.
+    return {
+      clientId: this.config.google.clientId,
+      scopes: [
+        'openid',
+        'profile',
+        'email',
+      ],
+      redirectUri,
+      responseType: AuthSession.ResponseType.Code,
+      usePKCE: true,
+    };
+  }
 
-      const [request, , promptAsync] = AuthSession.useAuthRequest(
-        {
-          clientId: this.config.google.clientId,
-          scopes: [
-            'openid',
-            'profile',
-            'email',
-            // Google Workspace scopes (for Open Beta)
-            // 'https://www.googleapis.com/auth/gmail.readonly',
-            // 'https://www.googleapis.com/auth/calendar',
-          ],
-          redirectUri,
-          responseType: AuthSession.ResponseType.Code,
-          usePKCE: true, // Security best practice
-        },
-        discovery
+  async processOAuthResponse(
+    provider: 'google' | 'github' | 'apple',
+    response: unknown
+  ): Promise<SignInResult> {
+    if (provider !== 'google') {
+      throw new AuthError(
+        `Provider ${provider} not supported in Closed Beta`,
+        'INVALID_PROVIDER'
       );
+    }
 
-      // Prompt user for OAuth consent
-      const result = await promptAsync();
+    const authResponse = response as AuthSession.AuthSessionResult;
 
-      if (result.type === 'cancel') {
+    try {
+      if (authResponse.type === 'cancel') {
         throw new AuthError('User cancelled OAuth flow', 'AUTH_CANCELLED');
       }
 
-      if (result.type === 'error') {
+      if (authResponse.type === 'error') {
         throw new AuthError(
           'OAuth authentication failed',
           'AUTH_FAILED',
-          new Error(result.error?.message || 'Unknown error')
+          new Error(authResponse.error?.message ?? 'Unknown error')
         );
       }
 
-      if (result.type !== 'success') {
+      if (authResponse.type !== 'success') {
         throw new AuthError('Unexpected OAuth result', 'UNKNOWN_ERROR');
       }
 
-      // Exchange code for tokens
+      // This logic is now testable by passing a mock response object.
+      const code = authResponse.params['code'];
+      const codeVerifier = authResponse.params['code_verifier'];
+      
       const tokenResponse = await AuthSession.exchangeCodeAsync(
         {
           clientId: this.config.google.clientId,
-          code: result.params['code'] as string,
-          redirectUri,
+          code: typeof code === 'string' ? code : '',
+          redirectUri: this.config.redirectUri ?? AuthSession.makeRedirectUri({
+            scheme: 'ybis',
+            path: 'auth/callback',
+          }),
           extraParams: {
-            code_verifier: request?.codeVerifier || '',
+            code_verifier: typeof codeVerifier === 'string' ? codeVerifier : '',
           },
         },
         discovery
       );
 
-      // Extract user info from ID token (JWT)
-      const idTokenPayload = this.parseJWT(tokenResponse.idToken || '');
+      const idTokenPayload = this.parseJWT(tokenResponse.idToken ?? '');
 
       const user: User = {
-        id: idTokenPayload.sub,
-        email: idTokenPayload.email,
-        displayName: idTokenPayload.name || null,
-        photoURL: idTokenPayload.picture || null,
-        emailVerified: idTokenPayload.email_verified || false,
+        id: idTokenPayload['sub'] as string,
+        email: idTokenPayload['email'] as string,
+        displayName: (idTokenPayload['name'] as string) ?? null,
+        photoURL: (idTokenPayload['picture'] as string) ?? null,
+        emailVerified: (idTokenPayload['email_verified'] as boolean) ?? false,
         createdAt: new Date(),
         lastLoginAt: new Date(),
       };
@@ -133,11 +142,8 @@ export class ExpoAuthAdapter implements AuthPort {
         provider: 'google',
       };
 
-      // Store in memory (TODO: Persist to expo-secure-store)
       this.currentUser = user;
       this.credentials = credentials;
-
-      // Notify listeners
       this.notifyAuthStateChanged(user);
 
       return {
@@ -150,7 +156,7 @@ export class ExpoAuthAdapter implements AuthPort {
         throw error;
       }
       throw new AuthError(
-        'Failed to sign in with Google',
+        'Failed to process Google OAuth response',
         'AUTH_FAILED',
         error as Error
       );
@@ -158,27 +164,19 @@ export class ExpoAuthAdapter implements AuthPort {
   }
 
   async signOut(): Promise<void> {
-    // Revoke token with Google (optional but recommended)
     if (this.credentials?.accessToken) {
       try {
         await fetch(
           `https://oauth2.googleapis.com/revoke?token=${this.credentials.accessToken}`,
           { method: 'POST' }
         );
-      } catch (error) {
-        console.warn('[ExpoAuthAdapter] Failed to revoke token:', error);
+      } catch {
+        // Don't block sign-out if revoke fails
       }
     }
-
-    // Clear session
     this.currentUser = null;
     this.credentials = null;
-
-    // Notify listeners
     this.notifyAuthStateChanged(null);
-
-    // TODO: Clear from expo-secure-store
-    console.log('[ExpoAuthAdapter] Signed out');
   }
 
   async getCurrentUser(): Promise<User | null> {
@@ -189,10 +187,7 @@ export class ExpoAuthAdapter implements AuthPort {
     if (!this.currentUser || !this.credentials) {
       return false;
     }
-
-    // Check token expiry
     if (this.credentials.expiresAt && this.credentials.expiresAt < new Date()) {
-      // Token expired, try refresh
       try {
         await this.refreshToken();
         return true;
@@ -200,7 +195,6 @@ export class ExpoAuthAdapter implements AuthPort {
         return false;
       }
     }
-
     return true;
   }
 
@@ -208,7 +202,6 @@ export class ExpoAuthAdapter implements AuthPort {
     if (!this.credentials?.refreshToken) {
       throw new AuthError('No refresh token available', 'REFRESH_FAILED');
     }
-
     try {
       const response = await fetch('https://oauth2.googleapis.com/token', {
         method: 'POST',
@@ -225,10 +218,9 @@ export class ExpoAuthAdapter implements AuthPort {
       }
 
       const data = await response.json();
-
       const newCredentials: OAuthCredentials = {
         accessToken: data.access_token,
-        refreshToken: this.credentials.refreshToken, // Keep existing refresh token
+        refreshToken: this.credentials.refreshToken,
         idToken: data.id_token,
         expiresAt: data.expires_in
           ? new Date(Date.now() + data.expires_in * 1000)
@@ -237,9 +229,6 @@ export class ExpoAuthAdapter implements AuthPort {
       };
 
       this.credentials = newCredentials;
-
-      // TODO: Persist to expo-secure-store
-
       return newCredentials;
     } catch (error) {
       throw new AuthError(
@@ -252,11 +241,7 @@ export class ExpoAuthAdapter implements AuthPort {
 
   onAuthStateChanged(callback: (user: User | null) => void): () => void {
     this.authStateListeners.push(callback);
-
-    // Immediately call with current state
     callback(this.currentUser);
-
-    // Return unsubscribe function
     return () => {
       const index = this.authStateListeners.indexOf(callback);
       if (index > -1) {
@@ -269,19 +254,17 @@ export class ExpoAuthAdapter implements AuthPort {
     await this.signOut();
   }
 
-  // Helper methods
-
   private notifyAuthStateChanged(user: User | null): void {
     this.authStateListeners.forEach((listener) => {
       try {
         listener(user);
-      } catch (error) {
-        console.error('[ExpoAuthAdapter] Error in auth state listener:', error);
+      } catch {
+        // Don't let one listener break the others
       }
     });
   }
 
-  private parseJWT(token: string): any {
+  private parseJWT(token: string): Record<string, unknown> {
     try {
       const base64Url = token.split('.')[1];
       if (!base64Url) {
@@ -291,10 +274,10 @@ export class ExpoAuthAdapter implements AuthPort {
       const jsonPayload = decodeURIComponent(
         atob(base64)
           .split('')
-          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
           .join('')
       );
-      return JSON.parse(jsonPayload);
+      return JSON.parse(jsonPayload) as Record<string, unknown>;
     } catch (error) {
       throw new AuthError(
         'Failed to parse ID token',

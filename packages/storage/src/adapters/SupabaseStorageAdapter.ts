@@ -7,7 +7,8 @@
  * @see StoragePort for interface documentation
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import type {
   StoragePort,
   FileMetadata,
@@ -79,7 +80,7 @@ export class SupabaseStorageAdapter implements StoragePort {
     this.ensureInitialized();
 
     try {
-      const uploadOptions: any = {
+      const uploadOptions: Record<string, unknown> = {
         contentType: options?.contentType,
         cacheControl: options?.cacheControl,
         upsert: options?.upsert ?? false,
@@ -127,7 +128,7 @@ export class SupabaseStorageAdapter implements StoragePort {
     this.ensureInitialized();
 
     try {
-      let downloadPath = path;
+      const downloadPath = path;
 
       // Apply transformations for images (if supported)
       // Supabase Storage supports image transformations via URL query params
@@ -303,7 +304,7 @@ export class SupabaseStorageAdapter implements StoragePort {
             height: options.transform.height,
             quality: options.transform.quality,
             format: options.transform.format,
-          } as any)
+          } as Record<string, unknown>)
         : undefined;
 
       const { data, error } = await this.client!.storage
@@ -457,29 +458,30 @@ export class SupabaseStorageAdapter implements StoragePort {
     return parts[parts.length - 1] || '';
   }
 
-  private handleSupabaseError(error: any): StorageError {
-    const message = error.message || 'Unknown storage error';
+  private handleSupabaseError(error: unknown): StorageError {
+    const err = error as { statusCode?: string; message?: string };
+    const message = err.message ?? 'Unknown storage error';
 
-    if (error.statusCode === '404' || message.includes('not found')) {
-      return new StorageError(message, 'NOT_FOUND', error);
+    if (err.statusCode === '404' || message.includes('not found')) {
+      return new StorageError(message, 'NOT_FOUND', error as Error);
     }
 
-    if (error.statusCode === '409' || message.includes('already exists')) {
-      return new StorageError(message, 'ALREADY_EXISTS', error);
+    if (err.statusCode === '409' || message.includes('already exists')) {
+      return new StorageError(message, 'ALREADY_EXISTS', error as Error);
     }
 
-    if (error.statusCode === '403' || message.includes('permission')) {
-      return new StorageError(message, 'PERMISSION_DENIED', error);
+    if (err.statusCode === '403' || message.includes('permission')) {
+      return new StorageError(message, 'PERMISSION_DENIED', error as Error);
     }
 
     if (message.includes('too large') || message.includes('size')) {
-      return new StorageError(message, 'FILE_TOO_LARGE', error);
+      return new StorageError(message, 'FILE_TOO_LARGE', error as Error);
     }
 
     if (message.includes('invalid') && message.includes('path')) {
-      return new StorageError(message, 'INVALID_PATH', error);
+      return new StorageError(message, 'INVALID_PATH', error as Error);
     }
 
-    return new StorageError(message, 'UNKNOWN_ERROR', error);
+    return new StorageError(message, 'UNKNOWN_ERROR', error as Error);
   }
 }

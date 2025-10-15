@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import {
   YStack,
   XStack,
@@ -8,28 +8,40 @@ import {
   Input,
   ScrollView,
 } from 'tamagui';
-import { Keyboard, Dimensions, KeyboardAvoidingView, ScrollView as RNScrollView } from 'react-native';
-import { Plus, Send, Calendar, CheckSquare, FileText, Workflow } from '@tamagui/lucide-icons';
+import { Keyboard, KeyboardAvoidingView, ScrollView as RNScrollView, useWindowDimensions } from 'react-native';
+import { Plus, Send, Calendar, CheckSquare, FileText, Workflow, Mic } from '@tamagui/lucide-icons';
+import { ChatBubble, type ChatMessage as ChatMessageType } from '@ybis/chat';
 
 /**
- * Main Screen - New Design
+ * Main Screen - WhatsApp-Inspired Design
  *
  * Features:
- * - Slidable tabs (Notes, Tasks, Calendar, Flows)
- * - Widget area (1/4 screen, shows mini summary)
- * - Chat area (suggestion prompts when empty, messages when active)
- * - Input bar with + button for quick actions
+ * - Slidable tabs (Notes, Tasks, Calendar, Flows) - Smooth pills
+ * - Widget area (1/5 screen, shows mini summary)
+ * - Chat area (suggestion prompts when empty, WhatsApp-style bubbles when active)
+ * - Smart input bar: Mic icon (empty) → Send icon (has text)
+ * - Voice-to-text: Mic converts speech to text (Epic 4)
+ * - Quick actions menu (+ button)
  * - Keyboard-aware: widget area shrinks when keyboard opens
+ *
+ * UX Improvements:
+ * - WhatsApp-style chat bubbles (rounded corners, tail effect)
+ * - Smooth animations (AnimatePresence, enterStyle, exitStyle)
+ * - Dynamic button transitions (mic ↔ send)
+ * - Rounded input field with subtle background
+ * - Modern card designs with smooth press feedback
+ *
+ * Performance:
+ * - useCallback for event handlers (prevent re-renders)
+ * - useMemo for computed values
+ * - useWindowDimensions hook (reactive to orientation changes)
+ * - Static data outside component (TABS, PROMPTS)
  */
 
 type TabType = 'notes' | 'tasks' | 'calendar' | 'flows';
 
-interface Message {
-  id: string;
-  text: string;
-  sender: 'user' | 'ai';
-  timestamp: string;
-}
+// Using @ybis/chat types
+type Message = ChatMessageType;
 
 interface SuggestionPrompt {
   id: string;
@@ -38,7 +50,7 @@ interface SuggestionPrompt {
   description: string;
 }
 
-// Mock data - will be replaced with real data
+// Mock data - will be replaced with real data (static, outside component)
 const ONBOARDING_PROMPTS: SuggestionPrompt[] = [
   {
     id: '1',
@@ -69,6 +81,14 @@ const REGULAR_PROMPTS: SuggestionPrompt[] = [
   },
 ];
 
+// Static tabs configuration (outside component to prevent re-creation)
+const TABS: { key: TabType; label: string; icon: typeof Calendar }[] = [
+  { key: 'notes', label: 'Notes', icon: FileText },
+  { key: 'tasks', label: 'Tasks', icon: CheckSquare },
+  { key: 'calendar', label: 'Calendar', icon: Calendar },
+  { key: 'flows', label: 'Flows', icon: Workflow },
+];
+
 export default function MainScreen() {
   const [selectedTab, setSelectedTab] = useState<TabType>('notes');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -78,8 +98,9 @@ export default function MainScreen() {
 
   const scrollViewRef = useRef<RNScrollView>(null);
 
-  const screenHeight = Dimensions.get('window').height;
-  const widgetHeight = screenHeight * 0.2; // 1/5 of screen
+  // Reactive window dimensions (handles orientation changes)
+  const { height: screenHeight } = useWindowDimensions();
+  const widgetHeight = useMemo(() => screenHeight * 0.2, [screenHeight]); // 1/5 of screen
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -90,54 +111,8 @@ export default function MainScreen() {
     }
   }, [messages]);
 
-  const tabs: { key: TabType; label: string; icon: typeof Calendar }[] = [
-    { key: 'notes', label: 'Notes', icon: FileText },
-    { key: 'tasks', label: 'Tasks', icon: CheckSquare },
-    { key: 'calendar', label: 'Calendar', icon: Calendar },
-    { key: 'flows', label: 'Flows', icon: Workflow },
-  ];
-
-  const handleSendMessage = () => {
-    if (!inputText.trim()) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: inputText,
-      sender: 'user',
-      timestamp: new Date().toLocaleTimeString('tr-TR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setInputText('');
-    Keyboard.dismiss();
-
-    // Exit onboarding mode after first message
-    if (isFirstTime) {
-      setIsFirstTime(false);
-    }
-
-    // Mock AI response after 1.5 seconds
-    setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: getMockAIResponse(userMessage.text),
-        sender: 'ai',
-        timestamp: new Date().toLocaleTimeString('tr-TR', {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-      };
-      setMessages((prev) => [...prev, aiMessage]);
-    }, 1500);
-
-    // TODO: Send to backend API
-    console.log('Message sent:', userMessage.text);
-  };
-
-  const getMockAIResponse = (userText: string): string => {
+  // Mock AI response generator (memoized)
+  const getMockAIResponse = useCallback((userText: string): string => {
     const lowerText = userText.toLowerCase();
 
     // Simple keyword-based responses
@@ -175,9 +150,80 @@ export default function MainScreen() {
     const randomIndex = Math.floor(Math.random() * defaultResponses.length);
     const response = defaultResponses[randomIndex];
     return response ?? 'Anladım. Size nasıl yardımcı olabilirim?';
-  };
+  }, []);
 
-  const handlePromptClick = (prompt: SuggestionPrompt) => {
+  const handleSendMessage = useCallback(() => {
+    if (!inputText.trim()) return;
+
+    const messageId = Date.now().toString();
+    const userMessage: Message = {
+      id: messageId,
+      text: inputText,
+      sender: 'user',
+      timestamp: new Date().toLocaleTimeString('tr-TR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      status: 'sending', // Start with sending
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInputText('');
+    Keyboard.dismiss();
+
+    // Exit onboarding mode after first message
+    if (isFirstTime) {
+      setIsFirstTime(false);
+    }
+
+    // Simulate message sending progression
+    setTimeout(() => {
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === messageId ? { ...msg, status: 'sent' as const } : msg))
+      );
+    }, 300);
+
+    setTimeout(() => {
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === messageId ? { ...msg, status: 'delivered' as const } : msg))
+      );
+    }, 600);
+
+    // Mock AI response after 1.5 seconds
+    setTimeout(() => {
+      // Mark as read when AI responds
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === messageId ? { ...msg, status: 'read' as const } : msg))
+      );
+
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: getMockAIResponse(userMessage.text),
+        sender: 'ai',
+        timestamp: new Date().toLocaleTimeString('tr-TR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      };
+      setMessages((prev) => [...prev, aiMessage]);
+    }, 1500);
+
+    // TODO: Send to backend API
+    console.log('Message sent:', userMessage.text);
+  }, [getMockAIResponse, inputText, isFirstTime]);
+
+  const handleVoiceRecord = useCallback(() => {
+    // TODO: Implement voice-to-text in Epic 4
+    // Will use expo-speech-recognition or web Speech API
+    console.log('Voice recording started - Will convert to text (Epic 4)');
+
+    // Mock: Simulate voice-to-text
+    setTimeout(() => {
+      setInputText('Bu bir ses mesajından dönüştürülmüş metindir');
+    }, 1000);
+  }, []);
+
+  const handlePromptClick = useCallback((prompt: SuggestionPrompt) => {
     // Auto-send the prompt
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -211,9 +257,9 @@ export default function MainScreen() {
     }, 1500);
 
     console.log('Prompt clicked:', prompt.title);
-  };
+  }, [getMockAIResponse, isFirstTime]);
 
-  const handleQuickAction = (action: string) => {
+  const handleQuickAction = useCallback((action: string) => {
     console.log('Quick action:', action);
     setShowQuickActions(false);
 
@@ -228,14 +274,20 @@ export default function MainScreen() {
     } else {
       // TODO: Navigate to add task/event/note screen
     }
-  };
+  }, []);
 
-  const renderWidget = () => {
+  const renderWidget = useCallback(() => {
     // Placeholder widgets - will be implemented later
     return (
-      <Card padding="$4" bordered backgroundColor="$gray2">
+      <Card
+        padding="$4"
+        backgroundColor="$gray2"
+        borderWidth={1}
+        borderColor="$gray5"
+        borderRadius="$6"
+      >
         <YStack alignItems="center" justifyContent="center" height="100%">
-          <Text color="$gray11" fontSize="$3">
+          <Text color="$gray11" fontSize="$3" textAlign="center">
             {selectedTab === 'notes' && '📝 Recent Notes (Coming soon)'}
             {selectedTab === 'tasks' && '✅ Today\'s Tasks (Coming soon)'}
             {selectedTab === 'calendar' && '📅 Mini Calendar (Coming soon)'}
@@ -244,28 +296,32 @@ export default function MainScreen() {
         </YStack>
       </Card>
     );
-  };
+  }, [selectedTab]);
 
-  const renderSuggestionPrompts = () => {
+  const renderSuggestionPrompts = useCallback(() => {
     const prompts = isFirstTime ? ONBOARDING_PROMPTS : REGULAR_PROMPTS;
 
     return (
-      <YStack gap="$2" padding="$4">
+      <YStack gap="$3" padding="$4">
         {prompts.map((prompt) => (
           <Card
             key={prompt.id}
-            padding="$3"
-            bordered
-            pressStyle={{ scale: 0.97 }}
+            padding="$4"
+            backgroundColor="$gray2"
+            borderWidth={1}
+            borderColor="$gray5"
+            borderRadius="$6"
+            pressStyle={{ scale: 0.96, backgroundColor: '$gray3' }}
+            animation="bouncy"
             onPress={() => handlePromptClick(prompt)}
           >
-            <XStack gap="$2" alignItems="center">
-              <Text fontSize="$6">{prompt.icon}</Text>
+            <XStack gap="$3" alignItems="center">
+              <Text fontSize="$7">{prompt.icon}</Text>
               <YStack flex={1} gap="$1">
-                <Text fontWeight="500" fontSize="$3">
+                <Text fontWeight="600" fontSize="$4" color="$color">
                   {prompt.title}
                 </Text>
-                <Text color="$gray11" fontSize="$2">
+                <Text color="$gray11" fontSize="$3">
                   {prompt.description}
                 </Text>
               </YStack>
@@ -274,41 +330,21 @@ export default function MainScreen() {
         ))}
       </YStack>
     );
-  };
+  }, [isFirstTime, handlePromptClick]);
 
-  const renderChatMessages = () => {
+  const renderChatMessages = useCallback(() => {
     return (
-      <YStack padding="$4" gap="$3">
-        {messages.map((message) => (
-          <XStack
+      <YStack padding="$4" gap="$2">
+        {messages.map((message, index) => (
+          <ChatBubble
             key={message.id}
-            justifyContent={message.sender === 'user' ? 'flex-end' : 'flex-start'}
-          >
-            <Card
-              maxWidth="80%"
-              padding="$4"
-              backgroundColor={message.sender === 'user' ? '$blue4' : '$gray3'}
-            >
-              <Text
-                color={message.sender === 'user' ? '$blue12' : '$color'}
-                fontSize="$4"
-                lineHeight="$5"
-              >
-                {message.text}
-              </Text>
-              <Text
-                color={message.sender === 'user' ? '$blue11' : '$gray11'}
-                fontSize="$2"
-                marginTop="$2"
-              >
-                {message.timestamp}
-              </Text>
-            </Card>
-          </XStack>
+            message={message}
+            animationDelay={index * 30}
+          />
         ))}
       </YStack>
     );
-  };
+  }, [messages]);
 
   return (
     <KeyboardAvoidingView
@@ -321,7 +357,7 @@ export default function MainScreen() {
         <YStack borderBottomWidth={1} borderColor="$gray5">
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <XStack paddingHorizontal="$3" paddingVertical="$2" gap="$2">
-              {tabs.map((tab) => {
+              {TABS.map((tab) => {
                 const isSelected = selectedTab === tab.key;
                 const Icon = tab.icon;
 
@@ -329,12 +365,14 @@ export default function MainScreen() {
                   <Button
                     key={tab.key}
                     size="$3"
-                    theme={isSelected ? 'blue' : undefined}
-                    backgroundColor={isSelected ? '$blue4' : '$gray2'}
-                    borderColor={isSelected ? '$blue8' : '$gray5'}
-                    pressStyle={{ scale: 0.95 }}
+                    backgroundColor={isSelected ? '$blue9' : '$gray3'}
+                    color={isSelected ? 'white' : '$gray11'}
+                    borderWidth={0}
+                    borderRadius="$10"
+                    pressStyle={{ scale: 0.94, backgroundColor: isSelected ? '$blue10' : '$gray4' }}
+                    animation="bouncy"
                     onPress={() => setSelectedTab(tab.key)}
-                    icon={<Icon size={16} />}
+                    icon={<Icon size={16} color={isSelected ? 'white' : undefined} />}
                   >
                     {tab.label}
                   </Button>
@@ -365,102 +403,161 @@ export default function MainScreen() {
           </YStack>
         </ScrollView>
 
-        {/* Input Bar - FIXED */}
+        {/* Input Bar - WhatsApp Style (Smooth) */}
         <YStack
           padding="$3"
+          paddingBottom="$4"
           borderTopWidth={1}
           borderColor="$gray5"
           backgroundColor="$background"
         >
-          <XStack gap="$2" alignItems="center">
-            {/* + Button (Quick Actions) */}
+          <XStack gap="$3" alignItems="center">
+            {/* + Button (Quick Actions) - Instant Feedback */}
             <Button
               size="$4"
               circular
               icon={Plus}
-              theme="gray"
+              backgroundColor="$gray3"
+              borderWidth={0}
+              pressStyle={{ scale: 0.92, backgroundColor: '$gray4' }}
+              animation="bouncy"
               onPress={() => setShowQuickActions(!showQuickActions)}
             />
 
-            {/* Text Input */}
+            {/* Text Input - Rounded WhatsApp Style */}
             <Input
               flex={1}
-              placeholder="Type a message..."
+              placeholder="Mesaj yazın..."
+              placeholderTextColor="$gray10"
               value={inputText}
               onChangeText={setInputText}
               onSubmitEditing={handleSendMessage}
+              backgroundColor="$gray2"
+              borderWidth={1}
+              borderColor="$gray5"
+              borderRadius="$10"
+              paddingHorizontal="$4"
+              paddingVertical="$3"
+              fontSize="$4"
             />
 
-            {/* Send Button */}
-            <Button
-              size="$4"
-              circular
-              icon={Send}
-              theme="blue"
-              onPress={handleSendMessage}
-              disabled={!inputText.trim()}
-            />
+            {/* Send or Mic Button - Instant Transition */}
+            <YStack width={48} height={48} alignItems="center" justifyContent="center">
+              {inputText.trim() ? (
+                <Button
+                  key="send"
+                  size="$4"
+                  circular
+                  icon={Send}
+                  backgroundColor="$blue9"
+                  borderWidth={0}
+                  pressStyle={{ scale: 0.88, backgroundColor: '$blue10' }}
+                  animation="bouncy"
+                  onPress={handleSendMessage}
+                />
+              ) : (
+                <Button
+                  key="mic"
+                  size="$4"
+                  circular
+                  icon={Mic}
+                  backgroundColor="$gray3"
+                  borderWidth={0}
+                  pressStyle={{ scale: 0.88, backgroundColor: '$blue9' }}
+                  animation="bouncy"
+                  onPress={handleVoiceRecord}
+                />
+              )}
+            </YStack>
           </XStack>
 
-          {/* Quick Actions Menu */}
+          {/* Quick Actions Menu - Instant Appearance */}
           {showQuickActions && (
-            <Card marginTop="$2" padding="$3" bordered>
-              <YStack gap="$2">
-                <Button
-                  size="$3"
-                  justifyContent="flex-start"
-                  icon={CheckSquare}
-                  onPress={() => handleQuickAction('add-task')}
-                >
-                  Task Ekle
-                </Button>
-                <Button
-                  size="$3"
-                  justifyContent="flex-start"
-                  icon={Calendar}
-                  onPress={() => handleQuickAction('add-event')}
-                >
-                  Etkinlik Ekle
-                </Button>
-                <Button
-                  size="$3"
-                  justifyContent="flex-start"
-                  icon={FileText}
-                  onPress={() => handleQuickAction('add-note')}
-                >
-                  Not Ekle
-                </Button>
-                <Button
-                  size="$3"
-                  justifyContent="flex-start"
-                  icon={Workflow}
-                  onPress={() => handleQuickAction('start-flow')}
-                >
-                  Flow Başlat
-                </Button>
+            <Card
+              marginTop="$3"
+              padding="$3"
+              bordered
+              borderRadius="$6"
+            >
 
-                <YStack height={1} backgroundColor="$gray5" marginVertical="$2" />
+                <YStack gap="$2">
+                  <Button
+                    size="$3"
+                    justifyContent="flex-start"
+                    icon={CheckSquare}
+                    backgroundColor="$gray2"
+                    borderWidth={0}
+                    pressStyle={{ scale: 0.96, backgroundColor: '$gray3' }}
+                    animation="bouncy"
+                    onPress={() => handleQuickAction('add-task')}
+                  >
+                    Task Ekle
+                  </Button>
+                  <Button
+                    size="$3"
+                    justifyContent="flex-start"
+                    icon={Calendar}
+                    backgroundColor="$gray2"
+                    borderWidth={0}
+                    pressStyle={{ scale: 0.96, backgroundColor: '$gray3' }}
+                    animation="bouncy"
+                    onPress={() => handleQuickAction('add-event')}
+                  >
+                    Etkinlik Ekle
+                  </Button>
+                  <Button
+                    size="$3"
+                    justifyContent="flex-start"
+                    icon={FileText}
+                    backgroundColor="$gray2"
+                    borderWidth={0}
+                    pressStyle={{ scale: 0.96, backgroundColor: '$gray3' }}
+                    animation="bouncy"
+                    onPress={() => handleQuickAction('add-note')}
+                  >
+                    Not Ekle
+                  </Button>
+                  <Button
+                    size="$3"
+                    justifyContent="flex-start"
+                    icon={Workflow}
+                    backgroundColor="$gray2"
+                    borderWidth={0}
+                    pressStyle={{ scale: 0.96, backgroundColor: '$gray3' }}
+                    animation="bouncy"
+                    onPress={() => handleQuickAction('start-flow')}
+                  >
+                    Flow Başlat
+                  </Button>
 
-                {/* Demo Actions */}
-                <Button
-                  size="$3"
-                  justifyContent="flex-start"
-                  theme="blue"
-                  onPress={() => handleQuickAction('new-chat')}
-                >
-                  🆕 Yeni Chat
-                </Button>
-                <Button
-                  size="$3"
-                  justifyContent="flex-start"
-                  theme="red"
-                  onPress={() => handleQuickAction('clear-all')}
-                >
-                  🗑️ Tümünü Temizle
-                </Button>
-              </YStack>
-            </Card>
-          )}
+                  <YStack height={1} backgroundColor="$gray5" marginVertical="$2" />
+
+                  {/* Demo Actions */}
+                  <Button
+                    size="$3"
+                    justifyContent="flex-start"
+                    backgroundColor="$blue3"
+                    borderWidth={0}
+                    pressStyle={{ scale: 0.96, backgroundColor: '$blue4' }}
+                    animation="bouncy"
+                    onPress={() => handleQuickAction('new-chat')}
+                  >
+                    🆕 Yeni Chat
+                  </Button>
+                  <Button
+                    size="$3"
+                    justifyContent="flex-start"
+                    backgroundColor="$red3"
+                    borderWidth={0}
+                    pressStyle={{ scale: 0.96, backgroundColor: '$red4' }}
+                    animation="bouncy"
+                    onPress={() => handleQuickAction('clear-all')}
+                  >
+                    🗑️ Tümünü Temizle
+                  </Button>
+                </YStack>
+              </Card>
+            )}
         </YStack>
       </YStack>
     </KeyboardAvoidingView>

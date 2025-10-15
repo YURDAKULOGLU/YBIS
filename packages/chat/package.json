@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "@ybis/core": "workspace:*",
-    "react-native-gifted-chat": "^2.8.1"
+    "@ybis/ui": "workspace:*",
+    "@tamagui/lucide-icons": "^1.135.0"
   },
   "peerDependencies": {
     "react": "^19.1.0",
-    "react-native": "^0.81.4"
+    "react-native": "^0.81.4",
+    "tamagui": "^1.135.0"
   },
   "devDependencies": {
     "@types/react": "~19.1.0",

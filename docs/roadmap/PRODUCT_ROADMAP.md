@@ -6,6 +6,7 @@
 **Strategy:** Build Infrastructure for All Paths, Ship Minimal
 
 **Cross-References:**
+- [Development Roadmap](./DEVELOPMENT_ROADMAP.md) - Technical implementation timeline (informed by this roadmap)
 - [Project Vision](../vision/PROJECT_VISION.md) - Strategic foundation (goals → timeline)
 - [Market Research](../strategy/MARKET_RESEARCH.md) - Market priorities (inform roadmap)
 - [Competitive Strategy](../strategy/COMPETITIVE_STRATEGY.md) - Positioning (inform strategy)
@@ -18,6 +19,330 @@
 
 ## 🎯 **Core Philosophy**
 
+**"Build for Scale, Ship Minimal"**
+
+- **Ship:** Individual users, minimal features (Google Workspace)
+- **Build:** Infrastructure for vertical plugins, team features, enterprise deployment
+- **Decide:** Post-release based on market feedback
+
+**Business Principles:**
+- ✅ User value first (core features before advanced features)
+- ✅ Market validation (user feedback drives decisions)
+- ✅ Scalable growth (infrastructure ready for expansion)
+- ✅ Competitive differentiation (unique value proposition)
+
+---
+
+## 📅 **Phase 0: Closed Beta**
+
+**Timeline:** October - November 2025 (6 weeks)  
+**Status:** Week 1 - 80% complete (24/30 tasks done)  
+**Users:** 100-200 beta testers  
+**Focus:** Core value validation
+
+### **Primary Goals**
+- ✅ Validate AI assistant value proposition
+- ✅ Test Google Workspace integration
+- ✅ Establish technical foundation
+- ✅ Gather user behavior patterns
+
+### **User Acquisition Strategy**
+
+#### **Beta Tester Recruitment**
+- ✅ **Target Audience:** Knowledge workers, productivity enthusiasts
+- ✅ **Recruitment Channels:** 
+  - LinkedIn (productivity groups)
+  - Twitter (AI/productivity community)
+  - Product Hunt (early adopters)
+  - Personal network (colleagues, friends)
+- ✅ **Recruitment Timeline:** Week 4-5 (2 weeks before launch)
+- ✅ **Target:** 100-200 beta testers
+
+#### **User Onboarding**
+- ✅ **Welcome Flow:** Simple 3-step setup
+- ✅ **Google Workspace Connection:** One-click OAuth
+- ✅ **First AI Interaction:** Guided tutorial
+- ✅ **Success Metrics:** 80% completion rate
+
+### **Features (Minimal)**
+
+#### **Google Workspace Integration**
+- ✅ **Auth:** Expo Auth Session + Google OAuth (NOT Firebase)
+- ✅ **Calendar:** Google Calendar (CalendarPort → GoogleCalendarAdapter)
+- ✅ **Email:** Gmail (EmailPort → GmailAdapter)
+- ✅ **Tasks:** Google Tasks (TaskPort → GoogleTasksAdapter)
+
+#### **AI Chat System**
+- ✅ **LLM:** OpenAI only (single provider, simple)
+- ✅ **Chat UI:** Widget-based + slidable tabs (Notes, Tasks, Calendar, Flows)
+- ✅ **Context:** Conversation memory (local storage)
+- ✅ **Tool Calling:** Basic task creation, search, organize
+
+#### **Core Features**
+- ✅ **Note Management:** Built-in (create, edit, search, AI summary)
+- ✅ **Task Management:** Built-in (create, complete, priority)
+- ✅ **Calendar View:** Built-in (daily view, basic CRUD)
+- ✅ **Workflow Templates:** 3-5 presets (morning routine, daily planning)
+
+### **Business Milestones**
+
+#### **Week 1-2: Foundation**
+- ✅ Technical foundation complete
+- ✅ Core features working
+- ✅ User interface polished
+
+#### **Week 3-4: Integration**
+- ✅ Google Workspace connected
+- ✅ AI assistant functional
+- ✅ User workflows established
+
+#### **Week 5-6: Launch Preparation**
+- ✅ Beta tester recruitment
+- ✅ User onboarding flow
+- ✅ Feedback collection system
+- ✅ Closed Beta launch
+
+### **Success Metrics (Closed Beta)**
+- ✅ App launches on iOS + Android
+- ✅ Google Workspace integration works
+- ✅ AI assistant responds to basic queries
+- ✅ User retention >70% (7-day)
+- ✅ User satisfaction >4.0/5.0
+- ✅ Feature usage >60% (core features)
+
+---
+
+## 📅 **Phase 1: Open Beta**
+
+**Timeline:** December 2025 - January 2026 (2 months)  
+**Status:** Planned  
+**Users:** 1000-5000 beta testers  
+**Focus:** Plugin system testing + user feedback
+
+### **Primary Goals**
+- ✅ Test plugin system with real users
+- ✅ Validate vertical expansion demand
+- ✅ Gather plugin marketplace feedback
+- ✅ Optimize AI assistant performance
+
+### **User Acquisition Strategy**
+
+#### **Scaling Strategy**
+- ✅ **Target Audience:** Productivity enthusiasts, early adopters
+- ✅ **Recruitment Channels:**
+  - Product Hunt launch
+  - Social media campaigns
+  - Influencer partnerships
+  - Community referrals
+- ✅ **Growth Target:** 1000-5000 users
+- ✅ **Retention Goal:** >60% (30-day)
+
+#### **Marketing Strategy**
+- ✅ **Content Marketing:** Productivity tips, AI insights
+- ✅ **Social Media:** Twitter, LinkedIn, YouTube
+- ✅ **Community Building:** Discord, Reddit
+- ✅ **Influencer Outreach:** Productivity YouTubers
+
+### **Features (Plugin System Testing)**
+
+#### **Basic Internal Plugins**
+- ✅ **Markdown Editor Plugin:** Rich text editing
+- ✅ **Advanced Calendar Widget:** Interactive calendar
+- ✅ **Custom Workflow Templates:** User-defined workflows
+- ✅ **Theme Customization Plugin:** Advanced theming
+
+#### **Plugin Management**
+- ✅ **Plugin Settings UI:** Enable/disable plugins
+- ✅ **Plugin Performance:** Loading/unloading testing
+- ✅ **Security Validation:** Sandbox testing
+- ✅ **User Experience:** Plugin interaction testing
+
+#### **Enhanced Core Features**
+- ✅ **Multi-Provider LLM:** Auto-routing testing (GPT-3.5 vs GPT-4)
+- ✅ **Advanced Google Workspace:** Deep integration
+- ✅ **Workflow Automation:** Complex multi-step workflows
+- ✅ **AI Tool Calling:** Advanced task automation
+
+### **Business Milestones**
+
+#### **Month 1: Launch & Growth**
+- ✅ Open Beta launch
+- ✅ User acquisition campaigns
+- ✅ Plugin system testing
+- ✅ Feedback collection
+
+#### **Month 2: Optimization**
+- ✅ Performance optimization
+- ✅ User experience improvements
+- ✅ Plugin system refinement
+- ✅ MVP preparation
+
+### **Success Metrics (Open Beta)**
+- ✅ User growth >1000 (Month 1)
+- ✅ Plugin usage >40% (enabled plugins)
+- ✅ User retention >60% (30-day)
+- ✅ User satisfaction >4.2/5.0
+- ✅ Feature adoption >70% (core features)
+- ✅ Plugin marketplace interest >30%
+
+---
+
+## 📅 **Phase 2: MVP Release**
+
+**Timeline:** February - March 2026 (2 months)  
+**Status:** Planned  
+**Users:** 10,000+ users  
+**Focus:** Full plugin ecosystem + vertical expansion
+
+### **Primary Goals**
+- ✅ Launch full plugin ecosystem
+- ✅ Enable vertical expansion (Finance, Student, Health)
+- ✅ Support third-party plugin development
+- ✅ Establish plugin marketplace
+
+### **User Acquisition Strategy**
+
+#### **Market Launch**
+- ✅ **Target Audience:** General productivity users
+- ✅ **Launch Strategy:**
+  - Product Hunt featured launch
+  - Press release campaign
+  - Influencer partnerships
+  - Paid advertising (Google, Facebook)
+- ✅ **Growth Target:** 10,000+ users
+- ✅ **Retention Goal:** >50% (90-day)
+
+#### **Marketing Campaign**
+- ✅ **Content Strategy:** Educational content, use cases
+- ✅ **Social Media:** Viral campaigns, user stories
+- ✅ **PR Strategy:** Tech press, productivity blogs
+- ✅ **Partnerships:** Productivity tool integrations
+
+### **Features (Full Plugin Ecosystem)**
+
+#### **Vertical Plugins**
+- ✅ **Finance Plugin:** Budget tracking, investment management
+- ✅ **Student Plugin:** Flashcards, study tools, academic planning
+- ✅ **Health Plugin:** Medical records, fitness tracking, wellness
+- ✅ **CRM Plugin:** Customer management, sales tracking
+
+#### **Plugin Marketplace**
+- ✅ **Third-Party Plugin Support:** External developer plugins
+- ✅ **Plugin Discovery:** Search, categories, recommendations
+- ✅ **Rating/Review System:** User feedback and ratings
+- ✅ **Plugin Installation Flow:** One-click installation
+
+#### **Advanced Plugin Features**
+- ✅ **Plugin Dependencies:** Plugin-to-plugin dependencies
+- ✅ **Plugin Updates:** Automatic update system
+- ✅ **Advanced Permissions:** Granular permission control
+- ✅ **Plugin Analytics:** Usage tracking and insights
+
+#### **Production Features**
+- ✅ **Multi-Provider Support:** User connects 2+ calendar apps
+- ✅ **Enterprise Deployment:** On-premise server support
+- ✅ **Advanced AI:** Custom LLM integration
+- ✅ **Workflow Marketplace:** Community workflow sharing
+
+### **Business Milestones**
+
+#### **Month 1: Ecosystem Launch**
+- ✅ MVP launch
+- ✅ Plugin marketplace launch
+- ✅ Vertical plugin release
+- ✅ Third-party developer program
+
+#### **Month 2: Growth & Optimization**
+- ✅ User acquisition scaling
+- ✅ Plugin ecosystem growth
+- ✅ Enterprise feature development
+- ✅ Community building
+
+### **Success Metrics (MVP Release)**
+- ✅ User growth >10,000 (Month 1)
+- ✅ Plugin marketplace >50 plugins
+- ✅ Vertical plugin adoption >20%
+- ✅ User retention >50% (90-day)
+- ✅ User satisfaction >4.5/5.0
+- ✅ Revenue generation (if applicable)
+
+---
+
+## 📅 **Post-Release Evolution**
+
+**Timeline:** April 2026+  
+**Status:** Future  
+**Focus:** Ecosystem growth + enterprise features
+
+### **Growth Strategy**
+
+#### **User Acquisition**
+- ✅ **Organic Growth:** Word-of-mouth, referrals
+- ✅ **Content Marketing:** Educational content, tutorials
+- ✅ **Community Building:** User-generated content
+- ✅ **Partnerships:** Productivity tool integrations
+
+#### **Market Expansion**
+- ✅ **Vertical Expansion:** Finance, Health, Education
+- ✅ **Geographic Expansion:** International markets
+- ✅ **Enterprise Sales:** B2B customer acquisition
+- ✅ **Platform Expansion:** Web, desktop applications
+
+### **Business Evolution**
+- ✅ **Revenue Model:** Freemium, enterprise licensing
+- ✅ **Monetization:** Premium plugins, enterprise features
+- ✅ **Partnerships:** Strategic integrations, reseller programs
+- ✅ **Community:** Developer ecosystem, user community
+
+---
+
+## 📊 **Business Success Metrics**
+
+### **User Growth**
+- ✅ **Closed Beta:** 100-200 users
+- ✅ **Open Beta:** 1,000-5,000 users
+- ✅ **MVP Release:** 10,000+ users
+- ✅ **Post-Release:** 100,000+ users (Year 1)
+
+### **User Engagement**
+- ✅ **Daily Active Users:** >30% of total users
+- ✅ **Session Duration:** >10 minutes average
+- ✅ **Feature Adoption:** >70% (core features)
+- ✅ **Plugin Usage:** >40% (enabled plugins)
+
+### **Business Metrics**
+- ✅ **User Retention:** >50% (90-day)
+- ✅ **User Satisfaction:** >4.5/5.0
+- ✅ **Net Promoter Score:** >50
+- ✅ **Customer Acquisition Cost:** <$50
+
+### **Market Position**
+- ✅ **Market Share:** Top 3 in AI productivity space
+- ✅ **Brand Recognition:** Known in productivity community
+- ✅ **Competitive Advantage:** Unique plugin ecosystem
+- ✅ **Enterprise Adoption:** 100+ enterprise customers
+
+---
+
+## 🔄 **Cross-Reference with Development Roadmap**
+
+**Business Milestones → Technical Implementation:**
+- User acquisition targets → Performance optimization
+- Feature delivery promises → Development timeline
+- Market validation → Technical architecture decisions
+- Revenue goals → Scalability requirements
+
+**Technical Decisions → Business Impact:**
+- Plugin system → Vertical expansion capability
+- Port architecture → Vendor flexibility
+- LLM auto-routing → Cost optimization
+- Multi-provider support → Market differentiation
+
+---
+
+**Template Version:** 2.0 (Business Focus)  
+**Maintained By:** Product Team  
+**Next Review:** Monthly (first Friday of each month)
 **"Build for Scale, Ship Minimal"**
 
 - **Ship:** Individual users, minimal features (Google Workspace)
@@ -86,6 +411,91 @@ Infrastructure (Built, Not Shipped):
   multi_provider: "Architecture supports (not shipped yet)"
 ```
 
+### **Plugin System Timeline (3-Wave Strategy)**
+
+**WAVE 1: Infrastructure Foundation (Closed Beta - Week 5-6)**
+```yaml
+Timeline: Week 5-6 (2 weeks)
+Focus: Plugin registry + basic abstractions
+Scope: Foundation only, NO complex plugins
+
+What to Build:
+  ✅ Plugin Registry System
+    - Plugin manifest schema
+    - Registration/loading system
+    - Basic permission model
+    - Simple plugin lifecycle
+
+  ✅ Component Abstraction Layer
+    - Screen component registry
+    - Widget slot system
+    - Feature registration system
+    - Dynamic route registration
+
+  ✅ Plugin API Foundation
+    - Basic plugin interface
+    - Event system (plugin hooks)
+    - Data access patterns
+    - Security sandbox (basic)
+
+What NOT to Build:
+  ❌ Complex plugins (Finance, Health, etc.)
+  ❌ Plugin marketplace
+  ❌ Advanced plugin features
+  ❌ Third-party plugin support
+```
+
+**WAVE 2: Basic Plugins (Open Beta - Month 2-3)**
+```yaml
+Timeline: Open Beta (Month 2-3)
+Focus: Simple plugins + plugin system testing
+Scope: Internal plugins only
+
+What to Build:
+  ✅ Simple Internal Plugins
+    - Markdown editor plugin
+    - Advanced calendar widget
+    - Custom workflow templates
+    - Theme customization plugin
+
+  ✅ Plugin System Testing
+    - Plugin loading/unloading
+    - Performance testing
+    - Security validation
+    - User experience testing
+
+  ✅ Plugin Management UI
+    - Enable/disable plugins
+    - Plugin settings
+    - Basic plugin info display
+```
+
+**WAVE 3: Full Ecosystem (MVP Release - Month 4+)**
+```yaml
+Timeline: MVP Release (Month 4+)
+Focus: Full plugin ecosystem + vertical expansion
+Scope: Production-ready plugin system
+
+What to Build:
+  ✅ Vertical Plugins
+    - Finance Plugin (budget tracking, investments)
+    - Student Plugin (flashcards, study tools)
+    - Health Plugin (medical records, fitness)
+    - CRM Plugin (customer management)
+
+  ✅ Plugin Marketplace
+    - Third-party plugin support
+    - Plugin discovery
+    - Rating/review system
+    - Plugin installation flow
+
+  ✅ Advanced Plugin Features
+    - Plugin dependencies
+    - Plugin updates
+    - Advanced permissions
+    - Plugin analytics
+```
+
 ### **Week-by-Week Breakdown**
 
 **Week 1: Foundation** ✅ 80% Complete (24/30 tasks)
@@ -103,20 +513,112 @@ Infrastructure (Built, Not Shipped):
 - [ ] AI chat UI (widget-based design)
 
 **Week 3: AI & Workflows**
-- [ ] OpenAI integration (LLMPort)
-- [ ] Tool calling (create tasks, search, organize)
-- [ ] 3-5 workflow templates
-- [ ] Plugin system infrastructure (foundation)
+- [ ] LLMPort integration (OpenAI GPT-4o-mini)
+- [ ] Chat functionality (real AI responses)
+- [ ] Workflow templates (3-5 presets)
+- [ ] Note management (CRUD operations)
 
 **Week 4: Polish & Testing**
-- [ ] UI/UX refinement
-- [ ] Offline support
-- [ ] Error handling
-- [ ] Beta tester recruitment
+- [ ] End-to-end testing
+- [ ] Performance optimization
+- [ ] Bug fixes & polish
+- [ ] Closed Beta preparation
 
-**Week 5-6: Beta Testing**
-- [ ] User feedback collection
-- [ ] Bug fixes
+**Week 5-6: Plugin Foundation (NEW)**
+- [ ] Plugin Registry System (3 days)
+- [ ] Component Abstraction Layer (2 days)
+- [ ] Plugin API Foundation (2 days)
+- [ ] Basic Security Sandbox (2 days)
+- [ ] Testing & Documentation (1 day)
+
+**Deliverables:**
+- ✅ Plugin system infrastructure ready
+- ✅ No complex plugins shipped
+- ✅ Core features completed
+- ✅ Closed Beta launch ready
+
+---
+
+## 📅 **Phase 1: Open Beta**
+
+**Timeline:** December 2025 - January 2026 (2 months)  
+**Status:** Planned  
+**Users:** 1000-5000 beta testers  
+**Focus:** Plugin system testing + user feedback
+
+### **Primary Goals**
+- ✅ Test plugin system with real users
+- ✅ Validate vertical expansion demand
+- ✅ Gather plugin marketplace feedback
+- ✅ Optimize AI assistant performance
+
+### **Features (Plugin System Testing)**
+
+#### **Basic Internal Plugins**
+- ✅ **Markdown Editor Plugin:** Rich text editing
+- ✅ **Advanced Calendar Widget:** Interactive calendar
+- ✅ **Custom Workflow Templates:** User-defined workflows
+- ✅ **Theme Customization Plugin:** Advanced theming
+
+#### **Plugin Management**
+- ✅ **Plugin Settings UI:** Enable/disable plugins
+- ✅ **Plugin Performance:** Loading/unloading testing
+- ✅ **Security Validation:** Sandbox testing
+- ✅ **User Experience:** Plugin interaction testing
+
+#### **Enhanced Core Features**
+- ✅ **Multi-Provider LLM:** Auto-routing testing (GPT-3.5 vs GPT-4)
+- ✅ **Advanced Google Workspace:** Deep integration
+- ✅ **Workflow Automation:** Complex multi-step workflows
+- ✅ **AI Tool Calling:** Advanced task automation
+
+---
+
+## 📅 **Phase 2: MVP Release**
+
+**Timeline:** February - March 2026 (2 months)  
+**Status:** Planned  
+**Users:** 10,000+ users  
+**Focus:** Full plugin ecosystem + vertical expansion
+### **Primary Goals**
+- ✅ Launch full plugin ecosystem
+- ✅ Enable vertical expansion (Finance, Student, Health)
+- ✅ Support third-party plugin development
+- ✅ Establish plugin marketplace
+
+### **Features (Full Plugin Ecosystem)**
+
+#### **Vertical Plugins**
+- ✅ **Finance Plugin:** Budget tracking, investment management
+- ✅ **Student Plugin:** Flashcards, study tools, academic planning
+- ✅ **Health Plugin:** Medical records, fitness tracking, wellness
+- ✅ **CRM Plugin:** Customer management, sales tracking
+
+#### **Plugin Marketplace**
+- ✅ **Third-Party Plugin Support:** External developer plugins
+- ✅ **Plugin Discovery:** Search, categories, recommendations
+- ✅ **Rating/Review System:** User feedback and ratings
+- ✅ **Plugin Installation Flow:** One-click installation
+
+#### **Advanced Plugin Features**
+- ✅ **Plugin Dependencies:** Plugin-to-plugin dependencies
+- ✅ **Plugin Updates:** Automatic update system
+- ✅ **Advanced Permissions:** Granular permission control
+- ✅ **Plugin Analytics:** Usage tracking and insights
+
+#### **Production Features**
+- ✅ **Multi-Provider Support:** User connects 2+ calendar apps
+- ✅ **Enterprise Deployment:** On-premise server support
+- ✅ **Advanced AI:** Custom LLM integration
+- ✅ **Workflow Marketplace:** Community workflow sharing
+
+---
+
+## 📅 **Post-Release Evolution**
+
+**Timeline:** April 2026+  
+**Status:** Future  
+**Focus:** Ecosystem growth + enterprise features
 - [ ] Performance optimization
 - [ ] Prepare for Open Beta
 
@@ -575,4 +1077,5 @@ ELSE: Continue port architecture
 **Last Updated:** 2025-10-12  
 **Next Review:** Week 2 (Closed Beta checkpoint)  
 **Strategic Review:** Post-MVP (Conditional path decisions)
+
 

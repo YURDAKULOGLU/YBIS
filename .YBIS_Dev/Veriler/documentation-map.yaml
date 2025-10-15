@@ -6,7 +6,7 @@
 
 version: "2.0"
 last_updated: "2025-10-12"
-total_documents: 25
+total_documents: 26
 
 # ==============================================================================
 # TIER -1: STRATEGIC LAYER (Product & Business Vision)
@@ -184,6 +184,47 @@ tier_minus_1_strategic:
 # ==============================================================================
 # TIER 0: CANONICAL SOURCES (Single Source of Truth)
 # ==============================================================================
+
+  DEVELOPMENT_ROADMAP:
+    path: "docs/roadmap/DEVELOPMENT_ROADMAP.md"
+    version: "1.0"
+    status: "ACTIVE"
+    last_updated: "2025-10-12"
+    tier: 1
+    authority: "REFERENCE"
+    purpose: "Technical implementation timeline and milestones"
+    audience: ["Development team", "Technical stakeholders"]
+    scope: "Technical - Code delivery phases, architecture decisions"
+    length: "Medium (~260 lines)"
+    update_frequency: "Weekly"
+    
+    owns:
+      - technical_milestones
+      - code_delivery_timeline
+      - architecture_decisions
+      - plugin_system_implementation
+      - performance_targets
+      - quality_gates
+    
+    derived_from:
+      - PRODUCT_ROADMAP: ["business_milestones", "feature_delivery"]
+      - PROJECT_VISION: ["technical_principles", "architecture_goals"]
+      - YBIS_PROJE_ANAYASASI: ["technical_constraints", "port_architecture"]
+    
+    informs:
+      - TASKS
+      - DEVELOPMENT_LOG
+      - TECH_STACK
+    
+    update_triggers:
+      - weekly_review: "Update progress, adjust timeline"
+      - architecture_change: "Requires TECH_STACK update"
+      - milestone_completion: "Requires TASKS update"
+    
+    cross_references:
+      - PRODUCT_ROADMAP: "Business milestones → Technical implementation"
+      - TASKS: "Technical milestones → Task breakdown"
+      - DEVELOPMENT_LOG: "Architecture decisions → AD-XXX"
 
 tier_0_canonical:
   
@@ -495,6 +536,42 @@ tier_1_reference:
 
 tier_2_execution:
   
+  CHAT_KARARLASTIRMA:
+    path: "docs/Güncel/CHAT_KARARLASTIRMA.md"
+    version: "1.0"
+    status: "ACTIVE"
+    last_updated: "2025-10-15"
+    tier: 2
+    authority: "DERIVED - From AD-026"
+    purpose: "Chat UI strategy decision and feature implementation roadmap"
+    audience: ["Developers", "AI Agents"]
+    scope: "Execution - Chat UI strategy"
+    length: "Medium (~200 lines, decision analysis)"
+    update_frequency: "As-needed (strategy changes)"
+    
+    owns:
+      - chat_strategy_decisions: "STATIC"
+      - feature_implementation_roadmap: "STATIC"
+      - tamagui_vs_chatkit_analysis: "STATIC"
+    
+    derived_from:
+      - DEVELOPMENT_LOG: ["AD-026"]
+      - COMPONENT_ABSTRACTION_STRATEGY: ["Implementation plan"]
+    
+    informs:
+      - DEVELOPMENT_LOG: ["AD-026 documentation reference"]
+      - COMPONENT_ABSTRACTION_STRATEGY: ["Chat implementation"]
+      - session-context: ["Current chat strategy"]
+    
+    update_triggers:
+      - chat_strategy_changes: "Major strategy shifts"
+      - feature_implementation: "New feature requirements"
+    
+    cross_references:
+      - "DEVELOPMENT_LOG.md#AD-026"
+      - "COMPONENT_ABSTRACTION_STRATEGY.md"
+      - "session-context.md"
+  
   TASKS:
     path: "docs/Güncel/tasks.md"
     version: "1.0"
@@ -638,6 +715,41 @@ tier_2_execution:
 # ==============================================================================
 
 tier_3_support:
+  
+  ESLINT_CONFIG:
+    path: "packages/eslint-config/"
+    version: "1.0"
+    status: "ACTIVE"
+    last_updated: "2025-10-15"
+    tier: 3
+    authority: "SPECIALIZED - Shared configuration package"
+    purpose: "ESLint configuration - Monorepo shared configuration"
+    audience: ["All developers", "AI agents"]
+    scope: "Support - Code quality enforcement"
+    length: "Medium (~200 lines across 3 files)"
+    update_frequency: "Rule changes, New packages"
+    
+    owns:
+      - eslint_rules: "STATIC"
+      - typescript_config: "STATIC"
+      - react_config: "STATIC"
+    
+    derived_from:
+      - DEVELOPMENT_LOG: ["AD-027"]
+      - YBIS_PROJE_ANAYASASI: ["zero-tolerance rules"]
+    
+    informs:
+      - All packages: ["ESLint configuration"]
+      - DEVELOPMENT_LOG: ["AD-027 implementation"]
+    
+    update_triggers:
+      - rule_changes: "ESLint rule updates"
+      - new_packages: "New workspace packages"
+    
+    cross_references:
+      - "DEVELOPMENT_LOG.md#AD-027"
+      - "eslint.config.js"
+      - "All package.json files"
   
   INTEGRATION_ROADMAP:
     path: "docs/Güncel/INTEGRATION_ROADMAP.md"
@@ -1175,18 +1287,18 @@ dual_write_rule:
 # ==============================================================================
 
 statistics:
-  total_documents: 30  # 31 → 30 (v1.0 moved to Archive)
+  total_documents: 32  # 31 → 32 (ESLINT_CONFIG package added)
   
   by_tier:
     tier_minus_1: 4  # Strategic (Vision, Roadmap, Market, Competitive)
     tier_0: 2        # Canonical (ANAYASA, DEVELOPMENT_LOG)
     tier_1: 5        # Reference (tech-stack, package-structure, Architecture, PRD, README)
-    tier_2: 5        # Execution (tasks, stories, epics, DEVELOPMENT_GUIDELINES, QA gates)
-    tier_3: 6        # Support (INTEGRATION_ROADMAP, service-integration, quality-standards, TESTING_STRATEGY, expo-migration)
+    tier_2: 6        # Execution (tasks, stories, epics, DEVELOPMENT_GUIDELINES, QA gates, CHAT_KARARLASTIRMA)
+    tier_3: 7        # Support (INTEGRATION_ROADMAP, service-integration, quality-standards, TESTING_STRATEGY, expo-migration, ESLINT_CONFIG)
     tier_4: 8        # Meta (DOCUMENTATION_INDEX, QUICKSTART, AI_Asistan, AI_BASLANGIC_V2, QUICK_INDEX, session-context, DOCUMENTATION_TAXONOMY, DOCUMENTATION_MAP)
   
   by_status:
-    active: 30
+    active: 32  # 31 → 32 (ESLINT_CONFIG package added)
     archived: 1  # AI_BASLANGIC_REHBERI.md v1.0 → .YBIS_Dev/Archive/
   
   by_authority:
@@ -1198,7 +1310,7 @@ statistics:
     meta: 4  # V2 only (v1.0 archived)
   
   update_status:
-    up_to_date: 30
+    up_to_date: 32  # 31 → 32 (ESLINT_CONFIG package added)
     needs_minor_update: 0
     needs_major_update: 0
     archived: 1  # v1.0 AI_BASLANGIC_REHBERI → .YBIS_Dev/Archive/
