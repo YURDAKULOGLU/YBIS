@@ -224,8 +224,8 @@ export class OpenAIAdapter implements LLMPort {
       content: msg.content,
     }));
 
-    const params: any = {
-      model: options?.model || this.config.defaultModel || 'gpt-4o-mini',
+    const baseParams = {
+      model: options?.model ?? this.config.defaultModel ?? 'gpt-4o-mini',
       messages: openaiMessages,
       temperature: options?.temperature ?? 0.7,
       max_tokens: options?.maxTokens ?? 1000,
@@ -236,22 +236,29 @@ export class OpenAIAdapter implements LLMPort {
 
     // Add function calling if provided
     if (options?.functions && options.functions.length > 0) {
-      params.functions = options.functions.map((fn: FunctionDefinition) => ({
+      const functions = options.functions.map((fn: FunctionDefinition) => ({
         name: fn.name,
         description: fn.description,
         parameters: fn.parameters,
       }));
 
+      let functionCall: 'auto' | 'none' | { name: string } | undefined;
       if (options.functionCall) {
         if (options.functionCall === 'auto' || options.functionCall === 'none') {
-          params.function_call = options.functionCall;
+          functionCall = options.functionCall;
         } else {
-          params.function_call = { name: options.functionCall };
+          functionCall = { name: options.functionCall };
         }
       }
+
+      return {
+        ...baseParams,
+        functions,
+        function_call: functionCall,
+      } as ChatCompletionCreateParamsNonStreaming | ChatCompletionCreateParamsStreaming;
     }
 
-    return params;
+    return baseParams as ChatCompletionCreateParamsNonStreaming | ChatCompletionCreateParamsStreaming;
   }
 
   private mapFinishReason(
@@ -271,40 +278,41 @@ export class OpenAIAdapter implements LLMPort {
     }
   }
 
-  private handleOpenAIError(error: any): LLMError {
-    const message = error.message || 'Unknown OpenAI error';
+  private handleOpenAIError(error: unknown): LLMError {
+    const err = error as { code?: string; status?: number; message?: string };
+    const message = err.message ?? 'Unknown OpenAI error';
 
-    if (error.code === 'invalid_api_key' || error.status === 401) {
-      return new LLMError(message, 'INVALID_API_KEY', error);
+    if (err.code === 'invalid_api_key' || err.status === 401) {
+      return new LLMError(message, 'INVALID_API_KEY', error as Error);
     }
 
-    if (error.code === 'rate_limit_exceeded' || error.status === 429) {
-      return new LLMError(message, 'RATE_LIMIT', error);
+    if (err.code === 'rate_limit_exceeded' || err.status === 429) {
+      return new LLMError(message, 'RATE_LIMIT', error as Error);
     }
 
     if (
-      error.code === 'context_length_exceeded' ||
+      err.code === 'context_length_exceeded' ||
       message.includes('maximum context length')
     ) {
-      return new LLMError(message, 'CONTEXT_LENGTH', error);
+      return new LLMError(message, 'CONTEXT_LENGTH', error as Error);
     }
 
-    if (error.code === 'content_filter' || message.includes('content policy')) {
-      return new LLMError(message, 'CONTENT_FILTER', error);
+    if (err.code === 'content_filter' || message.includes('content policy')) {
+      return new LLMError(message, 'CONTENT_FILTER', error as Error);
     }
 
-    if (error.code === 'model_not_found' || error.status === 404) {
-      return new LLMError(message, 'MODEL_NOT_FOUND', error);
+    if (err.code === 'model_not_found' || err.status === 404) {
+      return new LLMError(message, 'MODEL_NOT_FOUND', error as Error);
     }
 
-    if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
-      return new LLMError(message, 'NETWORK_ERROR', error);
+    if (err.code === 'ENOTFOUND' || err.code === 'ECONNREFUSED') {
+      return new LLMError(message, 'NETWORK_ERROR', error as Error);
     }
 
-    if (error.status === 400) {
-      return new LLMError(message, 'INVALID_REQUEST', error);
+    if (err.status === 400) {
+      return new LLMError(message, 'INVALID_REQUEST', error as Error);
     }
 
-    return new LLMError(message, 'UNKNOWN_ERROR', error);
+    return new LLMError(message, 'UNKNOWN_ERROR', error as Error);
   }
 }

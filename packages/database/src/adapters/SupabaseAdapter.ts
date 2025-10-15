@@ -7,7 +7,8 @@
  * @see DatabasePort for interface documentation
  */
 
-import { createClient, SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
+import type { SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
 import type {
   DatabasePort,
   QueryOptions,
@@ -35,7 +36,7 @@ export class SupabaseAdapter implements DatabasePort {
   async initialize(): Promise<void> {
     try {
       // Use service role key if available (server-side), otherwise anon key (client-side)
-      const key = this.config.serviceRoleKey || this.config.anonKey;
+      const key = this.config.serviceRoleKey ?? this.config.anonKey;
 
       this.client = createClient(this.config.url, key, {
         auth: {
@@ -68,7 +69,7 @@ export class SupabaseAdapter implements DatabasePort {
     if (this.client) {
       // Unsubscribe from all channels
       this.subscriptions.forEach((channel) => {
-        this.client?.removeChannel(channel);
+        void this.client?.removeChannel(channel);
       });
       this.subscriptions.clear();
 
@@ -86,7 +87,7 @@ export class SupabaseAdapter implements DatabasePort {
       const { error } = await this.client.from('_health_check_table').select('*').limit(1);
 
       // Table might not exist, but if we get a connection error, it's unhealthy
-      if (error && error.message.includes('connection')) {
+      if (error?.message?.includes('connection')) {
         return false;
       }
 
@@ -98,7 +99,7 @@ export class SupabaseAdapter implements DatabasePort {
 
   // CRUD Operations
 
-  async select<T = any>(table: string, options?: QueryOptions): Promise<T[]> {
+  async select<T = unknown>(table: string, options?: QueryOptions): Promise<T[]> {
     this.ensureInitialized();
 
     try {
@@ -127,10 +128,10 @@ export class SupabaseAdapter implements DatabasePort {
               query = query.lte(filter.column, filter.value);
               break;
             case 'like':
-              query = query.like(filter.column, filter.value);
+              query = query.like(filter.column, filter.value as string);
               break;
             case 'in':
-              query = query.in(filter.column, filter.value);
+              query = query.in(filter.column, filter.value as readonly unknown[]);
               break;
           }
         }
@@ -148,7 +149,7 @@ export class SupabaseAdapter implements DatabasePort {
         query = query.limit(options.limit);
       }
       if (options?.offset) {
-        query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+        query = query.range(options.offset, options.offset + (options.limit ?? 10) - 1);
       }
 
       const { data, error } = await query;
@@ -168,7 +169,7 @@ export class SupabaseAdapter implements DatabasePort {
     }
   }
 
-  async selectById<T = any>(table: string, id: string): Promise<T | null> {
+  async selectById<T = unknown>(table: string, id: string): Promise<T | null> {
     this.ensureInitialized();
 
     try {
@@ -197,7 +198,7 @@ export class SupabaseAdapter implements DatabasePort {
     }
   }
 
-  async insert<T = any>(table: string, data: Partial<T>): Promise<InsertResult<T>> {
+  async insert<T = unknown>(table: string, data: Partial<T>): Promise<InsertResult<T>> {
     this.ensureInitialized();
 
     try {
@@ -225,7 +226,7 @@ export class SupabaseAdapter implements DatabasePort {
     }
   }
 
-  async insertMany<T = any>(table: string, data: Partial<T>[]): Promise<InsertResult<T>[]> {
+  async insertMany<T = unknown>(table: string, data: Partial<T>[]): Promise<InsertResult<T>[]> {
     this.ensureInitialized();
 
     try {
@@ -238,9 +239,9 @@ export class SupabaseAdapter implements DatabasePort {
         throw this.handleSupabaseError(error);
       }
 
-      return (results || []).map((row: any) => ({
+      return (results ?? []).map((row: Record<string, unknown>) => ({
         data: row as T,
-        id: row.id,
+        id: row['id'] as string,
       }));
     } catch (error) {
       if (error instanceof DatabaseError) throw error;
@@ -252,7 +253,7 @@ export class SupabaseAdapter implements DatabasePort {
     }
   }
 
-  async update<T = any>(
+  async update<T = unknown>(
     table: string,
     id: string | QueryOptions,
     data: Partial<T>
@@ -282,7 +283,7 @@ export class SupabaseAdapter implements DatabasePort {
 
       return {
         data: results?.[0] as T,
-        count: count || results?.length || 0,
+        count: count ?? results?.length ?? 0,
       };
     } catch (error) {
       if (error instanceof DatabaseError) throw error;
@@ -319,7 +320,7 @@ export class SupabaseAdapter implements DatabasePort {
       }
 
       return {
-        count: count || 0,
+        count: count ?? 0,
       };
     } catch (error) {
       if (error instanceof DatabaseError) throw error;
@@ -331,7 +332,7 @@ export class SupabaseAdapter implements DatabasePort {
     }
   }
 
-  async rawQuery<T = any>(_query: string, _params?: any[]): Promise<T[]> {
+  async rawQuery<T = unknown>(_query: string, _params?: unknown[]): Promise<T[]> {
     this.ensureInitialized();
 
     try {
@@ -355,7 +356,7 @@ export class SupabaseAdapter implements DatabasePort {
 
   // Real-time subscriptions
 
-  subscribe<T = any>(
+  subscribe<T = unknown>(
     table: string,
     callback: (event: {
       type: 'INSERT' | 'UPDATE' | 'DELETE';
@@ -372,7 +373,7 @@ export class SupabaseAdapter implements DatabasePort {
         { event: '*', schema: 'public', table },
         (payload) => {
           callback({
-            type: payload.eventType as 'INSERT' | 'UPDATE' | 'DELETE',
+            type: payload.eventType,
             old: payload.old as T | null,
             new: payload.new as T | null,
           });
@@ -387,7 +388,7 @@ export class SupabaseAdapter implements DatabasePort {
       if (this.client && this.subscriptions.has(table)) {
         const ch = this.subscriptions.get(table);
         if (ch) {
-          this.client.removeChannel(ch);
+          void this.client.removeChannel(ch);
           this.subscriptions.delete(table);
         }
       }
@@ -396,7 +397,7 @@ export class SupabaseAdapter implements DatabasePort {
 
   // Transactions
 
-  async transaction<T = any>(operations: Array<() => Promise<any>>): Promise<T[]> {
+  async transaction<T = unknown>(operations: Array<() => Promise<unknown>>): Promise<T[]> {
     this.ensureInitialized();
 
     // Note: Supabase JS client doesn't support native transactions
@@ -408,7 +409,7 @@ export class SupabaseAdapter implements DatabasePort {
 
       for (const operation of operations) {
         const result = await operation();
-        results.push(result);
+        results.push(result as T);
       }
 
       return results;
@@ -432,30 +433,31 @@ export class SupabaseAdapter implements DatabasePort {
     }
   }
 
-  private handleSupabaseError(error: any): DatabaseError {
+  private handleSupabaseError(error: unknown): DatabaseError {
     // Map Supabase error codes to our DatabaseError codes
-    const message = error.message || 'Unknown database error';
+    const err = error as { code?: string; message?: string };
+    const message = err.message ?? 'Unknown database error';
 
-    if (error.code === 'PGRST116') {
-      return new DatabaseError(message, 'NOT_FOUND', error);
+    if (err.code === 'PGRST116') {
+      return new DatabaseError(message, 'NOT_FOUND', error as Error);
     }
 
-    if (error.code === '23505') {
-      return new DatabaseError(message, 'DUPLICATE_KEY', error);
+    if (err.code === '23505') {
+      return new DatabaseError(message, 'DUPLICATE_KEY', error as Error);
     }
 
-    if (error.code === '23503') {
-      return new DatabaseError(message, 'FOREIGN_KEY', error);
+    if (err.code === '23503') {
+      return new DatabaseError(message, 'FOREIGN_KEY', error as Error);
     }
 
-    if (error.message?.includes('JWT') || error.message?.includes('permission')) {
-      return new DatabaseError(message, 'PERMISSION_DENIED', error);
+    if (err.message?.includes('JWT') || err.message?.includes('permission')) {
+      return new DatabaseError(message, 'PERMISSION_DENIED', error as Error);
     }
 
-    if (error.message?.includes('timeout')) {
-      return new DatabaseError(message, 'TIMEOUT', error);
+    if (err.message?.includes('timeout')) {
+      return new DatabaseError(message, 'TIMEOUT', error as Error);
     }
 
-    return new DatabaseError(message, 'UNKNOWN_ERROR', error);
+    return new DatabaseError(message, 'UNKNOWN_ERROR', error as Error);
   }
 }
