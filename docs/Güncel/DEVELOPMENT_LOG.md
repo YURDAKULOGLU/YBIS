@@ -2723,7 +2723,7 @@ Status:
 
 **Root Cause:** Misunderstanding of monorepo best practices - paths should point to build outputs or rely on workspace protocol resolution
 
-**Status:** **DOCUMENTED** - Flagged as P1 issue in YBIS_HEALTH_REPORT.md
+**Status:** **RESOLVED** - Root cause identified as `react-native-worklets` requiring native compilation. Expo Go migration eliminates this completely.
 **Next Action:** Requires architectural decision on proper resolution strategy
 
 ---
@@ -2796,7 +2796,7 @@ Status:
    newArchEnabled=false  # More stable for Phase 0
    ```
 
-**Status:** **BLOCKED** - Awaiting user decision on solution approach
+**Status:** **RESOLVED** - Expo Go migration strategy finalized in `EXPO_GO_MIGRATION_FINAL.md`
 
 **Reference:** 
 - AD-008: EAS Build over Local Android Build on Windows
