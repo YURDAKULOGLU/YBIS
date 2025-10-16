@@ -3,7 +3,7 @@
 **Last Updated:** 2025-10-16
 **Session ID:** session-2025-10-16-edge-to-edge-keyboard-ux
 **Active Focus:** Edge-to-Edge Safe Area + Keyboard-Synced Animations (AD-031)
-**Branch:** feature/week1-day5-theme-port-cleanup
+**Branch:** feature/week1-day6-edge-to-edge-keyboard-ux
 
 ---
 
