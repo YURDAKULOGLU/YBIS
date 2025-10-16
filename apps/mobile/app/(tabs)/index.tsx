@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import {
   YStack,
   XStack,
@@ -8,9 +8,11 @@ import {
   Input,
   ScrollView,
 } from 'tamagui';
-import { Keyboard, KeyboardAvoidingView, ScrollView as RNScrollView, useWindowDimensions } from 'react-native';
+import type { ScrollView as RNScrollView} from 'react-native';
+import { Keyboard, useWindowDimensions, Animated } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Plus, Send, Calendar, CheckSquare, FileText, Workflow, Mic } from '@tamagui/lucide-icons';
-import { ChatBubble, type ChatMessage as ChatMessageType } from '@ybis/chat';
+import { ChatBubble, type Message } from '@ybis/chat';
 
 /**
  * Main Screen - WhatsApp-Inspired Design
@@ -41,7 +43,7 @@ import { ChatBubble, type ChatMessage as ChatMessageType } from '@ybis/chat';
 type TabType = 'notes' | 'tasks' | 'calendar' | 'flows';
 
 // Using @ybis/chat types
-type Message = ChatMessageType;
+// Message type is already imported from @ybis/chat
 
 interface SuggestionPrompt {
   id: string;
@@ -57,6 +59,18 @@ const ONBOARDING_PROMPTS: SuggestionPrompt[] = [
     icon: '👋',
     title: 'Başlayalım!',
     description: 'YBIS\'e hoş geldiniz. Nasıl yardımcı olabilirim?',
+  },
+  {
+    id: '2',
+    icon: '🚀',
+    title: 'Demo Modu',
+    description: 'Tüm özellikleri test edin',
+  },
+  {
+    id: '3',
+    icon: '💬',
+    title: 'Chat Başlat',
+    description: 'AI asistanı ile konuşun',
   },
 ];
 
@@ -79,6 +93,24 @@ const REGULAR_PROMPTS: SuggestionPrompt[] = [
     title: 'Takvimi kontrol et',
     description: 'Bugünün etkinliklerini gör',
   },
+  {
+    id: '4',
+    icon: '🔄',
+    title: 'Workflow oluştur',
+    description: 'Otomatik iş akışı kurun',
+  },
+  {
+    id: '5',
+    icon: '📊',
+    title: 'Rapor oluştur',
+    description: 'Veri analizi yapın',
+  },
+  {
+    id: '6',
+    icon: '🎯',
+    title: 'Hedef belirle',
+    description: 'Yeni hedefler ekleyin',
+  },
 ];
 
 // Static tabs configuration (outside component to prevent re-creation)
@@ -89,7 +121,7 @@ const TABS: { key: TabType; label: string; icon: typeof Calendar }[] = [
   { key: 'flows', label: 'Flows', icon: Workflow },
 ];
 
-export default function MainScreen() {
+export default function MainScreen(): React.ReactElement {
   const [selectedTab, setSelectedTab] = useState<TabType>('notes');
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
@@ -97,10 +129,66 @@ export default function MainScreen() {
   const [showQuickActions, setShowQuickActions] = useState(false);
 
   const scrollViewRef = useRef<RNScrollView>(null);
+  
+  // Safe area insets for edge-to-edge support
+  const insets = useSafeAreaInsets();
 
   // Reactive window dimensions (handles orientation changes)
   const { height: screenHeight } = useWindowDimensions();
   const widgetHeight = useMemo(() => screenHeight * 0.2, [screenHeight]); // 1/5 of screen
+  
+  // Animated values for smooth transitions
+  const widgetAnimatedHeight = useRef(new Animated.Value(widgetHeight)).current;
+  const inputBarAnimatedBottom = useRef(new Animated.Value(0)).current;
+
+  // Keyboard visibility listener with synced animations
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
+      const keyboardHeight = e.endCoordinates.height;
+      const keyboardDuration = e.duration || 250; // Klavyenin kendi süresini kullan
+      
+      // Parallel animations synced with keyboard speed
+      Animated.parallel([
+        // Widget collapses completely (0 height)
+        Animated.timing(widgetAnimatedHeight, {
+          toValue: 0,
+          duration: keyboardDuration, // ✅ Klavye ile senkronize
+          useNativeDriver: false,
+        }),
+        // Input bar sticks to keyboard top (full keyboard height)
+        Animated.timing(inputBarAnimatedBottom, {
+          toValue: keyboardHeight, // Klavyenin tam üstüne yapış
+          duration: keyboardDuration, // ✅ Klavye ile senkronize
+          useNativeDriver: false,
+        }),
+      ]).start();
+    });
+    
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', (e) => {
+      const keyboardDuration = e.duration || 250; // Klavyenin kendi süresini kullan
+      
+      // Parallel animations synced with keyboard speed
+      Animated.parallel([
+        // Widget expands back to original height
+        Animated.timing(widgetAnimatedHeight, {
+          toValue: widgetHeight,
+          duration: keyboardDuration, // ✅ Klavye ile senkronize
+          useNativeDriver: false,
+        }),
+        // Input bar returns to bottom (original position)
+        Animated.timing(inputBarAnimatedBottom, {
+          toValue: 0, // En alta dön
+          duration: keyboardDuration, // ✅ Klavye ile senkronize
+          useNativeDriver: false,
+        }),
+      ]).start();
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, [widgetAnimatedHeight, inputBarAnimatedBottom, widgetHeight]);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -115,42 +203,72 @@ export default function MainScreen() {
   const getMockAIResponse = useCallback((userText: string): string => {
     const lowerText = userText.toLowerCase();
 
-    // Simple keyword-based responses
-    if (lowerText.includes('merhaba') || lowerText.includes('selam')) {
-      return 'Merhaba! Size nasıl yardımcı olabilirim? 😊';
+    // Greeting responses
+    if (lowerText.includes('merhaba') || lowerText.includes('selam') || lowerText.includes('hello')) {
+      return 'Merhaba! YBIS Demo Modu\'na hoş geldiniz! 🚀\n\nSize şu konularda yardımcı olabilirim:\n• 📝 Not oluşturma\n• ✅ Görev yönetimi\n• 📅 Takvim planlama\n• 🔄 Workflow oluşturma\n\nNe yapmak istersiniz?';
     }
-    if (lowerText.includes('nasılsın') || lowerText.includes('nasıl')) {
-      return 'Ben bir AI asistanıyım, her zaman iyiyim! 🤖 Sizin için ne yapabilirim?';
-    }
-    if (lowerText.includes('teşekkür') || lowerText.includes('sağol')) {
-      return 'Rica ederim! Başka bir konuda yardımcı olabilir miyim? 🙌';
-    }
-    if (lowerText.includes('görüşürüz') || lowerText.includes('hoşçakal')) {
-      return 'Görüşürüz! İyi günler dilerim! 👋';
-    }
-    if (lowerText.includes('not') || lowerText.includes('yaz')) {
-      return 'Not oluşturma özelliği yakında aktif olacak. Şimdilik size başka nasıl yardımcı olabilirim?';
-    }
-    if (lowerText.includes('görev') || lowerText.includes('task')) {
-      return 'Görev yönetimi özellikleri geliştirilme aşamasında. Şu an için başka bir konuda yardımcı olabilir miyim?';
-    }
-    if (lowerText.includes('yardım') || lowerText.includes('help')) {
-      return 'Size şu konularda yardımcı olabilirim:\n• Not oluşturma\n• Görev yönetimi\n• Takvim planlama\n• Workflow oluşturma';
+    
+    // Demo mode responses
+    if (lowerText.includes('demo') || lowerText.includes('test')) {
+      return 'Demo Modu aktif! 🎯\n\nŞu özellikleri test edebilirsiniz:\n• Chat interface (şu an kullandığınız)\n• Tab navigation (Notes, Tasks, Calendar, Flows)\n• Widget area (üstteki mini özet)\n• Quick actions (+ butonu)\n\nHangi özelliği denemek istersiniz?';
     }
 
-    // Default responses
-    const defaultResponses = [
-      'Anlıyorum. Bu konuda size nasıl yardımcı olabilirim?',
-      'İlginç bir soru! Biraz daha detay verebilir misiniz?',
-      'Elbette! Bu konuda daha fazla bilgiye ihtiyacım var.',
-      'Anladım. Size en iyi şekilde yardımcı olmaya çalışacağım.',
-      'Harika! Hemen üzerinde çalışıyorum.',
-    ];
+    // Feature-specific responses
+    if (lowerText.includes('not') || lowerText.includes('yaz') || lowerText.includes('note')) {
+      return `📝 Not Oluşturma\n\nDemo modunda not oluşturma özelliği simüle ediliyor:\n\n✅ Not başlığı: "${userText}"\n✅ İçerik: Demo içerik\n✅ Tarih: ${new Date().toLocaleDateString('tr-TR')}\n\nGerçek uygulamada bu not veritabanına kaydedilecek.`;
+    }
+    
+    if (lowerText.includes('görev') || lowerText.includes('task') || lowerText.includes('todo')) {
+      return `✅ Görev Yönetimi\n\nDemo modunda görev oluşturma:\n\n📋 Görev: "${userText}"\n⏰ Tarih: ${new Date().toLocaleDateString('tr-TR')}\n🎯 Öncelik: Orta\n📊 Durum: Beklemede\n\nGörev başarıyla oluşturuldu! (Demo)`;
+    }
+    
+    if (lowerText.includes('takvim') || lowerText.includes('calendar') || lowerText.includes('etkinlik')) {
+      return `📅 Takvim Yönetimi\n\nDemo modunda etkinlik oluşturma:\n\n📅 Etkinlik: "${userText}"\n🕐 Saat: ${new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}\n📆 Tarih: ${new Date().toLocaleDateString('tr-TR')}\n📍 Konum: Demo Konum\n\nEtkinlik takvime eklendi! (Demo)`;
+    }
+    
+    if (lowerText.includes('workflow') || lowerText.includes('akış') || lowerText.includes('flow')) {
+      return `🔄 Workflow Oluşturma\n\nDemo modunda workflow:\n\n🔧 Workflow: "${userText}"\n⚡ Tetikleyici: Manuel\n🎯 Hedef: Otomatik işlem\n📊 Durum: Aktif\n\nWorkflow başarıyla oluşturuldu! (Demo)`;
+    }
 
-    const randomIndex = Math.floor(Math.random() * defaultResponses.length);
-    const response = defaultResponses[randomIndex];
-    return response ?? 'Anladım. Size nasıl yardımcı olabilirim?';
-  }, []);
+    // Help responses
+    if (lowerText.includes('yardım') || lowerText.includes('help') || lowerText.includes('nasıl')) {
+      return '🆘 YBIS Demo Yardım\n\n📱 **Ana Özellikler:**\n• Tab navigation (Notes, Tasks, Calendar, Flows)\n• Widget area (üstteki özet)\n• Chat interface (şu an kullandığınız)\n• Quick actions (+ butonu)\n\n🎯 **Demo Komutları:**\n• "not oluştur" - Not simülasyonu\n• "görev ekle" - Task simülasyonu\n• "etkinlik planla" - Calendar simülasyonu\n• "workflow başlat" - Flow simülasyonu\n\n💡 **İpucu:** Tab\'ları değiştirerek farklı widget\'ları görebilirsiniz!';
+    }
+
+    // Status responses
+    if (lowerText.includes('nasılsın') || lowerText.includes('durum')) {
+      return '🤖 AI Asistan Durumu\n\n✅ **Sistem:** Çevrimiçi\n✅ **Demo Modu:** Aktif\n✅ **Özellikler:** Tümü simüle ediliyor\n✅ **Performans:** Optimal\n\nSize nasıl yardımcı olabilirim?';
+    }
+
+    // Thank you responses
+    if (lowerText.includes('teşekkür') || lowerText.includes('sağol') || lowerText.includes('thanks')) {
+      return 'Rica ederim! 😊\n\nYBIS Demo Modu\'nda daha fazla özellik keşfetmek ister misiniz?\n\n💡 **Öneriler:**\n• Tab\'ları değiştirin\n• + butonuna basın\n• Farklı komutlar deneyin\n\nBaşka nasıl yardımcı olabilirim?';
+    }
+
+    // Goodbye responses
+    if (lowerText.includes('görüşürüz') || lowerText.includes('hoşçakal') || lowerText.includes('bye')) {
+      return 'Görüşürüz! 👋\n\nYBIS Demo Modu\'nu beğendiyseniz, gerçek uygulamayı da deneyebilirsiniz!\n\n🚀 **Sonraki Adımlar:**\n• Gerçek veri bağlantısı\n• Gelişmiş AI özellikleri\n• Mobil optimizasyon\n\nİyi günler!';
+    }
+
+    // Context-aware responses based on selected tab
+    const getContextualResponse = (): string => {
+      switch (selectedTab) {
+        case 'notes':
+          return `📝 Not Modu\n\n"${userText}" konusunda bir not oluşturmak ister misiniz?\n\nDemo modunda bu not simüle edilecek ve gerçek uygulamada veritabanına kaydedilecek.`;
+        case 'tasks':
+          return `✅ Görev Modu\n\n"${userText}" için bir görev oluşturmak ister misiniz?\n\nDemo modunda bu görev simüle edilecek ve gerçek uygulamada task listesine eklenecek.`;
+        case 'calendar':
+          return `📅 Takvim Modu\n\n"${userText}" için bir etkinlik planlamak ister misiniz?\n\nDemo modunda bu etkinlik simüle edilecek ve gerçek uygulamada takvime eklenecek.`;
+        case 'flows':
+          return `🔄 Workflow Modu\n\n"${userText}" için bir workflow oluşturmak ister misiniz?\n\nDemo modunda bu workflow simüle edilecek ve gerçek uygulamada otomatik işlem olarak çalışacak.`;
+        default:
+          return `Anlıyorum. "${userText}" konusunda size nasıl yardımcı olabilirim?`;
+      }
+    };
+
+    // Default contextual response
+    return getContextualResponse();
+  }, [selectedTab]);
 
   const handleSendMessage = useCallback(() => {
     if (!inputText.trim()) return;
@@ -185,15 +303,15 @@ export default function MainScreen() {
 
     setTimeout(() => {
       setMessages((prev) =>
-        prev.map((msg) => (msg.id === messageId ? { ...msg, status: 'delivered' as const } : msg))
+        prev.map((msg) => (msg.id === messageId ? { ...msg, status: 'sent' as const } : msg))
       );
     }, 600);
 
     // Mock AI response after 1.5 seconds
     setTimeout(() => {
-      // Mark as read when AI responds
+      // Mark as sent when AI responds
       setMessages((prev) =>
-        prev.map((msg) => (msg.id === messageId ? { ...msg, status: 'read' as const } : msg))
+        prev.map((msg) => (msg.id === messageId ? { ...msg, status: 'sent' as const } : msg))
       );
 
       const aiMessage: Message = {
@@ -209,13 +327,11 @@ export default function MainScreen() {
     }, 1500);
 
     // TODO: Send to backend API
-    console.log('Message sent:', userMessage.text);
   }, [getMockAIResponse, inputText, isFirstTime]);
 
   const handleVoiceRecord = useCallback(() => {
     // TODO: Implement voice-to-text in Epic 4
     // Will use expo-speech-recognition or web Speech API
-    console.log('Voice recording started - Will convert to text (Epic 4)');
 
     // Mock: Simulate voice-to-text
     setTimeout(() => {
@@ -256,11 +372,9 @@ export default function MainScreen() {
       setMessages((prev) => [...prev, aiMessage]);
     }, 1500);
 
-    console.log('Prompt clicked:', prompt.title);
   }, [getMockAIResponse, isFirstTime]);
 
   const handleQuickAction = useCallback((action: string) => {
-    console.log('Quick action:', action);
     setShowQuickActions(false);
 
     if (action === 'new-chat') {
@@ -271,28 +385,200 @@ export default function MainScreen() {
       // Full reset: Clear everything and show onboarding
       setMessages([]);
       setIsFirstTime(true);
-    } else {
-      // TODO: Navigate to add task/event/note screen
+    } else if (action === 'add-task') {
+      // Simulate task creation
+      const taskMessage: Message = {
+        id: Date.now().toString(),
+        text: 'Yeni görev oluştur',
+        sender: 'user',
+        timestamp: new Date().toLocaleTimeString('tr-TR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      };
+      setMessages((prev) => [...prev, taskMessage]);
+      
+      // AI response
+      setTimeout(() => {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: getMockAIResponse('görev ekle'),
+          sender: 'ai',
+          timestamp: new Date().toLocaleTimeString('tr-TR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        };
+        setMessages((prev) => [...prev, aiMessage]);
+      }, 1000);
+    } else if (action === 'add-event') {
+      // Simulate event creation
+      const eventMessage: Message = {
+        id: Date.now().toString(),
+        text: 'Yeni etkinlik planla',
+        sender: 'user',
+        timestamp: new Date().toLocaleTimeString('tr-TR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      };
+      setMessages((prev) => [...prev, eventMessage]);
+      
+      // AI response
+      setTimeout(() => {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: getMockAIResponse('etkinlik planla'),
+          sender: 'ai',
+          timestamp: new Date().toLocaleTimeString('tr-TR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        };
+        setMessages((prev) => [...prev, aiMessage]);
+      }, 1000);
+    } else if (action === 'add-note') {
+      // Simulate note creation
+      const noteMessage: Message = {
+        id: Date.now().toString(),
+        text: 'Yeni not oluştur',
+        sender: 'user',
+        timestamp: new Date().toLocaleTimeString('tr-TR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      };
+      setMessages((prev) => [...prev, noteMessage]);
+      
+      // AI response
+      setTimeout(() => {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: getMockAIResponse('not oluştur'),
+          sender: 'ai',
+          timestamp: new Date().toLocaleTimeString('tr-TR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        };
+        setMessages((prev) => [...prev, aiMessage]);
+      }, 1000);
+    } else if (action === 'start-flow') {
+      // Simulate workflow creation
+      const flowMessage: Message = {
+        id: Date.now().toString(),
+        text: 'Workflow başlat',
+        sender: 'user',
+        timestamp: new Date().toLocaleTimeString('tr-TR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      };
+      setMessages((prev) => [...prev, flowMessage]);
+      
+      // AI response
+      setTimeout(() => {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: getMockAIResponse('workflow başlat'),
+          sender: 'ai',
+          timestamp: new Date().toLocaleTimeString('tr-TR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        };
+        setMessages((prev) => [...prev, aiMessage]);
+      }, 1000);
     }
-  }, []);
+  }, [getMockAIResponse]);
 
   const renderWidget = useCallback(() => {
-    // Placeholder widgets - will be implemented later
+    // Mock widget data based on selected tab
+    const getWidgetData = (): { icon: string; title: string; count: number; items: string[] } => {
+      switch (selectedTab) {
+        case 'notes':
+          return {
+            icon: '📝',
+            title: 'Son Notlar',
+            count: 3,
+            items: ['Proje toplantısı notları', 'Haftalık rapor', 'Fikirler listesi']
+          };
+        case 'tasks':
+          return {
+            icon: '✅',
+            title: 'Bugünkü Görevler',
+            count: 5,
+            items: ['E-posta kontrolü', 'Rapor hazırlama', 'Toplantı hazırlığı', 'Kod review', 'Test yazma']
+          };
+        case 'calendar':
+          return {
+            icon: '📅',
+            title: 'Bugünün Etkinlikleri',
+            count: 2,
+            items: ['09:00 - Proje toplantısı', '14:00 - Müşteri görüşmesi']
+          };
+        case 'flows':
+          return {
+            icon: '🔄',
+            title: 'Aktif Workflow\'lar',
+            count: 1,
+            items: ['Otomatik rapor oluşturma', 'E-posta takibi', 'Görev hatırlatıcıları']
+          };
+        default:
+          return {
+            icon: '📊',
+            title: 'Dashboard',
+            count: 0,
+            items: []
+          };
+      }
+    };
+
+    const widgetData = getWidgetData();
+
     return (
       <Card
-        padding="$4"
+        padding="$3"
         backgroundColor="$gray2"
         borderWidth={1}
         borderColor="$gray5"
         borderRadius="$6"
+        pressStyle={{ scale: 0.98, backgroundColor: '$gray3' }}
+        animation="bouncy"
       >
-        <YStack alignItems="center" justifyContent="center" height="100%">
-          <Text color="$gray11" fontSize="$3" textAlign="center">
-            {selectedTab === 'notes' && '📝 Recent Notes (Coming soon)'}
-            {selectedTab === 'tasks' && '✅ Today\'s Tasks (Coming soon)'}
-            {selectedTab === 'calendar' && '📅 Mini Calendar (Coming soon)'}
-            {selectedTab === 'flows' && '🔄 Active Flows (Coming soon)'}
-          </Text>
+        <YStack height="100%" justifyContent="space-between">
+          {/* Header */}
+          <XStack alignItems="center" gap="$2">
+            <Text fontSize="$5">{widgetData.icon}</Text>
+            <YStack flex={1}>
+              <Text fontWeight="600" fontSize="$3" color="$color">
+                {widgetData.title}
+              </Text>
+              <Text color="$gray11" fontSize="$2">
+                {widgetData.count} öğe
+              </Text>
+            </YStack>
+          </XStack>
+
+          {/* Content */}
+          <YStack gap="$1">
+            {widgetData.items.slice(0, 2).map((item) => (
+              <Text
+                key={item}
+                color="$gray11"
+                fontSize="$2"
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                • {item}
+              </Text>
+            ))}
+            {widgetData.items.length > 2 && (
+              <Text color="$blue9" fontSize="$2">
+                +{widgetData.items.length - 2} daha...
+              </Text>
+            )}
+          </YStack>
         </YStack>
       </Card>
     );
@@ -335,11 +621,10 @@ export default function MainScreen() {
   const renderChatMessages = useCallback(() => {
     return (
       <YStack padding="$4" gap="$2">
-        {messages.map((message, index) => (
+        {messages.map((message) => (
           <ChatBubble
             key={message.id}
             message={message}
-            animationDelay={index * 30}
           />
         ))}
       </YStack>
@@ -347,12 +632,7 @@ export default function MainScreen() {
   }, [messages]);
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior="height"
-      keyboardVerticalOffset={0}
-    >
-      <YStack flex={1} backgroundColor="$background">
+    <YStack flex={1} backgroundColor="$background">
         {/* Slidable Tabs - FIXED */}
         <YStack borderBottomWidth={1} borderColor="$gray5">
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -382,16 +662,22 @@ export default function MainScreen() {
           </ScrollView>
         </YStack>
 
-        {/* Widget Area - FIXED (1/5 screen, yapışık) */}
-        <YStack height={widgetHeight} padding="$2">
-          {renderWidget()}
-        </YStack>
+        {/* Widget Area - Smooth animated collapse/expand */}
+        <Animated.View style={{ height: widgetAnimatedHeight, overflow: 'hidden' }}>
+          <YStack height={widgetHeight} padding="$2">
+            {renderWidget()}
+          </YStack>
+        </Animated.View>
 
         {/* Chat Area - SCROLLABLE */}
         <ScrollView
           ref={scrollViewRef}
           flex={1}
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ 
+            flexGrow: 1, 
+            // Padding for absolute positioned input bar (height ~70px + safe area)
+            paddingBottom: 70 + (insets.bottom > 0 ? insets.bottom + 8 : 24)
+          }}
           onContentSizeChange={() => {
             if (messages.length > 0) {
               scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -403,14 +689,23 @@ export default function MainScreen() {
           </YStack>
         </ScrollView>
 
-        {/* Input Bar - WhatsApp Style (Smooth) */}
-        <YStack
-          padding="$3"
-          paddingBottom="$4"
-          borderTopWidth={1}
-          borderColor="$gray5"
-          backgroundColor="$background"
+        {/* Input Bar - WhatsApp Style with Smooth Animation */}
+        <Animated.View
+          style={{
+            position: 'absolute',
+            bottom: inputBarAnimatedBottom,
+            left: 0,
+            right: 0,
+            backgroundColor: 'transparent',
+          }}
         >
+          <YStack
+            padding="$3"
+            paddingBottom={insets.bottom > 0 ? insets.bottom : '$4'}
+            borderTopWidth={1}
+            borderColor="$gray5"
+            backgroundColor="$background"
+          >
           <XStack gap="$3" alignItems="center">
             {/* + Button (Quick Actions) - Instant Feedback */}
             <Button
@@ -558,8 +853,8 @@ export default function MainScreen() {
                 </YStack>
               </Card>
             )}
-        </YStack>
-      </YStack>
-    </KeyboardAvoidingView>
+          </YStack>
+        </Animated.View>
+    </YStack>
   );
 }

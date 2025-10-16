@@ -1,19 +1,20 @@
 /**
- * @ybis/chat
- * Universal chat components (mobile, web, desktop)
+ * @ybis/chat - Chat UI Plugin Package
  *
- * WhatsApp-style chat UI built with Tamagui
+ * Reusable chat components for YBIS mobile app
+ *
+ * Components:
+ * - ChatBubble: Message bubble display
+ * - ChatInput: Input field with send button
+ * - MessageStatus: Status indicator (sending/sent/error)
+ *
+ * Usage:
+ * ```tsx
+ * import { ChatBubble, ChatInput, MessageStatus } from '@ybis/chat';
+ * ```
  */
 
-// Types
-export type { ChatMessage, MessageStatus, MessageSender } from './types';
-
-// Components
-export { MessageStatus as MessageStatusComponent } from './MessageStatus';
 export { ChatBubble } from './ChatBubble';
 export { ChatInput } from './ChatInput';
-
-// Re-export component prop types
-export type { MessageStatusProps } from './MessageStatus';
-export type { ChatBubbleProps } from './ChatBubble';
-export type { ChatInputProps } from './ChatInput';
+export { MessageStatus } from './MessageStatus';
+export type { Message, ChatBubbleProps, ChatInputProps, MessageStatusProps } from './types';

@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link, Stack } from 'expo-router';
 import { YStack, H1, Text, Button } from 'tamagui';
 
@@ -6,7 +7,7 @@ import { YStack, H1, Text, Button } from 'tamagui';
  * 
  * Displayed when user navigates to non-existent route
  */
-export default function NotFoundScreen() {
+export default function NotFoundScreen(): React.ReactElement {
   return (
     <>
       <Stack.Screen options={{ title: 'Oops! Page Not Found' }} />

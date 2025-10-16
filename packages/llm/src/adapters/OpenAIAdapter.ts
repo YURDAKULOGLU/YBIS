@@ -125,12 +125,12 @@ export class OpenAIAdapter implements LLMPort {
         : undefined;
 
       return {
-        content: choice.message.content || '',
+        content: choice.message.content ?? '',
         functionCall,
         usage: {
-          promptTokens: completion.usage?.prompt_tokens || 0,
-          completionTokens: completion.usage?.completion_tokens || 0,
-          totalTokens: completion.usage?.total_tokens || 0,
+          promptTokens: completion.usage?.prompt_tokens ?? 0,
+          completionTokens: completion.usage?.completion_tokens ?? 0,
+          totalTokens: completion.usage?.total_tokens ?? 0,
         },
         finishReason: this.mapFinishReason(choice.finish_reason),
         model: completion.model,
@@ -167,7 +167,7 @@ export class OpenAIAdapter implements LLMPort {
           : undefined;
 
         yield {
-          content: delta.content || '',
+          content: delta.content ?? '',
           done: chunk.choices[0]?.finish_reason !== null,
           functionCall,
         };

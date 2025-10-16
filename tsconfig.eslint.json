@@ -1,0 +1,23 @@
+{
+  // ESLint-specific TypeScript configuration for monorepo
+  // This file helps ESLint find all tsconfig files across the monorepo
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "apps/*/src/**/*",
+    "apps/*/app/**/*",
+    "packages/*/src/**/*",
+    "*.ts",
+    "*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    ".expo"
+  ]
+}
+

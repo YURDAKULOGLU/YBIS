@@ -1,6 +1,9 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { Platform } from 'react-native';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import * as NavigationBar from 'expo-navigation-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider } from 'tamagui';
 import { Theme, useThemeStore } from '@ybis/theme';
 import config from '../tamagui.config';
@@ -29,7 +32,7 @@ import { useMockAuth } from '../src/stores/useMockAuth';
  * @note Using mock auth for UI testing (Story 1.1)
  *       Real auth will be implemented in Story 2.1 (Supabase Auth)
  */
-export default function RootLayout() {
+export default function RootLayout(): React.ReactElement {
   const segments = useSegments();
   const router = useRouter();
 
@@ -39,14 +42,39 @@ export default function RootLayout() {
   // Mock auth state (DEMO MODE)
   const { isAuthenticated, isLoading, checkAuth } = useMockAuth();
 
-  // Check persisted auth on app start
+  // Check persisted auth on app start (DEMO MODE: instant)
   useEffect(() => {
-    checkAuth();
-  }, []);
+    // In DEMO MODE, checkAuth is instant (no async delays)
+    void checkAuth();
+  }, [checkAuth]);
+
+  // Update Android navigation bar based on theme
+  // Note: SDK 54+ uses edge-to-edge by default, setBackgroundColorAsync is deprecated
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      const updateNavigationBar = async (): Promise<void> => {
+        try {
+          // Set button style (light buttons on dark bg, dark buttons on light bg)
+          await NavigationBar.setButtonStyleAsync(
+            currentTheme === 'dark' ? 'light' : 'dark'
+          );
+          
+          // For edge-to-edge mode, use visibility instead of background color
+          // Navigation bar is transparent, content extends behind it
+          await NavigationBar.setVisibilityAsync('visible');
+        } catch (error) {
+          console.warn('Failed to update navigation bar:', error);
+        }
+      };
+
+      void updateNavigationBar();
+    }
+  }, [currentTheme]);
 
   // Handle auth-based navigation
   useEffect(() => {
-    if (isLoading) return;
+    // DEMO MODE: Skip loading checks, navigate instantly
+    // In production, keep: if (isLoading) return;
 
     const inAuthGroup = segments[0] === '(auth)';
 
@@ -54,17 +82,23 @@ export default function RootLayout() {
       // Redirect to login if not authenticated
       router.replace('/(auth)/login');
     } else if (isAuthenticated && inAuthGroup) {
-      // Redirect to tabs if authenticated
+      // DEMO MODE: Redirect to tabs immediately (already authenticated)
       router.replace('/(tabs)');
     }
-  }, [isAuthenticated, isLoading, segments]);
+  }, [isAuthenticated, isLoading, segments, router]);
 
   return (
-    <TamaguiProvider config={config} defaultTheme={currentTheme}>
-      <Theme>
-        <StatusBar style={currentTheme === 'dark' ? 'light' : 'dark'} />
-        <Slot />
-      </Theme>
-    </TamaguiProvider>
+    <SafeAreaProvider>
+      <TamaguiProvider config={config} defaultTheme={currentTheme}>
+        <Theme>
+          <StatusBar 
+            style={currentTheme === 'dark' ? 'light' : 'dark'} 
+            translucent
+            backgroundColor="transparent"
+          />
+          <Slot />
+        </Theme>
+      </TamaguiProvider>
+    </SafeAreaProvider>
   );
 }

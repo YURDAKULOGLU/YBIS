@@ -19,7 +19,8 @@ export default [
         ecmaFeatures: {
           jsx: true,
         },
-        project: './tsconfig.json',
+        project: true, // Auto-detect nearest tsconfig.json
+        tsconfigRootDir: process.cwd(),
       },
     },
     plugins: {

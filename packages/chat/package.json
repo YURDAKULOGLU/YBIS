@@ -3,24 +3,26 @@
   "version": "0.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "private": true,
   "scripts": {
-    "build": "tsc -b",
-    "clean": "rm -rf dist",
-    "lint": "eslint src --ext .ts,.tsx",
-    "type-check": "tsc --noEmit"
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx"
   },
   "dependencies": {
-    "@ybis/core": "workspace:*",
-    "@ybis/ui": "workspace:*",
+    "react": "19.1.0",
+    "react-native": "0.81.4",
+    "tamagui": "^1.135.0",
     "@tamagui/lucide-icons": "^1.135.0"
   },
-  "peerDependencies": {
-    "react": "^19.1.0",
-    "react-native": "^0.81.4",
-    "tamagui": "^1.135.0"
-  },
   "devDependencies": {
-    "@types/react": "~19.1.0",
+    "@types/react": "~19.1.10",
     "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "react": "19.1.0",
+    "react-native": "0.81.4"
   }
 }

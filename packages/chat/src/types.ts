@@ -1,44 +1,31 @@
 /**
- * Chat component types
- * Universal types for chat UI components (mobile, web, desktop)
+ * Chat Plugin Types
+ *
+ * Shared types for chat UI components
  */
 
-/**
- * Message status (WhatsApp-style)
- */
-export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read';
-
-/**
- * Message sender type
- */
-export type MessageSender = 'user' | 'ai';
-
-/**
- * Chat message interface
- */
-export interface ChatMessage {
-  /**
-   * Unique message ID
-   */
+export interface Message {
   id: string;
-
-  /**
-   * Message text content
-   */
   text: string;
-
-  /**
-   * Message sender
-   */
-  sender: MessageSender;
-
-  /**
-   * Message timestamp (display format)
-   */
+  sender: 'user' | 'ai';
   timestamp: string;
+  status?: 'sending' | 'sent' | 'error';
+}
 
-  /**
-   * Message status (only for user messages)
-   */
-  status?: MessageStatus;
+export interface ChatBubbleProps {
+  message: Message;
+  showAvatar?: boolean;
+}
+
+export interface ChatInputProps {
+  value: string;
+  onChangeText: (text: string) => void;
+  onSend: () => void;
+  placeholder?: string;
+  disabled?: boolean;
+}
+
+export interface MessageStatusProps {
+  status: Message['status'];
+  size?: number;
 }

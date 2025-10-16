@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Tabs, useRouter } from 'expo-router';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Menu, Bell, User } from '@tamagui/lucide-icons';
 import { useTheme } from 'tamagui';
 import { DrawerMenu } from '../components/DrawerMenu';
@@ -25,9 +26,22 @@ import { DrawerMenu } from '../components/DrawerMenu';
  * - Icons use theme tokens (color)
  * - Dynamic theme switching supported
  */
-export default function TabLayout() {
+export default function TabLayout(): React.ReactElement {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleDrawerOpen = useCallback(() => {
+    setDrawerOpen(true);
+  }, []);
+
+  const renderMenuButton = useCallback(() => (
+    <MenuButton onPress={handleDrawerOpen} />
+  ), [handleDrawerOpen]);
+
+  const renderHeaderActions = useCallback(() => (
+    <HeaderActions />
+  ), []);
 
   return (
     <>
@@ -38,6 +52,7 @@ export default function TabLayout() {
             display: 'none',
             height: 0,
             position: 'absolute',
+            backgroundColor: theme.background.val,
           }, // Completely hide bottom tab bar
           headerStyle: {
             backgroundColor: theme.background.val,
@@ -45,6 +60,7 @@ export default function TabLayout() {
             shadowOpacity: 0,
             borderBottomWidth: 1,
             borderBottomColor: theme.borderColor.val,
+            height: 56 + insets.top, // Header + safe area
           },
           headerTitleStyle: {
             color: theme.color.val,
@@ -60,8 +76,8 @@ export default function TabLayout() {
             fontSize: 20,
             fontWeight: '600',
           },
-          headerLeft: () => <MenuButton onPress={() => setDrawerOpen(true)} />,
-          headerRight: () => <HeaderActions />,
+          headerLeft: renderMenuButton,
+          headerRight: renderHeaderActions,
         }}
       />
       {/* Other screens hidden but accessible via navigation */}
@@ -105,7 +121,7 @@ interface MenuButtonProps {
   onPress: () => void;
 }
 
-function MenuButton({ onPress }: MenuButtonProps) {
+function MenuButton({ onPress }: MenuButtonProps): React.ReactElement {
   const theme = useTheme();
 
   return (
@@ -123,7 +139,7 @@ function MenuButton({ onPress }: MenuButtonProps) {
  * - Bell: Notifications (placeholder)
  * - User: Settings screen
  */
-function HeaderActions() {
+function HeaderActions(): React.ReactElement {
   const router = useRouter();
   const theme = useTheme();
 
@@ -131,7 +147,7 @@ function HeaderActions() {
     <View style={styles.headerRight}>
       <TouchableOpacity
         style={styles.iconButton}
-        onPress={() => console.log('Notifications not implemented yet')}
+        onPress={() => { /* Notifications not implemented yet */ }}
       >
         <Bell size={22} color={theme.color.val} />
       </TouchableOpacity>

@@ -43,9 +43,10 @@ const DEMO_USER: MockUser = {
 };
 
 export const useMockAuth = create<MockAuthState>((set) => ({
-  isAuthenticated: false,
-  user: null,
-  isLoading: true,
+  // DEMO MODE: Start authenticated (no login screen)
+  isAuthenticated: true,
+  user: DEMO_USER,
+  isLoading: false,
 
   /**
    * Demo Login - Sets authenticated state without real auth
@@ -88,8 +89,20 @@ export const useMockAuth = create<MockAuthState>((set) => ({
 
   /**
    * Check Auth - Loads persisted auth state on app start
+   *
+   * DEMO MODE BYPASS: Auto-authenticate instantly (no async operations)
+   * Always logged in as demo user on app start
    */
   checkAuth: async () => {
+    // DEMO MODE: Instant authentication (no SecureStore delays)
+    // Already authenticated in initialState, just confirm
+    set({
+      isAuthenticated: true,
+      user: DEMO_USER,
+      isLoading: false,
+    });
+
+    /* PRODUCTION CODE (Uncomment for real auth):
     try {
       const storedUser = await SecureStore.getItemAsync(MOCK_AUTH_KEY);
 
@@ -115,5 +128,6 @@ export const useMockAuth = create<MockAuthState>((set) => ({
         isLoading: false,
       });
     }
+    */
   },
 }));

@@ -9,6 +9,16 @@ import prettierConfig from 'eslint-config-prettier';
 export default [
   ...tsConfig,
   
+  // Ignore patterns (ESLint v9 - replaces .eslintignore)
+  {
+    ignores: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.expo/**',
+      '**/index.js', // Expo entry point - JSX in .js file
+    ],
+  },
+  
   // React files
   {
     files: ['**/*.tsx', '**/*.jsx'],

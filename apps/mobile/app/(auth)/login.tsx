@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { YStack, H1, Text, Button, Spinner } from 'tamagui';
 import { StatusBar } from 'expo-status-bar';
+import { useRouter } from 'expo-router';
 import { useMockAuth } from '../../src/stores/useMockAuth';
 
 /**
@@ -13,15 +14,17 @@ import { useMockAuth } from '../../src/stores/useMockAuth';
  * - Demo login button (instant access)
  * - Google OAuth button (placeholder, coming in Story 2.1)
  */
-export default function LoginScreen() {
+export default function LoginScreen(): React.ReactElement {
+  const router = useRouter();
   const { loginDemo } = useMockAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleDemoLogin = async () => {
+  const handleDemoLogin = async (): Promise<void> => {
     setIsLoading(true);
     try {
       await loginDemo();
-      // Navigation handled by root layout
+      // Manual navigation (state may already be authenticated)
+      router.replace('/(tabs)');
     } catch (error) {
       console.error('Demo login failed:', error);
     } finally {
@@ -29,10 +32,10 @@ export default function LoginScreen() {
     }
   };
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = (): void => {
     // TODO: Implement Google OAuth in Story 2.1
     // Will use expo-auth-session + expo-web-browser + Supabase Auth
-    console.log('Google Sign In clicked - Implementation pending (Story 2.1)');
+    // console.log('Google Sign In clicked - Implementation pending (Story 2.1)');
   };
 
   return (
@@ -59,7 +62,7 @@ export default function LoginScreen() {
         <Button
           size="$5"
           theme="green"
-          onPress={handleDemoLogin}
+          onPress={() => { void handleDemoLogin(); }}
           disabled={isLoading}
           icon={isLoading ? <Spinner /> : undefined}
         >

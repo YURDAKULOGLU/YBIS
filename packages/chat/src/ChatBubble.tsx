@@ -1,87 +1,73 @@
+import { Card, Text, YStack, XStack } from 'tamagui';
+import { Bot, User } from '@tamagui/lucide-icons';
+import { type ChatBubbleProps } from './types';
+
 /**
  * ChatBubble Component
- * WhatsApp-style chat bubble with rounded corners and tail effect
  *
- * Features:
- * - Different styles for user (blue) vs AI (gray) messages
- * - Rounded corners with tail effect (borderTopRightRadius for user, borderTopLeftRadius for AI)
- * - Message status indicator (WhatsApp ticks)
- * - Smooth animations (enterStyle for fade-in)
- * - Universal (works on mobile, web, desktop)
+ * Displays a single message bubble with:
+ * - User/AI avatar
+ * - Message text
+ * - Timestamp
+ * - Different styling for user vs AI messages
  */
-
-import React from 'react';
-import { YStack, XStack, Text, Card } from 'tamagui';
-import { MessageStatus } from './MessageStatus';
-import type { ChatMessage } from './types';
-
-export interface ChatBubbleProps {
-  /**
-   * Message data
-   */
-  message: ChatMessage;
-
-  /**
-   * Optional press handler
-   */
-  onPress?: () => void;
-
-  /**
-   * Animation delay (for staggered list animation)
-   */
-  animationDelay?: number;
-}
-
-export const ChatBubble: React.FC<ChatBubbleProps> = ({
-  message,
-  onPress,
-  animationDelay = 0,
-}) => {
+export function ChatBubble({ message, showAvatar = true }: ChatBubbleProps) {
   const isUser = message.sender === 'user';
 
   return (
     <XStack
       justifyContent={isUser ? 'flex-end' : 'flex-start'}
-      animation="quick"
-      enterStyle={{ opacity: 0, y: 10 }}
-      style={{ animationDelay: `${animationDelay}ms` }}
+      gap="$2"
     >
-      <Card
-        maxWidth="80%"
-        padding="$2"
-        paddingHorizontal="$3"
-        backgroundColor={isUser ? '$blue9' : '$gray3'}
-        borderWidth={0}
-        borderRadius="$5"
-        borderTopRightRadius={isUser ? '$2' : '$5'}
-        borderTopLeftRadius={isUser ? '$5' : '$2'}
-        onPress={onPress}
-        pressStyle={onPress ? { scale: 0.98 } : undefined}
-      >
-        <YStack gap="$1">
-          <Text
-            color={isUser ? 'white' : '$color'}
-            fontSize="$4"
-            lineHeight="$4"
-            paddingBottom="$1"
-          >
-            {message.text}
-          </Text>
-          <XStack gap="$2" alignItems="center" alignSelf="flex-end">
-            <Text
-              color={isUser ? 'rgba(255,255,255,0.6)' : '$gray10'}
-              fontSize="$1"
-            >
-              {message.timestamp}
-            </Text>
-            {isUser && message.status && (
-              <YStack marginLeft={2}>
-                <MessageStatus status={message.status} />
-              </YStack>
-            )}
-          </XStack>
+      {/* AI Avatar (left side) */}
+      {!isUser && showAvatar && (
+        <YStack
+          width={32}
+          height={32}
+          borderRadius="$4"
+          backgroundColor="$purple4"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Bot size={20} color="$purple11" />
         </YStack>
+      )}
+
+      {/* Message Card */}
+      <Card
+        maxWidth="75%"
+        padding="$3"
+        bordered={isUser}
+        backgroundColor={isUser ? '$blue4' : '$gray3'}
+      >
+        <Text
+          color={isUser ? '$blue12' : '$color'}
+          fontSize="$3"
+        >
+          {message.text}
+        </Text>
+        <Text
+          color={isUser ? '$blue11' : '$gray11'}
+          fontSize="$1"
+          marginTop="$2"
+        >
+          {message.timestamp}
+        </Text>
       </Card>
+
+      {/* User Avatar (right side) */}
+      {isUser && showAvatar && (
+        <YStack
+          width={32}
+          height={32}
+          borderRadius="$4"
+          backgroundColor="$blue4"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <User size={20} color="$blue11" />
+        </YStack>
+      )}
     </XStack>
   );
-};
+}

@@ -95,7 +95,7 @@ app.onError((err, c) => {
   console.error(`[Error] ${err.message}`, err);
   return c.json(
     {
-      error: err.message || 'Internal Server Error',
+      error: err.message ?? 'Internal Server Error',
     },
     500
   );
@@ -104,7 +104,7 @@ app.onError((err, c) => {
 // Initialize server
 const PORT = process.env['PORT'] ? parseInt(process.env['PORT']) : 3001;
 
-async function startServer() {
+async function startServer(): Promise<void> {
   try {
     console.log('🚀 YBIS Backend starting...\n');
 
@@ -115,7 +115,7 @@ async function startServer() {
       supabaseAnonKey: process.env['SUPABASE_ANON_KEY']!,
       supabaseServiceKey: process.env['SUPABASE_SERVICE_KEY'],
       openaiApiKey: process.env['OPENAI_API_KEY']!,
-      openaiModel: process.env['OPENAI_MODEL'] || 'gpt-4o-mini',
+      openaiModel: process.env['OPENAI_MODEL'] ?? 'gpt-4o-mini',
     });
 
     await registry.initialize();
@@ -147,16 +147,16 @@ async function startServer() {
 }
 
 // Graceful shutdown
-process.on('SIGINT', async () => {
+process.on('SIGINT', () => {
   console.log('\n🛑 Shutting down gracefully...');
   // Close database connections if needed
   process.exit(0);
 });
 
-process.on('SIGTERM', async () => {
+process.on('SIGTERM', () => {
   console.log('\n🛑 Shutting down gracefully...');
   process.exit(0);
 });
 
 // Start the server
-startServer();
+void startServer();

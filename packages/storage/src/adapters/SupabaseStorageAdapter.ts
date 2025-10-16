@@ -36,7 +36,7 @@ export class SupabaseStorageAdapter implements StoragePort {
 
   async initialize(): Promise<void> {
     try {
-      const key = this.config.serviceRoleKey || this.config.anonKey;
+      const key = this.config.serviceRoleKey ?? this.config.anonKey;
 
       this.client = createClient(this.config.url, key, {
         auth: {
@@ -222,9 +222,9 @@ export class SupabaseStorageAdapter implements StoragePort {
 
       return {
         name: file.name,
-        size: file.metadata?.['size'] || 0,
-        mimeType: file.metadata?.['mimetype'] || 'application/octet-stream',
-        lastModified: new Date(file.updated_at || file.created_at),
+        size: file.metadata?.['size'] ?? 0,
+        mimeType: file.metadata?.['mimetype'] ?? 'application/octet-stream',
+        lastModified: new Date(file.updated_at ?? file.created_at),
         path,
         metadata: file.metadata,
       };
@@ -248,7 +248,7 @@ export class SupabaseStorageAdapter implements StoragePort {
     try {
       const { data, error } = await this.client!.storage
         .from(bucket)
-        .list(path || '', {
+        .list(path ?? '', {
           limit: options?.limit,
           offset: options?.offset,
           sortBy: options?.sortBy ? { column: options.sortBy, order: 'asc' } : undefined,
@@ -259,18 +259,18 @@ export class SupabaseStorageAdapter implements StoragePort {
         throw this.handleSupabaseError(error);
       }
 
-      return (data || []).map((file) => ({
+      return (data ?? []).map((file) => ({
         name: file.name,
-        size: file.metadata?.['size'] || 0,
-        mimeType: file.metadata?.['mimetype'] || 'application/octet-stream',
-        lastModified: new Date(file.updated_at || file.created_at),
+        size: file.metadata?.['size'] ?? 0,
+        mimeType: file.metadata?.['mimetype'] ?? 'application/octet-stream',
+        lastModified: new Date(file.updated_at ?? file.created_at),
         path: path ? `${path}/${file.name}` : file.name,
         metadata: file.metadata,
       }));
     } catch (error) {
       if (error instanceof StorageError) throw error;
       throw new StorageError(
-        `Failed to list files in ${bucket}/${path || ''}`,
+        `Failed to list files in ${bucket}/${path ?? ''}`,
         'UNKNOWN_ERROR',
         error as Error
       );
@@ -295,7 +295,7 @@ export class SupabaseStorageAdapter implements StoragePort {
     this.ensureInitialized();
 
     try {
-      const expiresIn = options?.expiresIn || 3600; // 1 hour default
+      const expiresIn = options?.expiresIn ?? 3600; // 1 hour default
 
       // Build transform options
       const transform = options?.transform
@@ -425,7 +425,7 @@ export class SupabaseStorageAdapter implements StoragePort {
         throw this.handleSupabaseError(error);
       }
 
-      return (data || []).map((bucket) => bucket.name);
+      return (data ?? []).map((bucket) => bucket.name);
     } catch (error) {
       if (error instanceof StorageError) throw error;
       throw new StorageError(
@@ -455,7 +455,7 @@ export class SupabaseStorageAdapter implements StoragePort {
 
   private getFileName(path: string): string {
     const parts = path.split('/');
-    return parts[parts.length - 1] || '';
+    return parts[parts.length - 1] ?? '';
   }
 
   private handleSupabaseError(error: unknown): StorageError {

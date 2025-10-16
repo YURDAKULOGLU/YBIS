@@ -1,0 +1,8 @@
+# Expo entry point - contains JSX in .js file
+index.js
+
+# Build outputs
+dist/
+.expo/
+node_modules/
+

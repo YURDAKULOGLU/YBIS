@@ -28,7 +28,11 @@
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",
         "VIBRATE"
-      ]
+      ],
+      "softInputMode": "adjustResize",
+      "navigationBar": {
+        "backgroundColor": "#000000"
+      }
     },
     "web": {
       "bundler": "metro"

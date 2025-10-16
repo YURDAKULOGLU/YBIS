@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { YStack, H2, H3, Text, Card, Button, Switch, XStack, Separator } from 'tamagui';
 import { LogOut, Moon, Globe } from '@tamagui/lucide-icons';
 import { useMockAuth } from '../../src/stores/useMockAuth';
@@ -17,24 +17,24 @@ import { useThemeStore } from '@ybis/theme';
  * - useThemeStore: Multi-theme support (Phase 0: light/dark, Phase 1+: custom themes)
  * - No ThemePort: Internal logic, not vendor swap (criteria-based porting - AD-024)
  */
-export default function SettingsScreen() {
+export default function SettingsScreen(): React.ReactElement {
   const { user, logout } = useMockAuth();
   const { currentTheme, toggleTheme } = useThemeStore();
   const [selectedLanguage, setSelectedLanguage] = useState('en');
 
-  const handleThemeToggle = () => {
+  const handleThemeToggle = (): void => {
     toggleTheme();
-    console.log('Theme toggled to:', currentTheme === 'light' ? 'dark' : 'light');
+    // console.log('Theme toggled to:', currentTheme === 'light' ? 'dark' : 'light');
   };
 
-  const handleLanguageChange = () => {
+  const handleLanguageChange = (): void => {
     // TODO: Connect to @ybis/i18n
     const newLang = selectedLanguage === 'en' ? 'tr' : 'en';
     setSelectedLanguage(newLang);
-    console.log('Language changed to:', newLang);
+    // console.log('Language changed to:', newLang);
   };
 
-  const handleLogout = async () => {
+  const handleLogout = async (): Promise<void> => {
     try {
       await logout();
       // Navigation handled by root layout (redirects to login)
@@ -51,10 +51,10 @@ export default function SettingsScreen() {
       <Card padding="$4" bordered backgroundColor="$blue2">
         <YStack gap="$2">
           <Text fontWeight="600" fontSize="$5" color="$blue11">
-            {user?.name || 'User'}
+            {user?.name ?? 'User'}
           </Text>
           <Text color="$blue11" fontSize="$3">
-            {user?.email || 'user@example.com'}
+            {user?.email ?? 'user@example.com'}
           </Text>
           <Text color="$blue10" fontSize="$2" marginTop="$1">
             DEMO MODE ACTIVE
@@ -110,7 +110,7 @@ export default function SettingsScreen() {
             <H3>Account</H3>
           </XStack>
           <Separator />
-          <Button theme="red" size="$4" onPress={handleLogout} icon={LogOut}>
+          <Button theme="red" size="$4" onPress={() => { void handleLogout(); }} icon={LogOut}>
             Exit Demo Mode (Logout)
           </Button>
           <Text fontSize="$2" color="$gray10">

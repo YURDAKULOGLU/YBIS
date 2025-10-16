@@ -10,11 +10,11 @@
  * adapter selection configurable via environment variables.
  */
 
-import { DatabasePort } from '@ybis/database';
+import type { DatabasePort } from '@ybis/database';
 import { SupabaseAdapter as DatabaseAdapter } from '@ybis/database';
-import { LLMPort } from '@ybis/llm';
+import type { LLMPort } from '@ybis/llm';
 import { OpenAIAdapter } from '@ybis/llm';
-import { StoragePort } from '@ybis/storage';
+import type { StoragePort } from '@ybis/storage';
 import { SupabaseStorageAdapter } from '@ybis/storage';
 
 export interface PortRegistryConfig {
@@ -81,7 +81,7 @@ export class PortRegistry {
 
       // Initialize LLM Port (OpenAI)
       this._llm = new OpenAIAdapter({
-        defaultModel: this.config.openaiModel || 'gpt-4o-mini',
+        defaultModel: this.config.openaiModel ?? 'gpt-4o-mini',
       });
       await this._llm.initialize(this.config.openaiApiKey);
       console.log('[PortRegistry] ✓ LLMPort initialized (OpenAIAdapter)');

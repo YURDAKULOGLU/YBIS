@@ -4,7 +4,7 @@
  * Makes all ports available to route handlers via c.get()
  */
 
-import { Context, Next } from 'hono';
+import type { Context, Next } from 'hono';
 import { PortRegistry } from '../services/PortRegistry';
 
 /**
