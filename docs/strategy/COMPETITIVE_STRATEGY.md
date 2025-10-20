@@ -97,7 +97,26 @@ YBIS competes in the productivity software market with a **unique orchestration-
 
 ## 2. Competitive Landscape Mapping
 
-### 2.1 Competitive Set Analysis
+### 2.1 Direct Competitors
+
+#### TryMartin (Primary Direct Competitor)
+**Category:** AI Productivity Assistant  
+**Positioning:** Direct competitor in AI productivity space  
+**Threat Level:** HIGH - Direct competition with YBIS core value proposition  
+**Analysis:** See detailed analysis in [TryMartin Competitor Analysis](./TRYMARTIN_COMPETITOR_ANALYSIS.md)
+
+**Key Differentiators vs YBIS:**
+- Generic AI assistant positioning vs YBIS's orchestration-first approach
+- Likely vendor lock-in vs YBIS's Port Architecture flexibility
+- Standalone product vs YBIS's integration-first strategy
+
+**Strategic Response:**
+- Emphasize "Productivity Orchestrator" category differentiation
+- Highlight Port Architecture advantages
+- Focus on integration depth and multi-tool orchestration
+- Monitor closely for feature releases and market moves
+
+### 2.2 Competitive Set Analysis
 
 #### Tier 1: All-in-One Workspace Tools (Indirect Competition)
 
