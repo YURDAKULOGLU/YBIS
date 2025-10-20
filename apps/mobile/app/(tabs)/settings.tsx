@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { YStack, H2, H3, Text, Card, Button, Switch, XStack, Separator } from 'tamagui';
+import { YStack, H2, H3, Text, Card, Button, Switch, XStack, Separator } from '@ybis/ui';
 import { LogOut, Moon, Globe } from '@tamagui/lucide-icons';
 import { useMockAuth } from '../../src/stores/useMockAuth';
 import { useThemeStore } from '@ybis/theme';

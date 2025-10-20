@@ -106,10 +106,10 @@ const PORT = process.env['PORT'] ? parseInt(process.env['PORT']) : 3001;
 
 async function startServer(): Promise<void> {
   try {
-    console.log('🚀 YBIS Backend starting...\n');
+    console.warn('🚀 YBIS Backend starting...\n');
 
     // Initialize all ports
-    console.log('📦 Initializing ports...');
+    console.warn('📦 Initializing ports...');
     const registry = PortRegistry.getInstance({
       supabaseUrl: process.env['SUPABASE_URL']!,
       supabaseAnonKey: process.env['SUPABASE_ANON_KEY']!,

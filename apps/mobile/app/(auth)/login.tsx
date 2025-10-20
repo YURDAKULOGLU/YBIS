@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { YStack, H1, Text, Button, Spinner } from 'tamagui';
+import { YStack, H1, Text, Button, Spinner } from '@ybis/ui';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { useMockAuth } from '../../src/stores/useMockAuth';

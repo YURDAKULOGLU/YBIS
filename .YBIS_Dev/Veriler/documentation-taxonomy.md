@@ -86,7 +86,7 @@ docs/:
     - documentation-taxonomy.md ✅ (This file - 5-Tier system)
     - documentation-map.yaml ✅ (Machine-readable doc registry)
     - kelime/: [test files]
-    - memory/session-context.md ✅ (Active session - v2.0 real data)
+    - memory/session-context.md ✅ (Active session - v2.1 real data, demo mode fix logged)
     - scripts/: 5 PowerShell automation scripts
     - session-todos.md ✅ (Current session TODOs)
     - tasks/: [empty]

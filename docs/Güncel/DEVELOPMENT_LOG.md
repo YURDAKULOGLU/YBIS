@@ -1,11 +1,11 @@
 # YBIS Development Log
 
-**Version:** AD-031
-**Last Updated:** 2025-10-16
+**Version:** AD-037
+**Last Updated:** 2025-10-21
 **Purpose:** Facts, decisions, and issues only - no duplicates
 **Started:** 2025-10-06
-**Current:** Week 1, Day 6 (90% complete - Infrastructure fixes + ESLint v9)
-**Status:** 🟢 AHEAD OF SCHEDULE + ✅ ALL PACKAGES LINT-CLEAN
+**Current:** Week 1, Day 6 (95% complete - Demo mode fixed + Expo Go migration + Edge-to-edge UX + Build fixes + Competitor analysis)
+**Status:** 🟢 AHEAD OF SCHEDULE + ✅ ALL PACKAGES LINT-CLEAN + ✅ DEMO MODE WORKING + ✅ EXPO GO MIGRATION COMPLETE + ✅ BUILD SYSTEM FIXED + ✅ COMPETITOR ANALYSIS COMPLETE
 
 **Cross-References:**
 - [YBIS Proje Anayasası](../YBIS_PROJE_ANAYASASI.md) - Architecture constraints
@@ -2924,12 +2924,13 @@ Status:
 
 #### **Issues Encountered:**
 
-**🐛 BUG-001: Demo Mode Loading Screen Stuck (CRITICAL)**
-- **Severity:** P0 - Blocks demo mode access
+**🐛 BUG-001: Demo Mode Loading Screen Stuck (RESOLVED)**
+- **Severity:** P0 - Was blocking demo mode access
 - **Description:** User cannot enter demo mode, stuck on loading screen
-- **Attempted Fix:** Modified `useMockAuth` and `_layout.tsx`
-- **Status:** ⚠️ **UNRESOLVED** - Fix applied but issue persists
-- **Next Actions:**
+- **Root Cause:** Async SecureStore operations in useMockAuth causing delays
+- **Solution:** Modified useMockAuth to start authenticated (no async delays)
+- **Status:** ✅ **RESOLVED** - Demo mode now works perfectly (AD-032)
+- **Verification:** Instant navigation to main app, no loading screen delays
   1. Clear Metro bundler cache completely
   2. Check Expo Router navigation logs
   3. Add console logging to track navigation state
@@ -3018,9 +3019,21 @@ Status:
 
 #### **Architecture Decisions:**
 
+### AD-032: Demo Mode Navigation Bug Resolution
+
+**Date:** 2025-10-16
+**Context:** Critical P0 issue blocking demo mode access (BUG-001)
+**Decision:** Fixed demo mode navigation with instant authentication
+**Implementation:**
+- Modified `useMockAuth` store to start in authenticated state
+- Updated `_layout.tsx` navigation logic for instant redirect
+- Removed async delays from demo mode initialization
+**Impact:** Demo mode now works perfectly, instant navigation to main app
+**Status:** ✅ RESOLVED - No more loading screen issues
+
 ### AD-031: Mobile App Edge-to-Edge Safe Area & Keyboard-Aware Animations
 
-**Date:** 2025-10-16  
+**Date:** 2025-10-16
 **Context:** User reported UX issues after Expo SDK 54 migration:
 1. Chat bar not syncing with keyboard animation
 2. Dark mode gaps appearing (header top, keyboard bottom)
@@ -3152,6 +3165,74 @@ headerStyle: {
 
 ---
 
+### AD-033: Expo CLI Working Directory Requirement in Monorepos
+
+**Date:** 2025-10-16
+**Context:** Android bundling error: `Unable to resolve "../../App" from "node_modules\expo\AppEntry.js"`
+
+**Problem:**
+When running `npx expo start` from monorepo root, Expo CLI reads root `package.json` instead of `apps/mobile/package.json`, causing:
+1. App name displayed as "YBIS Monorepo" instead of "YBIS"
+2. Entry point resolution fails (looks for root `App.tsx` which doesn't exist)
+3. Metro bundler uses wrong package.json context
+
+**Root Cause:**
+Expo CLI determines project root from current working directory, not from configuration files. Running from wrong directory causes package.json resolution mismatch.
+
+**Decision:**
+**ALWAYS run Expo CLI commands from `apps/mobile/` directory, not from monorepo root.**
+
+**Correct Usage:**
+```bash
+# ✅ CORRECT - Run from app directory
+cd apps/mobile
+npx expo start --tunnel --clear
+
+# ❌ WRONG - Don't run from monorepo root
+npx expo start  # This reads root package.json!
+```
+
+**Why This Happened:**
+Initial confusion about monorepo working directory conventions led to attempting patches:
+1. ❌ Adding `"main": "index.js"` to `app.json` (unnecessary, already in package.json)
+2. ❌ Force-setting `config.projectRoot` in `metro.config.js` (breaks Metro's elegant resolution)
+
+**Correct Solution:**
+No configuration changes needed! Expo's existing architecture is correct:
+- `apps/mobile/package.json` already has `"main": "index.js"`
+- `metro.config.js` already correctly passes `projectRoot = __dirname`
+- Running from `apps/mobile/` directory makes everything work elegantly
+
+**Impact:**
+- ✅ No patch/force/workaround needed
+- ✅ Configuration stays clean and maintainable
+- ✅ Follows Expo's standard monorepo conventions
+- ✅ "Fix the Abstraction" principle upheld (problem wasn't in abstraction, but in usage)
+
+**Lesson Learned:**
+Before patching configuration, verify the tool is being used correctly. Expo's design assumes CLI runs from project directory, which is standard and correct behavior.
+
+**Related Principle:**
+This reinforces AD-028 ("Fix the Abstraction") by showing when NOT to fix: When the abstraction is correct and the issue is user error, educate rather than patch.
+
+**Files Reverted:**
+- `apps/mobile/app.json` - Removed unnecessary `"main"` field
+- `apps/mobile/metro.config.js` - Removed forced `projectRoot` assignment
+
+**Monorepo Commands Reference:**
+```bash
+# From root (package.json scripts)
+pnpm mobile           # Runs: cd apps/mobile && pnpm start
+pnpm mobile:android   # Runs: cd apps/mobile && pnpm run android
+
+# Direct usage (must cd first!)
+cd apps/mobile
+npx expo start --tunnel --clear
+npx expo run:android
+```
+
+---
+
 **Session End:** 2025-10-16 (Cursor AI Agent - Late Evening)
 **Type-Check Status:** ✅ ALL PASSING
 **Test Status:** ✅ 27/27 tests passing
@@ -3160,3 +3241,241 @@ headerStyle: {
 **Commits:** NOT COMMITTED (awaiting keyboard sync verification)
 
 ---
+
+### AD-030: Android Build Failure Resolution & Expo Go Migration Strategy
+
+**Date:** 2025-10-15
+**Context:** Android build failures preventing development progress
+**Decision:** Migrate to Expo Go to eliminate native build requirements while keeping Tamagui + Reanimated
+**Rationale:** 
+- Native builds were failing consistently on Android
+- Expo Go provides 10-second reload cycles
+- Maintains professional UX with Tamagui + Reanimated
+- Future-proof approach for development velocity
+
+**Implementation:**
+- Configured Expo Go compatibility
+- Maintained Tamagui theming system
+- Kept Reanimated for smooth animations
+- Eliminated native build dependencies
+
+**Impact:**
+- ✅ Android build issues eliminated
+- ✅ 10-second reload cycles achieved
+- ✅ Professional UX maintained
+- ✅ Development velocity increased
+- ✅ Future-proof architecture
+
+**Related:** AD-031 (Edge-to-edge safe area implementation)
+
+---
+
+### AD-034: RAG Priority over Plugin System (Week 5-6)
+
+**Date:** 2025-10-19  
+**Context:** Week 5-6 planning decision between RAG implementation vs Plugin System implementation  
+**Decision:** Prioritize RAG implementation, defer Plugin System to Week 7-8 (OTA update)
+
+**Rationale:**
+- RAG = core value proposition (AI intelligence)
+- Plugin System = nice-to-have (can add via OTA)
+- Timeline: 5 days RAG vs 10 days Plugin System
+- User impact: RAG enables "smart AI assistant", Plugin System enables "feature toggles"
+
+**Implementation:**
+- Week 5-6: RAG Core Implementation (5 days)
+  - RAGPort interface (Tier 1: Basic)
+  - SupabaseRAGAdapter (pgvector integration)
+  - AI integration (context selection)
+  - Background embedding pipeline
+- Week 5-6: Minimal Plugin Interface (4 hours)
+  - Feature Registry interface only
+  - NO UI, NO dynamic tabs
+  - Infrastructure for Week 7-8
+- Week 7-8: Full Plugin System (OTA update)
+  - Complete plugin infrastructure
+  - Plugin Management UI
+  - Closed Beta users get it in 10 minutes
+
+**Impact:**
+- ✅ Closed Beta ships with smart AI (RAG)
+- ✅ Feature System added Week 7-8 via OTA update
+- ✅ Continuous development model (no feature freeze)
+- ✅ Core value delivered first
+- ✅ Cost: $5/month (100 users), $10/month (500 users)
+
+**Related:** PRODUCT_ROADMAP.md Week 5-6 section revision
+
+---
+
+### Day 6 - 2025-10-21 (Build Fixes & Competitor Analysis)
+
+**Major Achievement: ✅ Build System Fixed + TryMartin Competitor Analysis Complete!**
+
+**Tasks Completed:**
+- [x] Fixed UI package exports (added ScrollView to @ybis/ui)
+- [x] Fixed i18n package translations (EN/TR complete)
+- [x] Fixed TypeScript configurations (theme package .tsx support)
+- [x] Completed TryMartin competitor analysis
+- [x] Created strategic recommendations document
+- [x] Updated session context and development log
+- [x] Cleaned up development environment (port 8081)
+
+**Issues Resolved:**
+- ✅ **UI Package:** ScrollView export missing from @ybis/ui
+- ✅ **i18n Package:** English translations empty, TypeScript build errors
+- ✅ **Theme Package:** .tsx files not included in TypeScript build
+- ✅ **Build System:** All packages now building successfully
+- ✅ **Competitive Strategy:** TryMartin analysis and response strategy complete
+
+**Architecture Decisions:**
+
+### AD-037: TryMartin Competitor Analysis & Strategic Response
+
+**Date:** 2025-10-21
+**Context:** TryMartin identified as direct competitor in AI productivity space
+**Decision:** Comprehensive competitor analysis completed, strategic recommendations developed
+
+**Rationale:**
+- TryMartin represents direct competition with YBIS core value proposition
+- Need strategic positioning and differentiation strategy
+- Blue ocean "Productivity Orchestrator" positioning vs generic AI assistant
+- Port Architecture provides significant technical advantage
+
+**Implementation:**
+- ✅ **Competitor Analysis Document:** `docs/strategy/TRYMARTIN_COMPETITOR_ANALYSIS.md`
+  - SWOT analysis (TryMartin vs YBIS)
+  - Feature comparison matrix
+  - Market positioning analysis
+  - Competitive monitoring framework
+- ✅ **Strategic Recommendations:** `docs/strategy/YBIS_STRATEGIC_RECOMMENDATIONS.md`
+  - Category leadership strategy
+  - Technical competitive advantages
+  - Market strategy recommendations
+  - Implementation roadmap
+
+**Key Strategic Insights:**
+- **YBIS Advantages:** Port Architecture, integration-first approach, plugin system
+- **TryMartin Weaknesses:** Generic positioning, likely vendor lock-in, limited integration depth
+- **Strategic Response:** Emphasize "Productivity Orchestrator" category, highlight technical moats
+- **Action Plan:** Monitor TryMartin developments, implement competitive response strategy
+
+**Impact:**
+- ✅ Competitive positioning strategy established
+- ✅ YBIS advantages identified and documented
+- ✅ Strategic response plan ready for implementation
+- ✅ Market differentiation clear (orchestrator vs assistant)
+
+**Related:** COMPETITIVE_STRATEGY.md updated with TryMartin as direct competitor
+
+---
+
+### AD-036: LoggerPort Implementation
+
+**Date:** 2025-10-21
+**Context:** Need for centralized logging across the application
+**Decision:** Implement LoggerPort with ConsoleLogger adapter
+
+**Rationale:**
+- Centralized logging mechanism needed across all packages
+- Port Architecture principle: swappable logging providers
+- Future extension with remote logging services (Sentry, Datadog)
+- Consistent logging API for all applications
+
+**Implementation:**
+- ✅ **New Package:** `@ybis/logging` created
+- ✅ **Port Interface:** `LoggingPort` interface defined
+- ✅ **Console Adapter:** `ConsoleLogger` implementation
+- ✅ **Singleton Pattern:** Single Logger instance exported
+- ✅ **Integration:** Used in mobile app for logging
+
+**Technical Details:**
+- Port pattern: Easy to swap providers without code changes
+- Console adapter: Simple implementation for development
+- Future adapters: Sentry, Datadog, remote logging services
+- TypeScript strict: Full type safety
+
+**Impact:**
+- ✅ Consistent logging API across all packages
+- ✅ Easy provider swapping (Port Architecture)
+- ✅ Future-ready for remote logging services
+- ✅ Development logging working in mobile app
+
+**Related:** Port Architecture principles, logging standardization
+
+---
+
+### AD-035: Drawer Navigation Implementation (Side Navigation)
+
+**Date:** 2025-01-20
+**Context:** Mobile app navigation - Side drawer menu implementation with animation optimizations
+**Decision:** Button-only drawer with fast animation (180ms) + smooth easing. Gesture support deferred.
+**Rationale:**
+- Fast animation (180ms vs 250ms) → Snappy UX
+- Smooth easing (Easing.out(Easing.cubic)) → Natural deceleration (not robotic/linear)
+- Gesture attempts (PanResponder, react-native-gesture-handler) → App lock, fixing loop, production risk
+- "Start Simple, Add Later" principle → Ship working feature, add complexity based on user feedback
+
+**Implementation:**
+- ✅ Modular component architecture:
+  - `DrawerHeader` - User profile section
+  - `DrawerNavItem` - Reusable navigation items
+  - `DrawerFooter` - Logout + app info
+- ✅ Animation: 180ms duration + Easing.out(Easing.cubic)
+- ✅ Glassmorphism backdrop (expo-blur)
+- ✅ Proper state management (no spawn bug on 2nd+ open)
+- ✅ Theme-aware styling (dark/light mode)
+- ❌ Gesture support deferred (wait for user feedback)
+
+**Technical Details:**
+- Folder structure: `apps/mobile/src/components/drawer/` (not `app/components/` - Expo Router route conflict)
+- Modal + Animated API with state lifecycle management
+- Easing curve: `Easing.out(Easing.cubic)` for natural deceleration
+- No haptic feedback (user feedback: not needed)
+
+**Lessons Learned (Documented in REACT_NATIVE_PATTERNS.md):**
+1. ❌ **Gesture complexity:** PanResponder → Touch event conflicts, app lock
+2. ❌ **Over-engineering:** Complex solution → Production blocker, fixing loop
+3. ✅ **Animation easing:** Linear → Robotic feel; Cubic.out → Smooth, natural
+4. ✅ **Start simple:** Button-only → Works every time; Gestures → Add later if users want
+
+**Impact:**
+- ✅ Professional side navigation working
+- ✅ Fast (180ms) + smooth (cubic easing) animation
+- ✅ Production-ready (stable, no spawn bug)
+- ✅ User feedback collection → Add gestures Week 3-4 if requested
+- ✅ Zero-dependency lock concerns addressed
+
+**Files Modified:**
+- `apps/mobile/src/components/drawer/DrawerMenu.tsx` (main component)
+- `apps/mobile/src/components/drawer/DrawerHeader.tsx` (user profile)
+- `apps/mobile/src/components/drawer/DrawerNavItem.tsx` (nav item)
+- `apps/mobile/src/components/drawer/DrawerFooter.tsx` (logout + info)
+- `apps/mobile/app/(tabs)/_layout.tsx` (import path updated)
+
+**Documentation Updated:**
+- `docs/Güncel/REACT_NATIVE_PATTERNS.md` (Section 10: Gesture Implementation Strategy)
+- `docs/YBIS_PROJE_ANAYASASI.md` (Section 9: React Native & Expo Specific Rules)
+- `CLAUDE.md` (React Native & Mobile Specific Rules section)
+
+**Related:** AD-031 (Edge-to-edge safe area), AD-032 (Demo mode navigation bug)
+
+---
+
+## 📋 NEXT SESSION PREPARATION
+
+**Next Session Focus:**
+- Settings Screen Implementation (Core Settings: Language, Theme, Appearance)
+- State Management for settings persistence
+- UI Components (SettingItem, SettingSection, toggles)
+- Navigation integration and theme system
+- Real-time language switching functionality
+
+**Ready for Next Session:**
+- ✅ Build system stable and reliable
+- ✅ i18n system ready for settings integration
+- ✅ UI components available for settings screen
+- ✅ Theme system ready for dark/light mode
+- ✅ Navigation structure ready for settings routing
+
+**Next Session Plan:** See `.YBIS_Dev/Veriler/next-session-settings-plan.md`

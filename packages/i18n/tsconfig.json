@@ -2,10 +2,11 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
+    "resolveJsonModule": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts", "src/**/*.json"],
   "exclude": ["node_modules", "dist"]
 }

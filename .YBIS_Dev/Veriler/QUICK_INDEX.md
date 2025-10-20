@@ -11,7 +11,7 @@
 
 ```yaml
 1. .YBIS_Dev/Veriler/memory/session-context.md
-   Ne: "Şu anda ne yapıyoruz?"
+   Ne: "Şu anda ne yapıyoruz?" (Demo mode fixed, Expo Go migration complete)
    İçerik: Active focus, last 3 AD, next 3 steps, blockers
    Satır: 100
    Oku: HER SESSION
@@ -22,11 +22,11 @@
    Satır: 81
    Oku: İlk session + ihtiyaç halinde
 
-3. docs/YBIS_PROJE_ANAYASASI.md (İLK 80 SATIR)
-   Ne: Port katalogu, zero-tolerance, forbidden
-   İçerik: AuthPort, DatabasePort, LLMPort... (8 port)
-   Satır: 154 (sadece ilk 80)
-   Oku: Port list için
+3. docs/YBIS_PROJE_ANAYASASI.md
+   Ne: Sections 1-8: Zero-tolerance + Port catalog
+   İçerik: Zero-tolerance rules, port criteria, 5 core ports (AuthPort, DatabasePort, LLMPort, StoragePort, DeploymentPort)
+   Satır: 172 total
+   Oku: Zero-tolerance + port catalog için
 
 4. .YBIS_Dev/Veriler/QUICK_INDEX.md
    Ne: Bu dosya! "Hangi dosyayı ne zaman?"
@@ -317,7 +317,11 @@
 Soru: "Ne yapayım?"
 │
 ├─ Session başlıyor mu?
-│  └─ YES → TIER 1 (4 dosya, <2K token)
+│  ├─ YES → TIER 1 (4 dosya, <2K token)
+│  └─ THEN → AI_SYSTEM_GUIDE.md (ilk 200 satır) ← NEW
+│
+├─ YBIS komutlarını bilmem gerekiyor mu?
+│  └─ YES → AI_SYSTEM_GUIDE.md (command catalog)
 │
 ├─ Kod yazacak mısın?
 │  └─ YES → TIER 2A (DEVELOPMENT_GUIDELINES + tech-stack)

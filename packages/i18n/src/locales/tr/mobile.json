@@ -1,0 +1,67 @@
+{
+  "onboarding": {
+    "prompt1_title": "Başlayalım!",
+    "prompt1_desc": "YBIS'e hoş geldiniz. Nasıl yardımcı olabilirim?",
+    "prompt2_title": "Demo Modu",
+    "prompt2_desc": "Tüm özellikleri test edin",
+    "prompt3_title": "Chat Başlat",
+    "prompt3_desc": "AI asistanı ile konuşun"
+  },
+  "prompts": {
+    "newNote_title": "Yeni not oluştur",
+    "newNote_desc": "Hızlıca bir not ekleyin",
+    "todayTasks_title": "Bugünkü görevler",
+    "todayTasks_desc": "Yapılacaklar listesini görüntüle",
+    "checkCalendar_title": "Takvimi kontrol et",
+    "checkCalendar_desc": "Bugünün etkinliklerini gör",
+    "createWorkflow_title": "Workflow oluştur",
+    "createWorkflow_desc": "Otomatik iş akışı kurun",
+    "createReport_title": "Rapor oluştur",
+    "createReport_desc": "Veri analizi yapın",
+    "setGoal_title": "Hedef belirle",
+    "setGoal_desc": "Yeni hedefler ekleyin"
+  },
+  "tabs": {
+    "notes": "Notes",
+    "tasks": "Tasks",
+    "calendar": "Calendar",
+    "flows": "Flows"
+  },
+  "widget": {
+    "notes_title": "Son Notlar",
+    "tasks_title": "Bugünkü Görevler",
+    "calendar_title": "Bugünün Etkinlikleri",
+    "flows_title": "Aktif Workflow'lar",
+    "dashboard_title": "Dashboard",
+    "item_count": "{{count}} öğe",
+    "more_items": "+{{count}} daha..."
+  },
+  "input": {
+    "placeholder": "Mesaj yazın..."
+  },
+  "quickActions": {
+    "addTask": "Task Ekle",
+    "addEvent": "Etkinlik Ekle",
+    "addNote": "Not Ekle",
+    "startFlow": "Flow Başlat",
+    "newChat": "🆕 Yeni Chat",
+    "clearAll": "🗑️ Tümünü Temizle"
+  },
+  "mockResponses": {
+    "greeting": "Merhaba! YBIS Demo Modu'na hoş geldiniz! 🚀\n\nSize şu konularda yardımcı olabilirim:\n• 📝 Not oluşturma\n• ✅ Görev yönetimi\n• 📅 Takvim planlama\n• 🔄 Workflow oluşturma\n\nNe yapmak istersiniz?",
+    "demoInfo": "Demo Modu aktif! 🎯\n\nŞu özellikleri test edebilirsiniz:\n• Chat interface (şu an kullandığınız)\n• Tab navigation (Notes, Tasks, Calendar, Flows)\n• Widget area (üstteki mini özet)\n• Quick actions (+ butonu)\n\nHangi özelliği denemek istersiniz?",
+    "createNote": "📝 Not Oluşturma\n\nDemo modunda not oluşturma özelliği simüle ediliyor:\n\n✅ Not başlığı: \"{{userText}}\"\n✅ İçerik: Demo içerik\n✅ Tarih: {{date}}\n\nGerçek uygulamada bu not veritabanına kaydedilecek.",
+    "createTask": "✅ Görev Yönetimi\n\nDemo modunda görev oluşturma:\n\n📋 Görev: \"{{userText}}\"\n⏰ Tarih: {{date}}\n🎯 Öncelik: Orta\n📊 Durum: Beklemede\n\nGörev başarıyla oluşturuldu! (Demo)",
+    "createEvent": "📅 Takvim Yönetimi\n\nDemo modunda etkinlik oluşturma:\n\n📅 Etkinlik: \"{{userText}}\"\n🕐 Saat: {{time}}\n📆 Tarih: {{date}}\n📍 Konum: Demo Konum\n\nEtkinlik takvime eklendi! (Demo)",
+    "createWorkflow": "🔄 Workflow Oluşturma\n\nDemo modunda workflow:\n\n🔧 Workflow: \"{{userText}}\"\n⚡ Tetikleyici: Manuel\n🎯 Hedef: Otomatik işlem\n📊 Durum: Aktif\n\nWorkflow başarıyla oluşturuldu! (Demo)",
+    "help": "🆘 YBIS Demo Yardım\n\n📱 **Ana Özellikler:**\n• Tab navigation (Notes, Tasks, Calendar, Flows)\n• Widget area (üstteki özet)\n• Chat interface (şu an kullandığınız)\n• Quick actions (+ butonu)\n\n🎯 **Demo Komutları:**\n• \"not oluştur\" - Not simülasyonu\n• \"görev ekle\" - Task simülasyonu\n• \"etkinlik planla\" - Calendar simülasyonu\n• \"workflow başlat\" - Flow simülasyonu\n\n💡 **İpucu:** Tab'ları değiştirerek farklı widget'ları görebilirsiniz!",
+    "status": "🤖 AI Asistan Durumu\n\n✅ **Sistem:** Çevrimiçi\n✅ **Demo Modu:** Aktif\n✅ **Özellikler:** Tümü simüle ediliyor\n✅ **Performans:** Optimal\n\nSize nasıl yardımcı olabilirim?",
+    "thanks": "Rica ederim! 😊\n\nYBIS Demo Modu'nda daha fazla özellik keşfetmek ister misiniz?\n\n💡 **Öneriler:**\n• Tab'ları değiştirin\n• + butonuna basın\n• Farklı komutlar deneyin\n\nBaşka nasıl yardımcı olabilirim?",
+    "goodbye": "Görüşürüz! 👋\n\nYBIS Demo Modu'nu beğendiyseniz, gerçek uygulamayı da deneyebilirsiniz!\n\n🚀 **Sonraki Adımlar:**\n• Gerçek veri bağlantısı\n• Gelişmiş AI özellikleri\n• Mobil optimizasyon\n\nİyi günler!",
+    "context_note": "📝 Not Modu\n\n\"{{userText}}\" konusunda bir not oluşturmak ister misiniz?\n\nDemo modunda bu not simüle edilecek ve gerçek uygulamada veritabanına kaydedilecek.",
+    "context_task": "✅ Görev Modu\n\n\"{{userText}}\" için bir görev oluşturmak ister misiniz?\n\nDemo modunda bu görev simüle edilecek ve gerçek uygulamada task listesine eklenecek.",
+    "context_calendar": "📅 Takvim Modu\n\n\"{{userText}}\" için bir etkinlik planlamak ister misiniz?\n\nDemo modunda bu etkinlik simüle edilecek ve gerçek uygulamada takvime eklenecek.",
+    "context_workflow": "🔄 Workflow Modu\n\n\"{{userText}}\" için bir workflow oluşturmak ister misiniz?\n\nDemo modunda bu workflow simüle edilecek ve gerçek uygulamada otomatik işlem olarak çalışacak.",
+    "context_default": "Anlıyorum. \"{{userText}}\" konusunda size nasıl yardımcı olabilirim?"
+  }
+}

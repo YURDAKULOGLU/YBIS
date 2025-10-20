@@ -8,6 +8,8 @@ import { TamaguiProvider } from 'tamagui';
 import { Theme, useThemeStore } from '@ybis/theme';
 import config from '../tamagui.config';
 import { useMockAuth } from '../src/stores/useMockAuth';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '@ybis/i18n';
 
 /**
  * Root Layout Component
@@ -88,11 +90,12 @@ export default function RootLayout(): React.ReactElement {
   }, [isAuthenticated, isLoading, segments, router]);
 
   return (
-    <SafeAreaProvider>
+    <I18nextProvider i18n={i18n}>
+      <SafeAreaProvider>
       <TamaguiProvider config={config} defaultTheme={currentTheme}>
         <Theme>
-          <StatusBar 
-            style={currentTheme === 'dark' ? 'light' : 'dark'} 
+          <StatusBar
+            style={currentTheme === 'dark' ? 'light' : 'dark'}
             translucent
             backgroundColor="transparent"
           />
@@ -100,5 +103,6 @@ export default function RootLayout(): React.ReactElement {
         </Theme>
       </TamaguiProvider>
     </SafeAreaProvider>
+  </I18nextProvider>
   );
 }

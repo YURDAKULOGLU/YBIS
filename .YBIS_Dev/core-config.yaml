@@ -14,9 +14,7 @@ architecture:
   architectureShardedLocation: docs/architecture
 customTechnicalDocuments: null
 devLoadAlwaysFiles:
-  - docs/Güncel/DEVELOPMENT_GUIDELINES.md
-  - docs/Güncel/tech-stack.md
-  - docs/Güncel/package-structure.md
+
 devDebugLog: .ai/debug-log.md
 devStoryLocation: docs/stories
 slashPrefix: BMad

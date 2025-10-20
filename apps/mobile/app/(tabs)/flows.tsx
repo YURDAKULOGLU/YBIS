@@ -1,5 +1,5 @@
 import React from 'react';
-import { YStack, H2, Text } from 'tamagui';
+import { YStack, H2, Text } from '@ybis/ui';
 
 /**
  * Flows Screen - Blank placeholder

@@ -41,7 +41,9 @@
       "Bash(node:*)",
       "Bash(jq:*)",
       "Bash(pnpm -r --filter \"./packages/**\" build)",
-      "Bash(pnpm store prune:*)"
+      "Bash(pnpm store prune:*)",
+      "Bash(npx expo install expo-blur expo-image)",
+      "Bash(pnpm add @react-native-async-storage/async-storage)"
     ],
     "deny": [],
     "ask": []

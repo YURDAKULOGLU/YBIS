@@ -3,8 +3,8 @@ import { Tabs, useRouter } from 'expo-router';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Menu, Bell, User } from '@tamagui/lucide-icons';
-import { useTheme } from 'tamagui';
-import { DrawerMenu } from '../components/DrawerMenu';
+import { useTheme } from '@ybis/ui';
+import { DrawerMenu } from '../../src/components/drawer/DrawerMenu';
 
 /**
  * Main Navigation Layout

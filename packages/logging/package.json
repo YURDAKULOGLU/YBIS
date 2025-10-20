@@ -1,0 +1,20 @@
+{
+  "name": "@ybis/logging",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@ybis/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.4"
+  }
+}

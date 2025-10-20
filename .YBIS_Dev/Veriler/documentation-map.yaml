@@ -5,8 +5,8 @@
 # Purpose: Track all documentation dependencies, references, and update cascades
 
 version: "2.0"
-last_updated: "2025-10-12"
-total_documents: 26
+last_updated: "2025-10-17"
+total_documents: 33
 
 # ==============================================================================
 # TIER -1: STRATEGIC LAYER (Product & Business Vision)
@@ -282,9 +282,9 @@ tier_0_canonical:
   
   DEVELOPMENT_LOG:
     path: "docs/Güncel/DEVELOPMENT_LOG.md"
-    version: "AD-020"
+    version: "AD-032"
     status: "ACTIVE"
-    last_updated: "2025-10-12"
+    last_updated: "2025-10-16"
     tier: 0
     authority: "CANONICAL - Decision Registry"
     purpose: "Decision registry - Architecture Decisions (AD-XXX), timeline, issues"
@@ -304,6 +304,8 @@ tier_0_canonical:
           - AD_018: "Web Dashboard (Open Beta)"
           - AD_019: "Navigation Design (Widget-based)"
           - AD_020: "MCP Integration Timeline"
+          - AD_031: "Mobile App Edge-to-Edge Safe Area & Keyboard-Aware Animations"
+          - AD_032: "Demo Mode Navigation Bug Resolution"
       - completed_tasks_log
       - issues_and_fixes
       - daily_progress
@@ -1139,11 +1141,74 @@ tier_4_meta:
       - check_all_docs_listed: "No orphan documents"
       - verify_tier_assignments: "Match DOCUMENTATION_TAXONOMY"
   
+  AI_PIPELINE_REVIEW_2025_10_16:
+    path: ".YBIS_Dev/Veriler/docs/ai-pipeline-review-2025-10-16.md"
+    version: "1.0"
+    status: "ACTIVE"
+    last_updated: "2025-10-16"
+    tier: 4
+    authority: "META"
+    purpose: "Findings and remediation plan for AI onboarding pipeline awareness gaps"
+    audience: ["AI System Maintainers", "AI Agents"]
+    scope: "Meta - Pipeline audit report"
+    length: "Short (~70 lines)"
+    update_frequency: "On subsequent pipeline reviews"
+    
+    derived_from:
+      - AI_BASLANGIC_REHBERI_V2: ["tier_flow"]
+      - QUICK_INDEX: ["document_routing"]
+      - AGENTS: ["agent_guidelines"]
+      - AI_SYSTEM_GUIDE: ["command_catalog"]
+    
+    informs:
+      - QUICK_INDEX: ["follow_up_actions"]
+      - AI_BASLANGIC_REHBERI_V2: ["next_steps_section"]
+      - core_config: ["loading_policy_alignment"]
+    
+    update_triggers:
+      - pipeline_change: "Re-run review and refresh recommendations"
+      - new_agent_instruction: "Validate consistency across personas"
+    
+    validation:
+      - ensure_actions_tracked: "Open recommendations assigned or scheduled"
+      - confirm_doc_links: "References to upstream docs remain valid"
+  
+  ONBOARDING_PIPELINE_ACTION_STEPS:
+    path: ".YBIS_Dev/Veriler/docs/onboarding-pipeline-action-steps.md"
+    version: "1.0"
+    status: "ACTIVE"
+    last_updated: "2025-10-17"
+    tier: 4
+    authority: "META"
+    purpose: "Actionable remediation backlog derived from the 2025-10-16 onboarding audits"
+    audience: ["AI System Maintainers", "Implementation Agents"]
+    scope: "Meta - Task tracker"
+    length: "Short (~50 lines)"
+    update_frequency: "Whenever an action is completed or reprioritised"
+    
+    derived_from:
+      - AI_PIPELINE_REVIEW_2025_10_16: ["recommendations"]
+      - ybis_pipeline_kusurlari_raporu: ["critical_actions"]
+      - YBIS_Dev_Surec_Analiz_Raporu: ["process_gaps"]
+    
+    informs:
+      - session_todos: ["meta_task_sync"]
+      - documentation_map: ["document_registration"]
+      - AI_BASLANGIC_REHBERI_V2: ["future_revisions"]
+    
+    update_triggers:
+      - action_completed: "Mark checkbox complete, add completion date"
+      - new_audit_report: "Cross-check and append new items"
+    
+    validation:
+      - ensure_checkboxes_synced: "Reflect current completion status"
+      - confirm_dual_write: "Decisions mirrored in session-context + DEVELOPMENT_LOG"
+  
   SESSION_CONTEXT_V2:
     path: ".YBIS_Dev/Veriler/memory/session-context.md"
-    version: "2.0"
+    version: "2.1"
     status: "ACTIVE"
-    last_updated: "2025-10-12"
+    last_updated: "2025-10-16"
     tier: 4
     authority: "HYBRID"
     purpose: "Active session state (max 100 lines, <500 tokens)"
@@ -1245,6 +1310,76 @@ tier_4_meta:
       - verify_paths_exist: "All paths valid"
       - check_circular_dependencies: "No dependency loops"
 
+  MASTER_PIPELINE_FIXES:
+    path: ".YBIS_Dev/Veriler/docs/MASTER_PIPELINE_FIXES.md"
+    version: "2.0"
+    status: "ACTIVE"
+    last_updated: "2025-01-16"
+    tier: 4
+    authority: "META"
+    purpose: "Consolidated action plan for YBIS pipeline fixes"
+    audience: ["Development Team", "AI Agents"]
+    scope: "Meta - Pipeline improvement plan"
+    length: "Long (~800 lines)"
+    update_frequency: "On action completion"
+    
+    owns:
+      - pipeline_fix_actions
+      - priority_matrix
+      - success_criteria
+      - execution_tracking
+    
+    derived_from:
+      - ybis_pipeline_kusurlari_raporu: ["critical_issues"]
+      - ai_pipeline_review_2025_10_16: ["gap_analysis"]
+      - YBIS_Dev_Surec_Analiz_Raporu: ["process_defects"]
+    
+    informs:
+      - PIPELINE_FIXES_PROGRESS: ["tracking"]
+      - session_context: ["current_fixes"]
+    
+    update_triggers:
+      - action_completed: "Update progress tracking"
+      - new_issue_found: "Add to action plan"
+    
+    validation:
+      - check_action_completion: "All P0 actions tracked"
+      - verify_success_criteria: "Metrics align with goals"
+
+  PIPELINE_FIXES_PROGRESS:
+    path: ".YBIS_Dev/Veriler/docs/PIPELINE_FIXES_PROGRESS.md"
+    version: "1.0"
+    status: "ACTIVE"
+    last_updated: "2025-01-16"
+    tier: 4
+    authority: "META"
+    purpose: "Progress tracking for pipeline fixes implementation"
+    audience: ["Development Team", "AI Agents"]
+    scope: "Meta - Progress tracking"
+    length: "Medium (~200 lines)"
+    update_frequency: "Daily during implementation"
+    
+    owns:
+      - progress_tracking
+      - success_metrics
+      - issue_detection
+      - next_session_prep
+    
+    derived_from:
+      - MASTER_PIPELINE_FIXES: ["action_plan"]
+    
+    informs:
+      - session_context: ["current_progress"]
+      - DEVELOPMENT_LOG: ["fix_completion"]
+    
+    update_triggers:
+      - action_completed: "Update progress"
+      - script_run: "Update detected issues"
+    
+    validation:
+      - check_progress_accuracy: "Match actual completion"
+      - verify_metrics: "Success criteria alignment"
+
 # ==============================================================================
 # DUAL-WRITE RULE REGISTRATION
 # ==============================================================================
@@ -1287,7 +1422,7 @@ dual_write_rule:
 # ==============================================================================
 
 statistics:
-  total_documents: 32  # 31 → 32 (ESLINT_CONFIG package added)
+  total_documents: 36  # Updated with new pipeline fix documents
   
   by_tier:
     tier_minus_1: 4  # Strategic (Vision, Roadmap, Market, Competitive)
@@ -1295,10 +1430,10 @@ statistics:
     tier_1: 5        # Reference (tech-stack, package-structure, Architecture, PRD, README)
     tier_2: 6        # Execution (tasks, stories, epics, DEVELOPMENT_GUIDELINES, QA gates, CHAT_KARARLASTIRMA)
     tier_3: 7        # Support (INTEGRATION_ROADMAP, service-integration, quality-standards, TESTING_STRATEGY, expo-migration, ESLINT_CONFIG)
-    tier_4: 8        # Meta (DOCUMENTATION_INDEX, QUICKSTART, AI_Asistan, AI_BASLANGIC_V2, QUICK_INDEX, session-context, DOCUMENTATION_TAXONOMY, DOCUMENTATION_MAP)
+    tier_4: 11       # Meta (DOCUMENTATION_INDEX, QUICKSTART, AI_Asistan, AI_BASLANGIC_V2, QUICK_INDEX, session-context, DOCUMENTATION_TAXONOMY, DOCUMENTATION_MAP, MASTER_PIPELINE_FIXES, PIPELINE_FIXES_PROGRESS, onboarding action plan)
   
   by_status:
-    active: 32  # 31 → 32 (ESLINT_CONFIG package added)
+    active: 36  # Updated with new pipeline fix documents
     archived: 1  # AI_BASLANGIC_REHBERI.md v1.0 → .YBIS_Dev/Archive/
   
   by_authority:
@@ -1307,10 +1442,10 @@ statistics:
     hybrid: 11  # +1 session-context
     auto_generated: 1
     specialized: 4
-    meta: 4  # V2 only (v1.0 archived)
+    meta: 7  # Meta docs including MASTER_PIPELINE_FIXES and PIPELINE_FIXES_PROGRESS
   
   update_status:
-    up_to_date: 32  # 31 → 32 (ESLINT_CONFIG package added)
+    up_to_date: 36  # Updated with new pipeline fix documents
     needs_minor_update: 0
     needs_major_update: 0
     archived: 1  # v1.0 AI_BASLANGIC_REHBERI → .YBIS_Dev/Archive/

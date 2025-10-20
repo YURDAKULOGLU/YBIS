@@ -1,96 +1,323 @@
-> **⚠️ ZORUNLU BAŞLANGIÇ PROSEDÜRÜ v2.0 (TOKEN-OPTIMIZED)**
->
-> Bu dosyaya özgü talimatlara geçmeden önce, projedeki tüm AI asistanları için geçerli olan **token-optimized** merkezi başlangıç rehberini izlemen zorunludur.
->
-> 1.  **Merkezi Rehberi Oku (v2.0):** Aşağıdaki dosyayı aç ve içindeki **3-Tier Lazy Loading** sistemini uygula. Bu rehber sadece **4 dosya (<5K token)** okumayı gerektirir.
->     - **Okunacak Dosya: [./.YBIS_Dev/AI_BASLANGIC_REHBERI_V2.md](./.YBIS_Dev/AI_BASLANGIC_REHBERI_V2.md)** ⚡ (v2.0 - Token Optimized!)
->     - ❌ **DEPRECATED:** AI_BASLANGIC_REHBERI.md (v1.0) - ARTIK KULLANMA!
->
-> 2.  **TIER 1 Oku (Zorunlu - 4 dosya):** Rehberin belirttiği TIER 1 dosyalarını oku:
->     - AI_GENEL_ANAYASA.md (behavior rules)
->     - YBIS_PROJE_ANAYASASI.md (ilk 80 satır - port catalog)
->     - session-context.md (current state)
->     - QUICK_INDEX.md (file navigation)
->
-> 3.  **TIER 2/3 Lazy Load:** Diğer dosyaları SADECE gerektiğinde oku (QUICK_INDEX.md'ye bak).
->
-> 4.  **Görevine Devam Et:** TIER 1 tamamlandıktan sonra, bu dosyadaki agent-specific talimatları uygula.
->
-> **Token Tasarrufu:** 20-30K → 3-5K (80-85% savings!) 🎉
+# 🚀 AI Başlangıç Prosedürü v2.0 (Token-Optimized)
+
+**Version:** 2.0  
+**Last Updated:** 2025-10-12  
+**Purpose:** Hızlı context loading - Minimum token, maksimum bilgi  
+**Target:** <5K token başlangıç (eski: 20-30K)
 
 ---
 
-# Repository Guidelines
+## 📊 YENİ SİSTEM: LAZY LOADING STRATEJİSİ
 
-**Start Here (v2.0):** Read `.YBIS_Dev/AI_BASLANGIC_REHBERI_V2.md` (NOT v1.0!) for the **token-optimized 3-Tier lazy loading system**. It reduces startup from 20-30K tokens to 3-5K tokens (80-85% savings!).
+### Token Karşılaştırma
+```yaml
+# ESKI SİSTEM (v1.0)
+Zorunlu okuma: 7 dosya
+- AI_GENEL_ANAYASA.md: 81 satır
+- YBIS_PROJE_ANAYASASI.md: 154 satır
+- DEVELOPMENT_GUIDELINES.md: 798 satır
+- QUICKSTART.md: 415 satır
+- tech-stack.md: 399 satır
+- DEVELOPMENT_LOG.md: 2088 satır
+- package-structure.md: 300+ satır
+TOPLAM: ~4500 satır = 20-30K token 😱
 
-## Purpose
-- Single source for AI agents and collaborators working inside `C:\Projeler\YBIS`
-- Token-optimized onboarding (TIER 1: 4 files only)
-- Lazy loading strategy (TIER 2/3: just-in-time reads)
-- Extends `.YBIS_Dev/core-config.yaml` for planning artifacts
+# YENİ SİSTEM (v2.0)
+Zorunlu okuma: 4 dosya (optimize edilmiş)
+- AI_GENEL_ANAYASA.md: 81 satır
+- YBIS_PROJE_ANAYASASI.md: 150 satır (sadece özet)
+- session-context.md: 100 satır
+- QUICK_INDEX.md: 50 satır
+TOPLAM: ~400 satır = 3-5K token ✅
+TASARRUF: %80-85% 🎉
+```
 
-## Required Context Before Work (NEW v2.0)
+---
 
-### ⚡ TIER 1 - ZORUNLU (Her Session - 4 dosya, <5K token)
-1. Read `.YBIS_Dev/AI_GENEL_ANAYASA.md` - Behavior rules, ethics
-2. Read `docs/YBIS_PROJE_ANAYASASI.md` (first 80 lines only!) - Port catalog, zero-tolerance
-3. Read `.YBIS_Dev/Veriler/memory/session-context.md` - Current state (Week X, Task Y, last 3 AD, next steps)
-4. Read `.YBIS_Dev/Veriler/QUICK_INDEX.md` - "Hangi dosya ne zaman?" decision tree
+## 🎯 3-TIER LAZY LOADING SİSTEMİ
 
-### 🔄 TIER 2 - İHTİYAÇ HALİNDE (Just-in-Time, lazy load)
-- `docs/Güncel/DEVELOPMENT_GUIDELINES.md` - Only when coding (zero-tolerance rules)
-- `docs/Güncel/tech-stack.md` - Only when installing dependencies
-- `docs/Güncel/package-structure.md` - Only when creating packages
-- `docs/Güncel/DEVELOPMENT_LOG.md` - Only search specific AD-XXX (don't read all 2000+ lines!)
+### **TIER 1: ZORUNLU START (Her Session - 5 dk)**
 
-### 🎯 TIER 3 - KOMUT TEKLİ (Command-triggered)
-- `docs/Güncel/tasks.md` - Only on `/YBIS:implement` command
-- `docs/stories/*.md` - Only on `/YBIS:review-story` command
-- Strategic docs (vision, roadmap) - Only for planning sessions
+```yaml
+Okuma Sırası (sırayla):
+  1. .YBIS_Dev/AI_GENEL_ANAYASA.md
+     Amaç: Davranış kuralları, etik, sınırlar
+     Satır: 81
+     Token: ~400
 
-**Rule:** Follow QUICK_INDEX.md for "when to read which file" decisions.
+  2. docs/YBIS_PROJE_ANAYASASI.md
+     Amaç: Sections 1-8: Zero-tolerance + Port catalog (5 ports)
+     Satır: 172 total
+     Token: ~900
 
-## Workflow Quick Start
-- Run `/session-start` (or reproduce its steps manually) at the start of every session so you load context, confirm tooling, and restate priorities
-- Planning artifacts live at `docs/prd`, `docs/architecture`, and `docs/qa` (per `.YBIS_Dev/core-config.yaml`); story shards are under `docs/stories`
-- Slash commands use the `BMad` prefix; implementations map to `.YBIS_Dev/Veriler/Commands/*.md` and should be executed exactly when invoked
-- Use numbered options when presenting choices to maintain compatibility with downstream agents
-- Halt and clarify whenever the current story is still in draft, validation fails three times, or required dependencies are missing
+  3. .YBIS_Dev/Veriler/memory/session-context.md
+     Amaç: "ŞU ANDA NE YAPIYORUZ?"
+     Satır: 100
+     Token: ~500
+     İçerik:
+       - Active focus (Week X, Task Y)
+       - Last 3 decisions (AD-XXX)
+       - Next steps (top 3)
+       - Blockers
 
-## Architecture & Code Standards
-- Follow the port-by-port architecture from the constitution: **only external vendor dependencies** are ported (e.g., `AuthPort`, `DatabasePort`, `LLMPort`, `StoragePort`, `DeploymentPort`). Internal/stable libraries (theme, i18n, navigation) are NOT ported to avoid overengineering.
-- Only import UI primitives through `@ybis/ui`; never import directly from `tamagui`
-- Honor TypeScript strict mode and eslint rules; add explicit return types, null checks, and consistent type imports
-- Run linting and the relevant test suites before declaring a story "Ready for Review"
-- Document any new or modified files in the story's file list and update `docs/Güncel/DEVELOPMENT_LOG.md` with meaningful change notes
+  4. .YBIS_Dev/Veriler/QUICK_INDEX.md
+     Amaç: "Hangi dosyayı ne zaman okuyacağım?"
+     Satır: 50
+     Token: ~250
 
-## Monorepo & Package Rules
-- Keep npm workspaces as the source of truth; add NX only when the documented triggers are met
-- Every package must ship with `tsconfig.json` (`composite: true`), `src/index.ts`, and proper `package.json` exports
-- Build package references (`npx tsc --build ./packages/*`) before type-checking dependent apps
-- Never use `skipLibCheck`, disable strict mode, or introduce `any`; prefer proper types or `unknown` with guards
-- Treat Expo as managed by default; only run `expo prebuild` when native code requirements are confirmed
+TOPLAM TIER 1: ~1550 token (hedef: <2K)
+SÜRESİ: 3-5 dakika
+SONUÇ: Agent görevine başlayabilir!
 
-## Logging, Documentation, and Quality Gates
-- Update the relevant `docs/stories/*.md` sections (checkboxes, Dev Agent Record) exactly as defined in the story template
-- After finishing a story, run the story Definition of Done checklist (`.YBIS_Dev/Veriler/checklists/story-dod-checklist.md`) and record the result
-- Record significant decisions or deviations in `.specify/memory/session-context.md` so future sessions inherit context
-- Keep architecture changes synchronized across PRD, architecture shards, and QA artifacts; escalate mismatches immediately
+**ÖNEMLİ NOT:** TIER 1 tamamlandıktan sonra, YBIS sistem komutları ve iş akışları hakkında bilgi edinmek için `.YBIS_Dev/AI_SYSTEM_GUIDE.md` dosyasını okuyun.
 
-## Instruction Precedence & Known Gaps
-- Instruction priority: `docs/YBIS_PROJE_ANAYASASI.md` > `docs/Güncel/DEVELOPMENT_GUIDELINES.md` > story file directives > command/task instructions > this guide
-- When any referenced file is missing or outdated, pause and request direction instead of guessing
+---
 
-## Documentation Hierarchy (5-Tier System)
-**Tier -1 (Strategic):** Vision → Roadmap → Market Research → Competitive Strategy  
-**Tier 0 (Canonical):** YBIS_PROJE_ANAYASASI.md → DEVELOPMENT_LOG.md (AD-XXX)  
-**Tier 1 (Reference):** PRD → tech-stack.md → package-structure.md → Architecture  
-**Tier 2 (Execution):** tasks.md → stories/*.md  
-**Tier 4 (Meta):** documentation-taxonomy.md → documentation-map.yaml
+## 🚀 NEXT STEPS AFTER TIER 1 (Command & Workflow Awareness)
 
-See `.YBIS_Dev/Veriler/documentation-taxonomy.md` for complete documentation architecture.
+Once TIER 1 is complete, agents should gain awareness of the YBIS system:
 
-## When Uncertain
-- Stop work and ask for clarification if requirements conflict, specifications are missing, or quality standards cannot be upheld
-- Prefer explicit confirmation from the user before performing destructive actions, enabling new adapters, or altering shared configuration
+### For All Agents (Optional but Recommended)
+```yaml
+5. .YBIS_Dev/AI_SYSTEM_GUIDE.md (first 200 lines)
+  Ne: Command catalog, workflow routing, agent coordination
+  Ne Zaman: After TIER 1, before first user interaction
+  İçerik:
+    - Available slash commands (/YBIS:*)
+    - Workflow routing (when to use which command)
+    - Agent coordination patterns
+    - System architecture overview
+  Satır: 200 (just overview section)
+  Token: ~1K
+```
+
+### Why Load This?
+- **Proactive Assistance:** Agents can suggest relevant workflows to users
+- **Command Awareness:** Know which commands exist and when to use them
+- **Routing Intelligence:** Direct users to optimal workflows
+- **System Integration:** Understand how pieces fit together
+
+### When to Skip
+Skip if user immediately provides a specific task (e.g., "fix bug X").
+In this case, proceed directly with the task and lazy-load as needed.
+```
+
+---
+
+### **TIER 2: İHTİYAÇ HALİNDE (Just-in-Time Load)**
+
+**⚠️ Sadece gerektiğinde oku! Token tasarrufu!**
+
+```yaml
+# CODING BAŞLARKEN
+IF task.type == "implementation":
+  READ: docs/Güncel/DEVELOPMENT_GUIDELINES.md
+  Amaç: Zero-tolerance rules, forbidden patterns
+  Satır: 798
+  Token: ~4K
+
+IF task.type == "dependency_install":
+  READ: docs/Güncel/tech-stack.md
+  Amaç: Locked versions, constraints
+  Satır: 399
+  Token: ~2K
+
+IF task.type == "package_creation":
+  READ: docs/Güncel/package-structure.md
+  Amaç: Monorepo rules, exports
+  Satır: 300+
+  Token: ~1.5K
+
+# ARAŞTIRMA YAPARKEN
+IF need.history == "architecture_decision":
+  SEARCH: docs/Güncel/DEVELOPMENT_LOG.md for "AD-XXX"
+  Method: grep veya codebase_search
+  Sadece ilgili AD-XXX'i oku (20-30 satır)
+
+IF need.context == "project_setup":
+  READ: docs/QUICKSTART.md
+  Amaç: Environment, commands
+  Satır: 415
+  Token: ~2K
+
+# PLANLAMA İÇİN
+IF task.type == "planning" OR "strategy":
+  READ: docs/vision/PROJECT_VISION.md
+  READ: docs/roadmap/PRODUCT_ROADMAP.md
+  Token: ~3K toplam
+```
+
+---
+
+### **TIER 3: KOMUT TEKLİ (Command-Triggered Load)**
+
+**⚠️ Slash komut geldiğinde o dosyayı oku!**
+
+```yaml
+# Slash Komut → Dosya Mapping
+/YBIS:implement:
+  READ: docs/Güncel/tasks.md (only relevant task)
+  READ: docs/stories/1.X.story-name.md (if story ref)
+
+/YBIS:review-story:
+  READ: docs/stories/*.md (specified story only)
+  READ: .YBIS_Dev/Veriler/checklists/story-dod-checklist.md
+
+/YBIS:deep-review:
+  READ: docs/Güncel/Architecture_better.md
+  READ: docs/prd/PRODUCT_REQUIREMENTS.md
+
+/YBIS:session-start:
+  Already loaded in TIER 1! ✅
+  Just confirm environment
+
+/YBIS:ad-create:
+  READ: docs/Güncel/DEVELOPMENT_LOG.md (last AD number)
+  UPDATE: DEVELOPMENT_LOG.md + session-context.md
+
+/YBIS:quality-check:
+  READ: docs/Güncel/quality-standards.md
+  RUN: linting, type-check
+```
+
+---
+
+## 🔄 DUAL-WRITE RULE (MANDATORY)
+
+### Session Context ↔ Development Log Sync
+
+**⚠️ HER session-context.md UPDATE'İNDE:**
+
+```yaml
+Step 1: Update session-context.md
+  - Active focus
+  - Recent decisions (AD-XXX)
+  - Next steps
+  - Max 100 lines!
+
+Step 2: Simultaneously update DEVELOPMENT_LOG.md
+  - Add Day X entry
+  - Tasks completed
+  - Architecture Decision (if AD-XXX created)
+  - Issues/blockers
+
+Step 3: Verify sync
+  - AD-XXX numbers match
+  - Dates match
+  - No duplicate info (context = summary, log = detail)
+```
+
+**Format Örnek:**
+
+```markdown
+# session-context.md (100 lines)
+## Recent Decisions (Last 3)
+### AD-021: Navigation Widget Design Finalized
+- Date: 2025-10-13
+- Decision: Minimalist cards with tap-to-detail
+- Details: See DEVELOPMENT_LOG.md#AD-021
+
+---
+
+# DEVELOPMENT_LOG.md (simultaneously)
+### Day 6 - 2025-10-13
+
+**Tasks Completed:**
+- [x] T025: Widget component implementation
+- [x] T026: Navigation logic
+
+**Architecture Decisions:**
+### AD-021: Navigation Widget Design Finalized
+- **Date:** 2025-10-13
+- **Context:** Main screen needs minimal yet functional widgets
+- **Decision:** 
+  - Card-based design with priority/time/progress indicators
+  - Tap on widget → Task detail screen
+  - Swipe actions for quick updates
+- **Rationale:** Balances minimalism with functionality
+- **Impact:** Mobile UX, Widget component API
+- **Related:** AD-019 (widget-based navigation strategy)
+```
+
+---
+
+
+## ✅ BAŞLANGIÇ CHECKLİST (5 Dakika)
+
+```yaml
+[ ] 1. TIER 1 oku (4 dosya, <2K token)
+    [ ] AI_GENEL_ANAYASA.md
+    [ ] YBIS_PROJE_ANAYASASI.md (ilk 90 satır - sections 1-8)
+    [ ] session-context.md
+    [ ] QUICK_INDEX.md
+
+[ ] 2. SESSION STATE'i onayla
+    [ ] Active focus nedir?
+    [ ] Last 3 decision (AD-XXX)
+    [ ] Next steps (top 3)
+    [ ] Blocker var mı?
+
+[ ] 3. ROLE'ü anla (QUICK_INDEX.md'den)
+    [ ] Ben hangi agent'ım? (Claude/Gemini/Cursor/Copilot)
+    [ ] Best-fit task'ım ne?
+    [ ] Hangi komutları kullanabilirim?
+
+[ ] 4. Proaktif Sağlık Kontrolü
+    [ ] session-context.md'de belirtilen anayasa ihlallerini veya blocker'ları gözden geçir.
+    [ ] Tespit edilen sorunları kullanıcıya raporla ve çözüm için bir sonraki adımı öner.
+
+[ ] 5. READY!
+    [ ] User'dan talimat bekle
+    [ ] Gerekli dosyaları TIER 2/3'ten lazy load et
+    [ ] DUAL-WRITE kuralını uygula
+```
+
+---
+
+## 🚨 YASAKLAR (Token İsrafı)
+
+```yaml
+❌ ASLA HEPSİNİ OKUMA:
+  - DEVELOPMENT_LOG.md'nin tamamını okuma (2088 satır!)
+  - Sadece ilgili AD-XXX'i grep/search et
+
+❌ GEREKMEDİKÇE OKUMA:
+  - Strategic docs (vision, roadmap) sadece planlama için
+  - Legacy docs (Archive/) hiç okuma!
+
+❌ DUPLICATE OKUMA:
+  - session-context.md zaten özet veriyor
+  - Detail'e ihtiyaç yoksa DEVELOPMENT_LOG'a gitme
+
+❌ EARLY OKUMA:
+  - Implementation başlamadıysa DEVELOPMENT_GUIDELINES okuma
+  - Komut gelmeden task.md okuma
+```
+
+---
+
+## 🎯 BAŞARI KRİTERLERİ
+
+### Token Efficiency
+- ✅ Başlangıç: <5K token (hedef: 3-5K)
+- ✅ Tier 2 lazy load: Sadece gerekli dosyalar
+- ✅ Tier 3 command load: Komut tetikli
+
+### Session Continuity
+- ✅ session-context.md her zaman güncel
+- ✅ DUAL-WRITE uygulanıyor
+- ✅ Next agent sorunsuz devralıyor
+
+### Quality
+- ✅ Zero-tolerance rules biliniyor (TIER 1'de)
+- ✅ Port katalogu biliniyor (ilk 80 satır)
+- ✅ Current focus belli (session-context)
+
+---
+
+**Version History:**
+- v1.0: 7 dosya zorunlu, 20-30K token (deprecated)
+- v2.0: 4 dosya + lazy loading, 3-5K token ✅
+
+**Maintained By:** YBIS AI System  
+**Update Trigger:** Documentation taxonomy değişirse

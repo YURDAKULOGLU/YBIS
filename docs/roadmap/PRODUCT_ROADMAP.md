@@ -413,14 +413,46 @@ Infrastructure (Built, Not Shipped):
 
 ### **Plugin System Timeline (3-Wave Strategy)**
 
-**WAVE 1: Infrastructure Foundation (Closed Beta - Week 5-6)**
+**WAVE 1: RAG Implementation + Minimal Plugin Interface (Closed Beta - Week 5-6)**
 ```yaml
 Timeline: Week 5-6 (2 weeks)
-Focus: Plugin registry + basic abstractions
-Scope: Foundation only, NO complex plugins
+Focus: RAG core implementation + minimal plugin interface
+Scope: RAG priority, plugin interface dormant
 
 What to Build:
-  ✅ Plugin Registry System
+  ✅ RAG Core Implementation (5 days)
+    - RAGPort interface (Tier 1: Basic)
+    - SupabaseRAGAdapter (pgvector integration)
+    - AI integration (context selection)
+    - Background embedding pipeline
+    - Testing + documentation
+
+  ✅ Minimal Plugin Interface (4 hours)
+    - Feature Registry interface only
+    - NO UI, NO dynamic tabs
+    - Infrastructure for Week 7-8
+
+  ✅ Closed Beta Prep (4.5 days)
+    - Performance optimization
+    - Monitoring setup
+    - Beta recruitment
+    - EAS Build configuration
+
+What NOT to Build:
+  ❌ Full Plugin System (deferred to Week 7-8)
+  ❌ Complex plugins (Finance, Health, etc.)
+  ❌ Plugin marketplace
+  ❌ Advanced plugin features
+```
+
+**WAVE 2: Plugin System Implementation (Week 7-8 - OTA Update)**
+```yaml
+Timeline: Week 7-8 (2 weeks)
+Focus: Full plugin system implementation
+Scope: Complete plugin infrastructure + basic plugins
+
+What to Build:
+  ✅ Plugin Registry System (Full Implementation)
     - Plugin manifest schema
     - Registration/loading system
     - Basic permission model
@@ -438,36 +470,13 @@ What to Build:
     - Data access patterns
     - Security sandbox (basic)
 
-What NOT to Build:
-  ❌ Complex plugins (Finance, Health, etc.)
-  ❌ Plugin marketplace
-  ❌ Advanced plugin features
-  ❌ Third-party plugin support
-```
-
-**WAVE 2: Basic Plugins (Open Beta - Month 2-3)**
-```yaml
-Timeline: Open Beta (Month 2-3)
-Focus: Simple plugins + plugin system testing
-Scope: Internal plugins only
-
-What to Build:
-  ✅ Simple Internal Plugins
-    - Markdown editor plugin
-    - Advanced calendar widget
-    - Custom workflow templates
-    - Theme customization plugin
-
-  ✅ Plugin System Testing
-    - Plugin loading/unloading
-    - Performance testing
-    - Security validation
-    - User experience testing
-
   ✅ Plugin Management UI
     - Enable/disable plugins
     - Plugin settings
     - Basic plugin info display
+
+Deployment: OTA Update (npx eas update)
+Closed Beta Users: Get plugin system in 10 minutes!
 ```
 
 **WAVE 3: Full Ecosystem (MVP Release - Month 4+)**
@@ -524,16 +533,25 @@ What to Build:
 - [ ] Bug fixes & polish
 - [ ] Closed Beta preparation
 
-**Week 5-6: Plugin Foundation (NEW)**
-- [ ] Plugin Registry System (3 days)
-- [ ] Component Abstraction Layer (2 days)
-- [ ] Plugin API Foundation (2 days)
-- [ ] Basic Security Sandbox (2 days)
-- [ ] Testing & Documentation (1 day)
+**Week 5-6: RAG Implementation + Minimal Plugin Interface (NEW)**
+- [ ] RAG Core Implementation (5 days)
+  - [ ] RAGPort interface (Tier 1: Basic)
+  - [ ] SupabaseRAGAdapter (pgvector integration)
+  - [ ] AI integration (context selection)
+  - [ ] Background embedding pipeline
+  - [ ] Testing + documentation
+- [ ] Minimal Plugin Interface (4 hours)
+  - [ ] Feature Registry interface only
+  - [ ] NO UI, NO dynamic tabs
+- [ ] Closed Beta Prep (4.5 days)
+  - [ ] Performance optimization
+  - [ ] Monitoring setup
+  - [ ] Beta recruitment
+  - [ ] EAS Build configuration
 
 **Deliverables:**
-- ✅ Plugin system infrastructure ready
-- ✅ No complex plugins shipped
+- ✅ RAG system operational (AI understands notes/calendar/tasks)
+- ✅ Plugin interface infrastructure ready (dormant)
 - ✅ Core features completed
 - ✅ Closed Beta launch ready
 

@@ -7,12 +7,14 @@ import {
   Button,
   Input,
   ScrollView,
-} from 'tamagui';
+} from '@ybis/ui';
 import type { ScrollView as RNScrollView} from 'react-native';
 import { Keyboard, useWindowDimensions, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Plus, Send, Calendar, CheckSquare, FileText, Workflow, Mic } from '@tamagui/lucide-icons';
+import { useTranslation } from 'react-i18next';
+import { Plus, Send, Calendar, CheckSquare, FileText, Workflow, Mic } from '@ybis/ui';
 import { ChatBubble, type Message } from '@ybis/chat';
+import Logger from '@ybis/logging';
 
 /**
  * Main Screen - WhatsApp-Inspired Design
@@ -52,76 +54,30 @@ interface SuggestionPrompt {
   description: string;
 }
 
-// Mock data - will be replaced with real data (static, outside component)
-const ONBOARDING_PROMPTS: SuggestionPrompt[] = [
-  {
-    id: '1',
-    icon: '👋',
-    title: 'Başlayalım!',
-    description: 'YBIS\'e hoş geldiniz. Nasıl yardımcı olabilirim?',
-  },
-  {
-    id: '2',
-    icon: '🚀',
-    title: 'Demo Modu',
-    description: 'Tüm özellikleri test edin',
-  },
-  {
-    id: '3',
-    icon: '💬',
-    title: 'Chat Başlat',
-    description: 'AI asistanı ile konuşun',
-  },
-];
-
-const REGULAR_PROMPTS: SuggestionPrompt[] = [
-  {
-    id: '1',
-    icon: '📝',
-    title: 'Yeni not oluştur',
-    description: 'Hızlıca bir not ekleyin',
-  },
-  {
-    id: '2',
-    icon: '✅',
-    title: 'Bugünkü görevler',
-    description: 'Yapılacaklar listesini görüntüle',
-  },
-  {
-    id: '3',
-    icon: '📅',
-    title: 'Takvimi kontrol et',
-    description: 'Bugünün etkinliklerini gör',
-  },
-  {
-    id: '4',
-    icon: '🔄',
-    title: 'Workflow oluştur',
-    description: 'Otomatik iş akışı kurun',
-  },
-  {
-    id: '5',
-    icon: '📊',
-    title: 'Rapor oluştur',
-    description: 'Veri analizi yapın',
-  },
-  {
-    id: '6',
-    icon: '🎯',
-    title: 'Hedef belirle',
-    description: 'Yeni hedefler ekleyin',
-  },
-];
-
-// Static tabs configuration (outside component to prevent re-creation)
-const TABS: { key: TabType; label: string; icon: typeof Calendar }[] = [
-  { key: 'notes', label: 'Notes', icon: FileText },
-  { key: 'tasks', label: 'Tasks', icon: CheckSquare },
-  { key: 'calendar', label: 'Calendar', icon: Calendar },
-  { key: 'flows', label: 'Flows', icon: Workflow },
-];
-
 export default function MainScreen(): React.ReactElement {
+  const { t } = useTranslation('mobile');
+
+  const ONBOARDING_PROMPTS = useMemo(() => [
+    { id: '1', icon: '👋', title: t('onboarding.prompt1_title'), description: t('onboarding.prompt1_desc') },
+    { id: '2', icon: '🚀', title: t('onboarding.prompt2_title'), description: t('onboarding.prompt2_desc') },
+    { id: '3', icon: '💬', title: t('onboarding.prompt3_title'), description: t('onboarding.prompt3_desc') },
+  ], [t]);
+
+  const REGULAR_PROMPTS = useMemo(() => [
+    { id: '1', icon: '📝', title: t('prompts.newNote_title'), description: t('prompts.newNote_desc') },
+    { id: '2', icon: '✅', title: t('prompts.todayTasks_title'), description: t('prompts.todayTasks_desc') },
+    { id: '3', icon: '📅', title: t('prompts.checkCalendar_title'), description: t('prompts.checkCalendar_desc') },
+    { id: '4', icon: '🔄', title: t('prompts.createWorkflow_title'), description: t('prompts.createWorkflow_desc') },
+    { id: '5', icon: '📊', title: t('prompts.createReport_title'), description: t('prompts.createReport_desc') },
+    { id: '6', icon: '🎯', title: t('prompts.setGoal_title'), description: t('prompts.setGoal_desc') },
+  ], [t]);
+
+  const TABS = useMemo(() => [
+    { key: 'notes', label: t('tabs.notes'), icon: FileText },
+    { key: 'tasks', label: t('tabs.tasks'), icon: CheckSquare },
+    { key: 'calendar', label: t('tabs.calendar'), icon: Calendar },
+    { key: 'flows', label: t('tabs.flows'), icon: Workflow },
+  ], [t]);
   const [selectedTab, setSelectedTab] = useState<TabType>('notes');
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
@@ -129,6 +85,11 @@ export default function MainScreen(): React.ReactElement {
   const [showQuickActions, setShowQuickActions] = useState(false);
 
   const scrollViewRef = useRef<RNScrollView>(null);
+
+  // Log screen mount
+  useEffect(() => {
+    Logger.info('MainScreen mounted', { type: 'LIFECYCLE' });
+  }, []);
   
   // Safe area insets for edge-to-edge support
   const insets = useSafeAreaInsets();
@@ -205,73 +166,83 @@ export default function MainScreen(): React.ReactElement {
 
     // Greeting responses
     if (lowerText.includes('merhaba') || lowerText.includes('selam') || lowerText.includes('hello')) {
-      return 'Merhaba! YBIS Demo Modu\'na hoş geldiniz! 🚀\n\nSize şu konularda yardımcı olabilirim:\n• 📝 Not oluşturma\n• ✅ Görev yönetimi\n• 📅 Takvim planlama\n• 🔄 Workflow oluşturma\n\nNe yapmak istersiniz?';
+      return t('mockResponses.greeting');
     }
     
     // Demo mode responses
     if (lowerText.includes('demo') || lowerText.includes('test')) {
-      return 'Demo Modu aktif! 🎯\n\nŞu özellikleri test edebilirsiniz:\n• Chat interface (şu an kullandığınız)\n• Tab navigation (Notes, Tasks, Calendar, Flows)\n• Widget area (üstteki mini özet)\n• Quick actions (+ butonu)\n\nHangi özelliği denemek istersiniz?';
+      return t('mockResponses.demoInfo');
     }
 
     // Feature-specific responses
     if (lowerText.includes('not') || lowerText.includes('yaz') || lowerText.includes('note')) {
-      return `📝 Not Oluşturma\n\nDemo modunda not oluşturma özelliği simüle ediliyor:\n\n✅ Not başlığı: "${userText}"\n✅ İçerik: Demo içerik\n✅ Tarih: ${new Date().toLocaleDateString('tr-TR')}\n\nGerçek uygulamada bu not veritabanına kaydedilecek.`;
+      return t('mockResponses.createNote', { userText, date: new Date().toLocaleDateString('tr-TR') });
     }
     
     if (lowerText.includes('görev') || lowerText.includes('task') || lowerText.includes('todo')) {
-      return `✅ Görev Yönetimi\n\nDemo modunda görev oluşturma:\n\n📋 Görev: "${userText}"\n⏰ Tarih: ${new Date().toLocaleDateString('tr-TR')}\n🎯 Öncelik: Orta\n📊 Durum: Beklemede\n\nGörev başarıyla oluşturuldu! (Demo)`;
+      return t('mockResponses.createTask', { userText, date: new Date().toLocaleDateString('tr-TR') });
     }
     
     if (lowerText.includes('takvim') || lowerText.includes('calendar') || lowerText.includes('etkinlik')) {
-      return `📅 Takvim Yönetimi\n\nDemo modunda etkinlik oluşturma:\n\n📅 Etkinlik: "${userText}"\n🕐 Saat: ${new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}\n📆 Tarih: ${new Date().toLocaleDateString('tr-TR')}\n📍 Konum: Demo Konum\n\nEtkinlik takvime eklendi! (Demo)`;
+      return t('mockResponses.createEvent', { 
+        userText, 
+        time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+        date: new Date().toLocaleDateString('tr-TR') 
+      });
     }
     
     if (lowerText.includes('workflow') || lowerText.includes('akış') || lowerText.includes('flow')) {
-      return `🔄 Workflow Oluşturma\n\nDemo modunda workflow:\n\n🔧 Workflow: "${userText}"\n⚡ Tetikleyici: Manuel\n🎯 Hedef: Otomatik işlem\n📊 Durum: Aktif\n\nWorkflow başarıyla oluşturuldu! (Demo)`;
+      return t('mockResponses.createWorkflow', { userText });
     }
 
     // Help responses
     if (lowerText.includes('yardım') || lowerText.includes('help') || lowerText.includes('nasıl')) {
-      return '🆘 YBIS Demo Yardım\n\n📱 **Ana Özellikler:**\n• Tab navigation (Notes, Tasks, Calendar, Flows)\n• Widget area (üstteki özet)\n• Chat interface (şu an kullandığınız)\n• Quick actions (+ butonu)\n\n🎯 **Demo Komutları:**\n• "not oluştur" - Not simülasyonu\n• "görev ekle" - Task simülasyonu\n• "etkinlik planla" - Calendar simülasyonu\n• "workflow başlat" - Flow simülasyonu\n\n💡 **İpucu:** Tab\'ları değiştirerek farklı widget\'ları görebilirsiniz!';
+      return t('mockResponses.help');
     }
 
     // Status responses
     if (lowerText.includes('nasılsın') || lowerText.includes('durum')) {
-      return '🤖 AI Asistan Durumu\n\n✅ **Sistem:** Çevrimiçi\n✅ **Demo Modu:** Aktif\n✅ **Özellikler:** Tümü simüle ediliyor\n✅ **Performans:** Optimal\n\nSize nasıl yardımcı olabilirim?';
+      return t('mockResponses.status');
     }
 
     // Thank you responses
     if (lowerText.includes('teşekkür') || lowerText.includes('sağol') || lowerText.includes('thanks')) {
-      return 'Rica ederim! 😊\n\nYBIS Demo Modu\'nda daha fazla özellik keşfetmek ister misiniz?\n\n💡 **Öneriler:**\n• Tab\'ları değiştirin\n• + butonuna basın\n• Farklı komutlar deneyin\n\nBaşka nasıl yardımcı olabilirim?';
+      return t('mockResponses.thanks');
     }
 
     // Goodbye responses
     if (lowerText.includes('görüşürüz') || lowerText.includes('hoşçakal') || lowerText.includes('bye')) {
-      return 'Görüşürüz! 👋\n\nYBIS Demo Modu\'nu beğendiyseniz, gerçek uygulamayı da deneyebilirsiniz!\n\n🚀 **Sonraki Adımlar:**\n• Gerçek veri bağlantısı\n• Gelişmiş AI özellikleri\n• Mobil optimizasyon\n\nİyi günler!';
+      return t('mockResponses.goodbye');
     }
 
     // Context-aware responses based on selected tab
     const getContextualResponse = (): string => {
       switch (selectedTab) {
         case 'notes':
-          return `📝 Not Modu\n\n"${userText}" konusunda bir not oluşturmak ister misiniz?\n\nDemo modunda bu not simüle edilecek ve gerçek uygulamada veritabanına kaydedilecek.`;
+          return t('mockResponses.context_note', { userText });
         case 'tasks':
-          return `✅ Görev Modu\n\n"${userText}" için bir görev oluşturmak ister misiniz?\n\nDemo modunda bu görev simüle edilecek ve gerçek uygulamada task listesine eklenecek.`;
+          return t('mockResponses.context_task', { userText });
         case 'calendar':
-          return `📅 Takvim Modu\n\n"${userText}" için bir etkinlik planlamak ister misiniz?\n\nDemo modunda bu etkinlik simüle edilecek ve gerçek uygulamada takvime eklenecek.`;
+          return t('mockResponses.context_calendar', { userText });
         case 'flows':
-          return `🔄 Workflow Modu\n\n"${userText}" için bir workflow oluşturmak ister misiniz?\n\nDemo modunda bu workflow simüle edilecek ve gerçek uygulamada otomatik işlem olarak çalışacak.`;
+          return t('mockResponses.context_workflow', { userText });
         default:
-          return `Anlıyorum. "${userText}" konusunda size nasıl yardımcı olabilirim?`;
+          return t('mockResponses.context_default', { userText });
       }
     };
 
     // Default contextual response
     return getContextualResponse();
-  }, [selectedTab]);
+  }, [selectedTab, t]);
 
   const handleSendMessage = useCallback(() => {
     if (!inputText.trim()) return;
+
+    Logger.info('Send Message button clicked', {
+      type: 'USER_ACTION',
+      component: 'MessageInput',
+      textLength: inputText.length,
+    });
 
     const messageId = Date.now().toString();
     const userMessage: Message = {
@@ -340,6 +311,13 @@ export default function MainScreen(): React.ReactElement {
   }, []);
 
   const handlePromptClick = useCallback((prompt: SuggestionPrompt) => {
+    Logger.info('Suggestion prompt clicked', {
+      type: 'USER_ACTION',
+      component: 'SuggestionPrompts',
+      promptTitle: prompt.title,
+      promptId: prompt.id,
+    });
+
     // Auto-send the prompt
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -375,6 +353,11 @@ export default function MainScreen(): React.ReactElement {
   }, [getMockAIResponse, isFirstTime]);
 
   const handleQuickAction = useCallback((action: string) => {
+    Logger.info('Quick action selected', {
+      type: 'USER_ACTION',
+      component: 'QuickActionsMenu',
+      action,
+    });
     setShowQuickActions(false);
 
     if (action === 'new-chat') {
@@ -389,7 +372,7 @@ export default function MainScreen(): React.ReactElement {
       // Simulate task creation
       const taskMessage: Message = {
         id: Date.now().toString(),
-        text: 'Yeni görev oluştur',
+        text: t('prompts.todayTasks_title'),
         sender: 'user',
         timestamp: new Date().toLocaleTimeString('tr-TR', {
           hour: '2-digit',
@@ -402,7 +385,7 @@ export default function MainScreen(): React.ReactElement {
       setTimeout(() => {
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
-          text: getMockAIResponse('görev ekle'),
+          text: getMockAIResponse(t('prompts.todayTasks_title')),
           sender: 'ai',
           timestamp: new Date().toLocaleTimeString('tr-TR', {
             hour: '2-digit',
@@ -415,7 +398,7 @@ export default function MainScreen(): React.ReactElement {
       // Simulate event creation
       const eventMessage: Message = {
         id: Date.now().toString(),
-        text: 'Yeni etkinlik planla',
+        text: t('prompts.checkCalendar_title'),
         sender: 'user',
         timestamp: new Date().toLocaleTimeString('tr-TR', {
           hour: '2-digit',
@@ -428,7 +411,7 @@ export default function MainScreen(): React.ReactElement {
       setTimeout(() => {
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
-          text: getMockAIResponse('etkinlik planla'),
+          text: getMockAIResponse(t('prompts.checkCalendar_title')),
           sender: 'ai',
           timestamp: new Date().toLocaleTimeString('tr-TR', {
             hour: '2-digit',
@@ -441,7 +424,7 @@ export default function MainScreen(): React.ReactElement {
       // Simulate note creation
       const noteMessage: Message = {
         id: Date.now().toString(),
-        text: 'Yeni not oluştur',
+        text: t('prompts.newNote_title'),
         sender: 'user',
         timestamp: new Date().toLocaleTimeString('tr-TR', {
           hour: '2-digit',
@@ -454,7 +437,7 @@ export default function MainScreen(): React.ReactElement {
       setTimeout(() => {
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
-          text: getMockAIResponse('not oluştur'),
+          text: getMockAIResponse(t('prompts.newNote_title')),
           sender: 'ai',
           timestamp: new Date().toLocaleTimeString('tr-TR', {
             hour: '2-digit',
@@ -467,7 +450,7 @@ export default function MainScreen(): React.ReactElement {
       // Simulate workflow creation
       const flowMessage: Message = {
         id: Date.now().toString(),
-        text: 'Workflow başlat',
+        text: t('prompts.createWorkflow_title'),
         sender: 'user',
         timestamp: new Date().toLocaleTimeString('tr-TR', {
           hour: '2-digit',
@@ -480,7 +463,7 @@ export default function MainScreen(): React.ReactElement {
       setTimeout(() => {
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
-          text: getMockAIResponse('workflow başlat'),
+          text: getMockAIResponse(t('prompts.createWorkflow_title')),
           sender: 'ai',
           timestamp: new Date().toLocaleTimeString('tr-TR', {
             hour: '2-digit',
@@ -499,35 +482,35 @@ export default function MainScreen(): React.ReactElement {
         case 'notes':
           return {
             icon: '📝',
-            title: 'Son Notlar',
+            title: t('widget.notes_title'),
             count: 3,
             items: ['Proje toplantısı notları', 'Haftalık rapor', 'Fikirler listesi']
           };
         case 'tasks':
           return {
             icon: '✅',
-            title: 'Bugünkü Görevler',
+            title: t('widget.tasks_title'),
             count: 5,
             items: ['E-posta kontrolü', 'Rapor hazırlama', 'Toplantı hazırlığı', 'Kod review', 'Test yazma']
           };
         case 'calendar':
           return {
             icon: '📅',
-            title: 'Bugünün Etkinlikleri',
+            title: t('widget.calendar_title'),
             count: 2,
             items: ['09:00 - Proje toplantısı', '14:00 - Müşteri görüşmesi']
           };
         case 'flows':
           return {
             icon: '🔄',
-            title: 'Aktif Workflow\'lar',
+            title: t('widget.flows_title'),
             count: 1,
             items: ['Otomatik rapor oluşturma', 'E-posta takibi', 'Görev hatırlatıcıları']
           };
         default:
           return {
             icon: '📊',
-            title: 'Dashboard',
+            title: t('widget.dashboard_title'),
             count: 0,
             items: []
           };
@@ -555,7 +538,7 @@ export default function MainScreen(): React.ReactElement {
                 {widgetData.title}
               </Text>
               <Text color="$gray11" fontSize="$2">
-                {widgetData.count} öğe
+                {t('widget.item_count', { count: widgetData.count })}
               </Text>
             </YStack>
           </XStack>
@@ -575,14 +558,14 @@ export default function MainScreen(): React.ReactElement {
             ))}
             {widgetData.items.length > 2 && (
               <Text color="$blue9" fontSize="$2">
-                +{widgetData.items.length - 2} daha...
+                {t('widget.more_items', { count: widgetData.items.length - 2 })}
               </Text>
             )}
           </YStack>
         </YStack>
       </Card>
     );
-  }, [selectedTab]);
+  }, [selectedTab, t]);
 
   const renderSuggestionPrompts = useCallback(() => {
     const prompts = isFirstTime ? ONBOARDING_PROMPTS : REGULAR_PROMPTS;
@@ -651,7 +634,14 @@ export default function MainScreen(): React.ReactElement {
                     borderRadius="$10"
                     pressStyle={{ scale: 0.94, backgroundColor: isSelected ? '$blue10' : '$gray4' }}
                     animation="bouncy"
-                    onPress={() => setSelectedTab(tab.key)}
+                    onPress={() => {
+                      Logger.info('Content tab selected', {
+                        type: 'USER_ACTION',
+                        component: 'SlidableTabs',
+                        selectedTab: tab.key,
+                      });
+                      setSelectedTab(tab.key);
+                    }}
                     icon={<Icon size={16} color={isSelected ? 'white' : undefined} />}
                   >
                     {tab.label}
@@ -716,13 +706,20 @@ export default function MainScreen(): React.ReactElement {
               borderWidth={0}
               pressStyle={{ scale: 0.92, backgroundColor: '$gray4' }}
               animation="bouncy"
-              onPress={() => setShowQuickActions(!showQuickActions)}
+              onPress={() => {
+                Logger.info('Quick Actions menu toggled', {
+                  type: 'USER_ACTION',
+                  component: 'InputBar',
+                  newState: !showQuickActions ? 'open' : 'closed',
+                });
+                setShowQuickActions(!showQuickActions);
+              }}
             />
 
             {/* Text Input - Rounded WhatsApp Style */}
             <Input
               flex={1}
-              placeholder="Mesaj yazın..."
+              placeholder={t('input.placeholder')}
               placeholderTextColor="$gray10"
               value={inputText}
               onChangeText={setInputText}
@@ -786,7 +783,7 @@ export default function MainScreen(): React.ReactElement {
                     animation="bouncy"
                     onPress={() => handleQuickAction('add-task')}
                   >
-                    Task Ekle
+                    {t('quickActions.addTask')}
                   </Button>
                   <Button
                     size="$3"
@@ -798,7 +795,7 @@ export default function MainScreen(): React.ReactElement {
                     animation="bouncy"
                     onPress={() => handleQuickAction('add-event')}
                   >
-                    Etkinlik Ekle
+                    {t('quickActions.addEvent')}
                   </Button>
                   <Button
                     size="$3"
@@ -810,7 +807,7 @@ export default function MainScreen(): React.ReactElement {
                     animation="bouncy"
                     onPress={() => handleQuickAction('add-note')}
                   >
-                    Not Ekle
+                    {t('quickActions.addNote')}
                   </Button>
                   <Button
                     size="$3"
@@ -822,7 +819,7 @@ export default function MainScreen(): React.ReactElement {
                     animation="bouncy"
                     onPress={() => handleQuickAction('start-flow')}
                   >
-                    Flow Başlat
+                    {t('quickActions.startFlow')}
                   </Button>
 
                   <YStack height={1} backgroundColor="$gray5" marginVertical="$2" />
@@ -837,7 +834,7 @@ export default function MainScreen(): React.ReactElement {
                     animation="bouncy"
                     onPress={() => handleQuickAction('new-chat')}
                   >
-                    🆕 Yeni Chat
+                    {t('quickActions.newChat')}
                   </Button>
                   <Button
                     size="$3"
@@ -848,7 +845,7 @@ export default function MainScreen(): React.ReactElement {
                     animation="bouncy"
                     onPress={() => handleQuickAction('clear-all')}
                   >
-                    🗑️ Tümünü Temizle
+                    {t('quickActions.clearAll')}
                   </Button>
                 </YStack>
               </Card>

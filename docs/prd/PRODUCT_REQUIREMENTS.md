@@ -691,3 +691,39 @@ Simple OAuth flow (no complex Firebase setup) supports 5-minute onboarding goal.
 **v1.0 (2025-01-05):**
 - Initial draft (archived at `docs/Archive/Legacy/prd.md`)
 
+---
+
+## 💡 Gelecek Versiyon Yetenekleri (Planlanan)
+
+Bu bölüm, mevcut yol haritasında olmayan ancak projenin vizyonuyla uyumlu, gelecekte hayata geçirilmesi planlanan özellikleri içerir.
+
+### F-001: Sohbetten Tema Kontrolü
+**Açıklama:** Kullanıcıların, sohbet arayüzü üzerinden doğal dil komutları kullanarak uygulamanın görsel temasını anında değiştirebilmesi.
+**Kullanıcı Komutu Örneği:** "Temayı mavi yap", "Karanlık moda geç"
+**Teknik Yaklaşım:**
+- **Niyet Anlama:** `LLMPort` kullanılarak kullanıcının komutu analiz edilir ve hedef tema ('blue', 'dark' vb.) belirlenir.
+- **State Güncelleme:** `useThemeStore` içerisindeki `setTheme` aksiyonu, belirlenen hedef tema ile çağrılır.
+- **Reaktif Arayüz:** Tamagui ve Zustand'ın reaktif yapısı sayesinde arayüz anında güncellenir.
+**Durum:** Altyapı (`useThemeStore` ve `setTheme` aksiyonu) bu özellik için hazırdır.
+
+### F-002: Sohbet İçi Etkileşimli Widget'lar
+**Açıklama:** Standart metin bazlı sohbet balonlarına ek olarak, sohbet akışı içinde interaktif bileşenlerin (widget'lar) gösterilebilmesi.
+**Kullanım Alanları:**
+- Tarih seçimi için bir takvim widget'ı.
+- Birden fazla seçenek sunmak için bir anket widget'ı.
+- Onay veya bilgi için interaktif bir kart.
+**Teknik Yaklaşım:**
+- **Mesaj Tipi Genişletmesi:** Mevcut `Message` tipine, `'text'` dışında `'calendar-picker'`, `'poll'` gibi yeni türler eklenir.
+- **Koşullu Render:** Sohbet mesajlarını listeleyen bileşen, mesajın tipine göre standart `ChatBubble` yerine ilgili widget'ı (`CalendarWidget`, `PollWidget` vb.) render eder.
+- **AI Tetikleme:** Yapay zeka, metin bir yanıt yerine, bir widget gösterilmesi gerektiğini belirten özel bir mesaj nesnesi döndürür.
+**Durum:** Mevcut özel sohbet arayüzü mimarisi (`Tamagui` ile oluşturulmuş), bu özelliğin eklenmesi için tamamen uygundur.
+
+### F-003: Çoklu Platformdan Sohbet Geçmişini İçeri Aktarma
+**Açıklama:** Kullanıcıların, büyük AI platformlarındaki (ChatGPT, Google Gemini, Anthropic Claude) mevcut sohbet geçmişlerini, tek seferlik bir 'içeri aktarma' işlemiyle YBIS uygulamasına taşıyabilmesi.
+**Hedef:** Kullanıcının diğer platformlardaki bağlamını ve bilgi birikimini YBIS'e taşıyarak, asistanın ilk günden itibaren kişiye özel ve daha akıllı olmasını sağlamak.
+**Teknik Yaklaşım:**
+- **Kullanıcı Akışı:** Uygulama içinden bir "İçeri Aktar" menüsü sunulur. Kullanıcı, ilgili platformun (ChatGPT, Google Takeout, Claude) "Veri Dışa Aktarma" özelliğini kullanarak indirdiği yapısal dosyayı (`JSON` formatında) seçer.
+- **Ayrıştırma (Parsing):** Her platformun kendine özgü JSON yapısını okuyup, YBIS'in standart sohbet formatına dönüştürecek özel ayrıştırıcılar yazılır.
+- **Veri Saklama:** Ayrıştırılan konuşmalar, `DatabasePort` üzerinden uygulamanın kendi veritabanına kaydedilir.
+- **Arayüz:** İçe aktarılan sohbetler, `chat.tsx` ekranında bir "Sohbet Gelen Kutusu" olarak listelenir.
+**Durum:** Konsept onaylandı. Desteklenecek platformlar için ön araştırma tamamlandı.
