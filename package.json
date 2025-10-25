@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
+    "prebuild": "pnpm --filter '@ybis/ui' --filter '@ybis/core' run build",
     "mobile": "cd apps/mobile && pnpm start",
     "mobile:ios": "cd apps/mobile && pnpm run ios",
     "mobile:android": "cd apps/mobile && pnpm run android",

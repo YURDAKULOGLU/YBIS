@@ -6,6 +6,7 @@ import { UniversalLayout } from '../../src/layouts/UniversalLayout';
 import { Navbar } from '../../src/components/layout/Navbar';
 import { ActionButton } from '../../src/components/layout/ActionButton';
 import { SafeAreaView } from '../../src/components/layout/SafeAreaView';
+import Logger from '@ybis/logging';
 
 const mockTasks: Task[] = [
   { id: '1', title: 'Market alışverişi yap', status: 'todo' },
@@ -70,7 +71,7 @@ export default function TasksScreen(): React.ReactElement {
         icon={Plus}
         color={theme.green9.val}
         onPress={() => {
-          console.log('basıldı');
+          Logger.info('Task action button pressed');
         }}
       />
     </UniversalLayout>

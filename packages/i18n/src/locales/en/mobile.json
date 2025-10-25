@@ -22,8 +22,14 @@
     "setGoal_desc": "Add new goals"
   },
   "tabs": {
-    "notes": "Notes",
+    "home": "Home",
     "tasks": "Tasks",
+    "notes": "Notes",
+    "plan": "Plan",
+    "chat": "Chat",
+    "settings": "Settings",
+    "notes_old": "Notes",
+    "tasks_old": "Tasks",
     "calendar": "Calendar",
     "flows": "Flows"
   },

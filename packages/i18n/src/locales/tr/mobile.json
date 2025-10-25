@@ -22,8 +22,14 @@
     "setGoal_desc": "Yeni hedefler ekleyin"
   },
   "tabs": {
-    "notes": "Notes",
-    "tasks": "Tasks",
+    "home": "Ana Sayfa",
+    "tasks": "Görevler",
+    "notes": "Notlar",
+    "plan": "Plan",
+    "chat": "Sohbet",
+    "settings": "Ayarlar",
+    "notes_old": "Notes",
+    "tasks_old": "Tasks",
     "calendar": "Calendar",
     "flows": "Flows"
   },
