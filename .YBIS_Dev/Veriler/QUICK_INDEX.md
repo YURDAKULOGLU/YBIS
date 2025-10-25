@@ -7,35 +7,17 @@
 
 ---
 
-## 🚀 TIER 1: HER SESSION BAŞINDA (Zorunlu - 3-5 dk)
+## ⚙️ TIER 0: DOKÜMANTASYON YÖNETİMİ (Command-Triggered)
 
 ```yaml
-1. .YBIS_Dev/Veriler/memory/session-context.md
-   Ne: "Şu anda ne yapıyoruz?" (Demo mode fixed, Expo Go migration complete)
-   İçerik: Active focus, last 3 AD, next 3 steps, blockers
-   Satır: 100
-   Oku: HER SESSION
-
-2. .YBIS_Dev/AI_GENEL_ANAYASA.md
-   Ne: Davranış kuralları, etik sınırlar
-   İçerik: Tone, boundaries, collaboration rules
-   Satır: 81
-   Oku: İlk session + ihtiyaç halinde
-
-3. docs/YBIS_PROJE_ANAYASASI.md
-   Ne: Sections 1-8: Zero-tolerance + Port catalog
-   İçerik: Zero-tolerance rules, port criteria, 5 core ports (AuthPort, DatabasePort, LLMPort, StoragePort, DeploymentPort)
-   Satır: 172 total
-   Oku: Zero-tolerance + port catalog için
-
-4. .YBIS_Dev/Veriler/QUICK_INDEX.md
-   Ne: Bu dosya! "Hangi dosyayı ne zaman?"
-   İçerik: Documentation roadmap
-   Satır: 50
-   Oku: İlk session
+1. .YBIS_Dev/Veriler/commands/add-summary-header.md
+   Ne: Markdown dosyalarına token-verimli özet başlığı ekler.
+   Ne Zaman: Yeni doküman oluştururken veya mevcut dokümanları optimize ederken.
+   İçerik: Başlık, durum, sahip, tarih, özet, ana çıkarımlar.
+   Oku: /YBIS:add-summary-header komutu ile tetiklenir.
 ```
 
-**Total: <2K token ✅**
+---
 
 ---
 

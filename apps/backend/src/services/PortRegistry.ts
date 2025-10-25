@@ -16,6 +16,7 @@ import type { LLMPort } from '@ybis/llm';
 import { OpenAIAdapter } from '@ybis/llm';
 import type { StoragePort } from '@ybis/storage';
 import { SupabaseStorageAdapter } from '@ybis/storage';
+import Logger from '@ybis/logging';
 
 export interface PortRegistryConfig {
   // Supabase (Database + Storage)
@@ -63,11 +64,11 @@ export class PortRegistry {
    */
   async initialize(): Promise<void> {
     if (this.initialized) {
-      console.log('[PortRegistry] Already initialized');
+      Logger.info('PortRegistry already initialized', { type: 'LIFECYCLE' });
       return;
     }
 
-    console.log('[PortRegistry] Initializing all ports...');
+    Logger.info('Initializing all ports...', { type: 'LIFECYCLE' });
 
     try {
       // Initialize Database Port (Supabase)
@@ -77,14 +78,14 @@ export class PortRegistry {
         serviceRoleKey: this.config.supabaseServiceKey,
       });
       await this._database.initialize();
-      console.log('[PortRegistry] ✓ DatabasePort initialized (SupabaseAdapter)');
+      Logger.info('DatabasePort initialized (SupabaseAdapter)', { type: 'LIFECYCLE' });
 
       // Initialize LLM Port (OpenAI)
       this._llm = new OpenAIAdapter({
         defaultModel: this.config.openaiModel ?? 'gpt-4o-mini',
       });
       await this._llm.initialize(this.config.openaiApiKey);
-      console.log('[PortRegistry] ✓ LLMPort initialized (OpenAIAdapter)');
+      Logger.info('LLMPort initialized (OpenAIAdapter)', { type: 'LIFECYCLE' });
 
       // Initialize Storage Port (Supabase Storage)
       this._storage = new SupabaseStorageAdapter({
@@ -93,12 +94,12 @@ export class PortRegistry {
         serviceRoleKey: this.config.supabaseServiceKey,
       });
       await this._storage.initialize();
-      console.log('[PortRegistry] ✓ StoragePort initialized (SupabaseStorageAdapter)');
+      Logger.info('StoragePort initialized (SupabaseStorageAdapter)', { type: 'LIFECYCLE' });
 
       this.initialized = true;
-      console.log('[PortRegistry] All ports initialized successfully ✅');
+      Logger.info('All ports initialized successfully', { type: 'LIFECYCLE' });
     } catch (error) {
-      console.error('[PortRegistry] Failed to initialize ports:', error);
+      Logger.error('Failed to initialize ports', error as Error, { type: 'LIFECYCLE' });
       throw error;
     }
   }

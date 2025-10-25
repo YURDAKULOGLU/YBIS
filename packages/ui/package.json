@@ -10,8 +10,10 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "tamagui": "^1.135.0",
-    "@tamagui/config": "^1.135.0"
+    "@tamagui/config": "^1.135.0",
+    "@tamagui/lucide-icons": "^1.135.2",
+    "@tamagui/sheet": "^1.135.2",
+    "tamagui": "^1.135.0"
   },
   "peerDependencies": {
     "react": "^19.1.0",

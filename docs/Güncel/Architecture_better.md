@@ -69,7 +69,7 @@ YBIS projesi için **port-by-port architecture** prensibiyle tasarlanmış, **we
 |----------|-----------|---------------|
 | **Error Tracking** | Sentry | Industry standard, free tier (5K events/mo) |
 | **Analytics** | PostHog / GA4 | Event tracking, funnel analysis |
-| **Performance** | Firebase Performance | Mobile-focused, free tier generous |
+| **Performance** | Sentry / PostHog | Mobile-focused, free tier generous |
 | **Security** | expo-secure-store | Token storage, biometric support |
 
 ### **UX Polish & Features**
@@ -127,7 +127,7 @@ packages/
 
 | Port | Reason | Migration Path |
 |------|--------|----------------|
-| **AuthPort** | OAuth provider swap | Expo Auth → Google → Firebase → Supabase Auth |
+| **AuthPort** | OAuth provider swap | Expo Auth → Supabase Auth |
 | **DatabasePort** | Database vendor swap | Supabase → Cloud SQL → PostgreSQL |
 | **LLMPort** | AI provider swap | OpenAI → Anthropic → Gemini → Local LLM |
 | **StoragePort** | Storage vendor swap | Supabase Storage → GCS → S3 → R2 |
@@ -241,7 +241,7 @@ Benefit: Better UX + Future-proof + Web-ready
 
 | Dependency | Risk | Mitigation |
 |------------|------|------------|
-| **Firebase Auth** | Vendor lock-in | AuthPort Day 1 |
+| **Expo Auth Session** | OAuth flow complexity | AuthPort Day 1 |
 | **Supabase** | Cost scaling | DatabasePort + migration plan |
 | **OpenAI** | Rate limits, cost | LLMPort + fallback (Claude) |
 | **Gifted Chat** | Mobile-only | ChatPort Day 1 |
@@ -258,12 +258,12 @@ Mitigation:
   - Fallback: Disable New Arch if critical issues
 ```
 
-### **React 18.3.1 vs React 19**
+### **React 19.1.0 (Official for Expo SDK 54)**
 
 ```yaml
-Decision: React 18.3.1
-Reason: Ecosystem maturity, library compatibility
-Future: React 19 migration Phase 2+ (when ecosystem ready)
+Decision: React 19.1.0
+Reason: Official Expo SDK 54 support, React Compiler optimizations, Actions API, and overall performance gains.
+Future: Aligned with the latest stable releases for the ecosystem.
 ```
 
 ---
@@ -276,7 +276,7 @@ Future: React 19 migration Phase 2+ (when ecosystem ready)
 |--------|--------|-------------|
 | **Development Speed** | 4-6 hafta to launch | Timeline tracking |
 | **Crash-free Rate** | >99% | Sentry |
-| **App Startup Time** | <2s | Firebase Performance |
+| **App Startup Time** | <2s | Sentry / PostHog |
 | **User Engagement** | >60% daily active | PostHog |
 | **Feature Adoption** | >50% use core workflow | Analytics |
 
@@ -399,17 +399,13 @@ Process:
   4. Zero downtime (dual-write period)
 ```
 
-### **Auth Migration (Open Beta)**
+### **Auth Strategy (AD-015)**
 
 ```yaml
-From: Firebase Auth
-To: Custom OAuth + JWT
-Reason: Full control, cost
-Process:
-  1. Implement custom OAuth
-  2. Dual-write (Firebase + Custom)
-  3. Migrate users (background job)
-  4. Deprecate Firebase
+Current: Expo Auth Session
+Reason: No vendor lock-in, pure JS, Expo managed workflow compatible.
+Status: Migration from Firebase complete.
+Future: AuthPort allows swapping to other providers if needed.
 ```
 
 ### **Chat UI Migration (Open Beta)**
@@ -434,7 +430,7 @@ Process:
 | Service | Cost | Notes |
 |---------|------|-------|
 | Supabase | $25 | Free tier → Pro |
-| Firebase (Auth + FCM) | $0 | Free tier sufficient |
+| Expo Auth / Notifications | $0 | Included in Expo free tier |
 | Vercel | $20 | Hobby plan |
 | OpenAI | ~$50 | Est. 300K tokens/day |
 | Sentry | $0 | Free tier (5K events) |
@@ -446,7 +442,7 @@ Process:
 | Service | Cost | Notes |
 |---------|------|-------|
 | Supabase | $25-50 | May need Pro+ |
-| Firebase | $0-20 | FCM may exceed free |
+
 | Vercel | $20-80 | May need Pro |
 | OpenAI | ~$500 | Est. 3M tokens/day |
 | Sentry | $26-80 | Likely exceed free |
@@ -531,7 +527,7 @@ Process:
 
 ---
 
-**Son Güncelleme:** 2025-01-05  
+**Tarih:** 2025-10-12  
 **Durum:** ✅ APPROVED - Ready for Implementation  
 **Next Steps:** Monorepo setup → Tier 1 Ports → Closed Beta features
 

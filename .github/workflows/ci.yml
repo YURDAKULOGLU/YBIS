@@ -1,0 +1,54 @@
+name: YBIS Quality Gate CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run Lint Check
+        run: pnpm -r lint
+
+      - name: Run Type Check
+        run: pnpm -r run type-check
+
+      - name: Run tests and generate coverage
+        run: pnpm -r test --coverage > coverage.txt
+
+      - name: Check Test Coverage Gate (80%)
+        run: |
+          echo 'Checking test coverage...'
+          COVERAGE=$(cat coverage.txt | grep Lines | awk -F'|' '{print $2}' | awk -F' ' '{print $1}')
+          echo "Current line coverage is: $COVERAGE%"
+          if [ $(echo "$COVERAGE < 80.0" | bc) -ne 0 ]; then
+            echo "Error: Test coverage is below the 80% threshold."
+            exit 1
+          else
+            echo "Success: Test coverage meets the 80% threshold."
+          fi

@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, Animated, TouchableWithoutFeedback, Dimensions, StyleSheet, Easing } from 'react-native';
-import { YStack, Separator } from '@ybis/ui';
+import { YStack, Separator, Home, MessageCircle, CheckSquare, Settings } from '@ybis/ui';
 import { useRouter, usePathname } from 'expo-router';
 import { BlurView } from 'expo-blur';
-import { Home, MessageCircle, CheckSquare, Settings } from '@tamagui/lucide-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useMockAuth } from '../../stores/useMockAuth';
 import { useThemeStore } from '@ybis/theme';
@@ -73,7 +72,7 @@ function DrawerMenu({ open, onOpenChange }: DrawerMenuProps): React.ReactElement
         setModalVisible(false);
       });
     }
-  }, [open]);
+  }, [open, slideAnim, opacityAnim]);
 
   // This effect runs when the modal becomes visible to animate the content in.
   useEffect(() => {
@@ -94,7 +93,7 @@ function DrawerMenu({ open, onOpenChange }: DrawerMenuProps): React.ReactElement
         }),
       ]).start();
     }
-  }, [modalVisible, open]);
+  }, [modalVisible, open, slideAnim, opacityAnim]);
 
   const handleNavigation = (path: string): void => {
     router.push(path as never);

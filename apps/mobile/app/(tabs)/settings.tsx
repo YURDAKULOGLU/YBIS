@@ -1,133 +1,130 @@
-import React, { useState } from 'react';
-import { YStack, H2, H3, Text, Card, Button, Switch, XStack, Separator } from '@ybis/ui';
-import { LogOut, Moon, Globe } from '@tamagui/lucide-icons';
+import React from 'react';
+import {
+  YStack,
+  H2,
+  H3,
+  ScrollView,
+  Sheet,
+  Button,
+  Check,
+  Bell,
+  Globe,
+  LogOut,
+  Moon,
+  Palette,
+  BrainCircuit,
+  DatabaseBackup,
+  Trash2,
+  SettingsGroup,
+  SettingsItem,
+  UserInfoCard,
+  AppInfoCard,
+} from '@ybis/ui';
 import { useMockAuth } from '../../src/stores/useMockAuth';
 import { useThemeStore } from '@ybis/theme';
+import { useTranslation } from 'react-i18next';
+import { UniversalLayout } from '../../src/layouts/UniversalLayout';
 
 /**
- * Settings Screen
- *
- * Features:
- * - Theme toggle (light/dark) with zustand persistence
- * - Language selector (placeholder for i18n integration)
- * - Logout button (functional - clears mock auth)
- * - App info display
- *
- * Architecture:
- * - useThemeStore: Multi-theme support (Phase 0: light/dark, Phase 1+: custom themes)
- * - No ThemePort: Internal logic, not vendor swap (criteria-based porting - AD-024)
+ * Settings Screen - Refined & Functional
  */
 export default function SettingsScreen(): React.ReactElement {
   const { user, logout } = useMockAuth();
-  const { currentTheme, toggleTheme } = useThemeStore();
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
-
-  const handleThemeToggle = (): void => {
-    toggleTheme();
-    // console.log('Theme toggled to:', currentTheme === 'light' ? 'dark' : 'light');
-  };
-
-  const handleLanguageChange = (): void => {
-    // TODO: Connect to @ybis/i18n
-    const newLang = selectedLanguage === 'en' ? 'tr' : 'en';
-    setSelectedLanguage(newLang);
-    // console.log('Language changed to:', newLang);
-  };
+  const { currentTheme, setTheme } = useThemeStore();
+  const { t, i18n } = useTranslation(['common', 'settings']);
+  const [sheetOpen, setSheetOpen] = React.useState(false);
 
   const handleLogout = async (): Promise<void> => {
     try {
       await logout();
-      // Navigation handled by root layout (redirects to login)
     } catch (error) {
       console.error('Logout failed:', error);
     }
   };
 
+  const changeLanguage = (lng: 'tr' | 'en') => {
+    void i18n.changeLanguage(lng);
+    setSheetOpen(false);
+  };
+
   return (
-    <YStack flex={1} padding="$4" gap="$4" backgroundColor="$background">
-      <H2>Settings</H2>
+    <UniversalLayout>
+      <>
+        <YStack flex={1} backgroundColor="$background">
+          <ScrollView padding="$4" gap="$4">
+            <H2>{t('settings:title')}</H2>
 
-      {/* User Info Section */}
-      <Card padding="$4" bordered backgroundColor="$blue2">
-        <YStack gap="$2">
-          <Text fontWeight="600" fontSize="$5" color="$blue11">
-            {user?.name ?? 'User'}
-          </Text>
-          <Text color="$blue11" fontSize="$3">
-            {user?.email ?? 'user@example.com'}
-          </Text>
-          <Text color="$blue10" fontSize="$2" marginTop="$1">
-            DEMO MODE ACTIVE
-          </Text>
+            <UserInfoCard user={user} />
+
+            <SettingsGroup icon={Palette} title={t('settings:appearance.title')}>
+              <SettingsItem
+                label={t('settings:appearance.darkMode')}
+                type="switch"
+                icon={Moon}
+                switchProps={{
+                  checked: currentTheme === 'dark',
+                  onCheckedChange: (isChecked: boolean) => setTheme(isChecked ? 'dark' : 'light'),
+                }}
+              />
+            </SettingsGroup>
+
+            <SettingsGroup icon={Globe} title={t('settings:language.title')}>
+              <SettingsItem
+                label={t('settings:language.appLanguage')}
+                value={i18n.language === 'tr' ? 'Türkçe' : 'English'}
+                onPress={() => setSheetOpen(true)}
+              />
+            </SettingsGroup>
+
+            <SettingsGroup icon={Bell} title={t('settings:notifications.title')}>
+              <SettingsItem label={t('settings:notifications.push')} type="switch" switchProps={{ checked: true, disabled: true }} />
+              <SettingsItem label={t('settings:notifications.emailSummaries')} value={t('settings:comingSoon')} disabled />
+            </SettingsGroup>
+
+            <SettingsGroup icon={BrainCircuit} title={t('settings:ai.title')}>
+              <SettingsItem label={t('settings:ai.modelSelection')} value={t('settings:comingSoon')} disabled />
+            </SettingsGroup>
+
+            <SettingsGroup icon={DatabaseBackup} title={t('settings:data.title')}>
+              <SettingsItem label={t('settings:data.export')} value={t('settings:comingSoon')} disabled />
+            </SettingsGroup>
+
+            <SettingsGroup icon={Trash2} title={t('settings:account.title')}>
+              <SettingsItem label={t('settings:account.logout')} icon={LogOut} color="$red10" onPress={() => { void handleLogout(); }} />
+            </SettingsGroup>
+
+            <AppInfoCard />
+
+          </ScrollView>
         </YStack>
-      </Card>
 
-      {/* Appearance Section */}
-      <Card padding="$4" bordered>
-        <YStack gap="$3">
-          <XStack gap="$2" alignItems="center">
-            <Moon size={20} />
-            <H3>Appearance</H3>
-          </XStack>
-          <Separator />
-          <XStack alignItems="center" justifyContent="space-between">
-            <Text>Dark Mode</Text>
-            <Switch checked={currentTheme === 'dark'} onCheckedChange={handleThemeToggle}>
-              <Switch.Thumb animation="quick" />
-            </Switch>
-          </XStack>
-          <Text fontSize="$2" color="$gray10">
-            Theme: {currentTheme} (Phase 0: light/dark, Phase 1+: custom themes)
-          </Text>
-        </YStack>
-      </Card>
-
-      {/* Language Section */}
-      <Card padding="$4" bordered>
-        <YStack gap="$3">
-          <XStack gap="$2" alignItems="center">
-            <Globe size={20} />
-            <H3>Language</H3>
-          </XStack>
-          <Separator />
-          <XStack alignItems="center" justifyContent="space-between">
-            <Text>Current: {selectedLanguage === 'en' ? 'English' : 'Türkçe'}</Text>
-            <Button size="$3" onPress={handleLanguageChange} disabled opacity={0.6}>
-              Switch to {selectedLanguage === 'en' ? 'TR' : 'EN'}
+        <Sheet
+          modal
+          open={sheetOpen}
+          onOpenChange={setSheetOpen}
+          snapPoints={[25]}
+          dismissOnSnapToBottom
+        >
+          <Sheet.Overlay animation="lazy" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} />
+          <Sheet.Frame padding="$4" gap="$3">
+            <H3>{t('settings:language.selectLanguage')}</H3>
+            <Button
+              icon={i18n.language === 'tr' ? Check : null}
+              onPress={() => changeLanguage('tr')}
+              theme={i18n.language === 'tr' ? 'blue' : undefined}
+            >
+              Türkçe
             </Button>
-          </XStack>
-          <Text fontSize="$2" color="$gray10">
-            Will connect to @ybis/i18n (i18next + react-i18next)
-          </Text>
-        </YStack>
-      </Card>
-
-      {/* Account Section */}
-      <Card padding="$4" bordered>
-        <YStack gap="$3">
-          <XStack gap="$2" alignItems="center">
-            <LogOut size={20} />
-            <H3>Account</H3>
-          </XStack>
-          <Separator />
-          <Button theme="red" size="$4" onPress={() => { void handleLogout(); }} icon={LogOut}>
-            Exit Demo Mode (Logout)
-          </Button>
-          <Text fontSize="$2" color="$gray10">
-            This will clear demo session and return to login
-          </Text>
-        </YStack>
-      </Card>
-
-      {/* App Info */}
-      <Card padding="$4" bordered marginTop="auto">
-        <YStack gap="$2">
-          <Text fontWeight="600">YBIS Mobile</Text>
-          <Text color="$gray11">Version 0.1.0 (Demo)</Text>
-          <Text color="$gray11">Expo SDK 54 + React 19.1</Text>
-          <Text color="$gray11">React Native 0.81.4</Text>
-        </YStack>
-      </Card>
-    </YStack>
+            <Button
+              icon={i18n.language === 'en' ? Check : null}
+              onPress={() => changeLanguage('en')}
+              theme={i18n.language === 'en' ? 'blue' : undefined}
+            >
+              English
+            </Button>
+          </Sheet.Frame>
+        </Sheet>
+      </>
+    </UniversalLayout>
   );
 }

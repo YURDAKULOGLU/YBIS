@@ -2,60 +2,82 @@
 description: Load previous context and prepare for work session
 ---
 
-You are starting a new development session. Load the complete development context and prepare for productive work.
+You are starting a new development session. Follow the MANDATORY TIER 1 startup protocol from AGENTS.md.
 
-**IMPORTANT**: This command should be run at the beginning of every development session to maintain continuity.
+**CRITICAL**: This command implements the TIER 1 startup protocol. All 7 files MUST be read before any work begins.
 
-## Session Initialization Process
+## TIER 1: MANDATORY STARTUP (All Sessions)
 
-1. **Load Session Context**:
-   - Read `.specify/memory/session-context.md` for current focus and recent decisions
-   - Check current development phase and active quality standards
-   - Review technical debt map and high-risk areas
+**⚠️ READ ALL 7 FILES IN PARALLEL (SINGLE MESSAGE) - NO EXCEPTIONS! ⚠️**
 
-2. **Validate Environment**:
-   - Confirm current feature branch and spec directory
-   - Check for any blocking issues or dependencies
-   - Verify development tools and environment setup
+1. **Load Core Context** (Read in parallel):
+   ```
+   [ ] .YBIS_Dev/AI_GENEL_ANAYASA.md
+       Purpose: AI behavior rules, ethics, boundaries
 
-3. **Context Summary**:
-   - Summarize what you were working on last session
-   - Highlight any pending decisions or unresolved issues
-   - Identify immediate next steps and priorities
+   [ ] .YBIS_Dev/AI_CONTENT_CONVENTIONS.md
+       Purpose: AI content format conventions
 
-4. **Quality Standards Check**:
-   - Load active architectural patterns and quality rules
-   - Review any recent violations or technical debt
-   - Confirm compliance requirements for current work
+   [ ] .YBIS_Dev/Veriler/memory/YBIS_CORE_PRINCIPLES.md
+       Purpose: Core architectural principles
 
-5. **Tool Coordination**:
-   - Check which AI tools are assigned to current work
-   - Update agent context files if needed
-   - Prepare handoff information for tool switching
+   [ ] docs/YBIS_PROJE_ANAYASASI.md
+       Purpose: Project-specific technical rules
+
+   [ ] .YBIS_Dev/Veriler/memory/session-context.md
+       Purpose: "WHAT ARE WE DOING NOW?" - Current focus, recent decisions
+
+   [ ] .YBIS_Dev/Veriler/QUICK_INDEX.md
+       Purpose: "Which file should I read when?" - Navigation guide
+
+   [ ] .YBIS_Dev/Veriler/YBIS_COMMAND_INDEX.md
+       Purpose: "Which commands are available?" - Command catalog
+   ```
+
+2. **Confirm Session State**:
+   - Active focus from session-context.md
+   - Last 3 decisions (AD-XXX)
+   - Next steps (top 3 priorities)
+   - Blockers (if any)
+
+3. **Proactive Health Check**:
+   - Review any constitution violations from session-context.md
+   - Report blockers to user with solutions
 
 ## Expected Output
 
-Provide a concise session briefing that includes:
+After reading all TIER 1 files, provide a brief session briefing:
 
-- **Current Work**: What feature/task you're working on
-- **Last Session**: Brief summary of what was accomplished
-- **Today's Focus**: Immediate priorities and next steps
-- **Context**: Any important decisions or constraints to remember
-- **Quality Gates**: Active standards and compliance requirements
-- **Blockers**: Any issues that need resolution before proceeding
+```
+✅ Context yüklendi - hazırım
 
-## Commands Available This Session
+📍 Current Focus: [from session-context.md]
+📋 Last 3 Decisions: [AD-XXX summaries]
+🎯 Next Steps: [Top 3 priorities]
+🚨 Blockers: [If any, with solutions]
+```
 
-After loading context, you have access to:
-- `/quality-standards [pattern]` - Generate or update architectural standards
-- `/quick-fix [description]` - Handle small changes efficiently
-- `/deep-decision [question]` - Strategic architectural analysis
-- `/specify [description]` - Start new feature specification
-- `/plan` - Create implementation plan
-- `/tasks` - Generate development tasks
+**IMPORTANT**:
+- Keep output concise (3-5 lines max)
+- Don't ask user what to do - wait for instructions
+- TIER 2/3 files will be lazy-loaded when needed
+
+## TIER 2/3 Loading Strategy
+
+Load additional files ONLY when needed:
+
+**TIER 2 (Task-Based)**:
+- Implementation tasks → Read `docs/Güncel/DEVELOPMENT_GUIDELINES.md`
+- Dependency install → Read `docs/Güncel/tech-stack.md`
+- Package creation → Read `docs/Güncel/package-structure.md`
+
+**TIER 3 (Command-Based)**:
+- `/YBIS:implement` → Read relevant task from `tasks.md`
+- `/YBIS:review-story` → Read specified story file
+- `/YBIS:deep-review` → Read `Architecture_better.md`
 
 ## Usage
 
-Simply run `/session-start` at the beginning of your development session. No additional arguments needed.
+Run `/session-start` at the beginning of every development session.
 
-The system will automatically detect your current context and provide a comprehensive briefing to get you up to speed quickly.
+**NO EXCEPTIONS**: TIER 1 must complete before any work begins.

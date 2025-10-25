@@ -13,6 +13,7 @@ import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import Logger from '@ybis/logging';
 import { PortRegistry } from './services/PortRegistry';
 import { portsMiddleware } from './middleware/ports';
 
@@ -121,7 +122,7 @@ async function startServer(): Promise<void> {
     await registry.initialize();
     portsReady = true;
 
-    console.log('\n✅ All ports initialized successfully\n');
+    Logger.info('All ports initialized successfully', { type: 'LIFECYCLE' });
 
     // Start HTTP server
     serve(
@@ -130,31 +131,34 @@ async function startServer(): Promise<void> {
         port: PORT,
       },
       (info) => {
-        console.log(`🌐 Server running at http://localhost:${info.port}`);
-        console.log('\n📍 Available endpoints:');
-        console.log(`   GET  /health              - Basic health check`);
-        console.log(`   GET  /health/ports        - Port health status`);
-        console.log(`   POST /api/llm/generate    - Generate text (GPT-4o-mini)`);
-        console.log(`   POST /api/llm/chat        - Chat with AI`);
-        console.log(`   POST /api/llm/embed       - Create embeddings`);
-        console.log('');
+        Logger.info(`Server running at http://localhost:${info.port}`, { type: 'LIFECYCLE' });
+        Logger.info('Available endpoints:', {
+          type: 'LIFECYCLE',
+          endpoints: [
+            'GET  /health              - Basic health check',
+            'GET  /health/ports        - Port health status',
+            'POST /api/llm/generate    - Generate text (GPT-4o-mini)',
+            'POST /api/llm/chat        - Chat with AI',
+            'POST /api/llm/embed       - Create embeddings',
+          ],
+        });
       }
     );
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    Logger.error('Failed to start server', error as Error, { type: 'LIFECYCLE' });
     process.exit(1);
   }
 }
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down gracefully...');
+  Logger.info('Shutting down gracefully (SIGINT)', { type: 'LIFECYCLE' });
   // Close database connections if needed
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 Shutting down gracefully...');
+  Logger.info('Shutting down gracefully (SIGTERM)', { type: 'LIFECYCLE' });
   process.exit(0);
 });
 

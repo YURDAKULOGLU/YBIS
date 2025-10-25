@@ -1,25 +1,41 @@
 import React from 'react';
-import { YStack, H2, Text } from '@ybis/ui';
+import { YStack, ScrollView, Button, Plus } from '@ybis/ui';
+import { TaskItem, type Task } from '../../src/components/tasks/TaskItem';
+import { UniversalLayout } from '../../src/layouts/UniversalLayout';
 
-/**
- * Tasks Screen - Blank placeholder
- *
- * This screen is intentionally blank during refactoring.
- * Task management will be reimplemented using plugin architecture.
- */
+const mockTasks: Task[] = [
+  { id: '1', title: 'Market alÄ±ÅŸveriÅŸi yap', status: 'todo' },
+  { id: '2', title: 'Proje sunumunu hazÄ±rla', status: 'in-progress' },
+  { id: '3', title: 'Spor salonuna git', status: 'done' },
+  { id: '4', title: 'YBIS dokÃ¼mantasyonunu gÃ¼ncelle', status: 'todo' },
+];
+
 export default function TasksScreen(): React.ReactElement {
   return (
-    <YStack
-      flex={1}
-      backgroundColor="$background"
-      alignItems="center"
-      justifyContent="center"
-      padding="$4"
-    >
-      <H2>Tasks</H2>
-      <Text color="$gray11" fontSize="$3" marginTop="$2" textAlign="center">
-        Coming soon...
-      </Text>
-    </YStack>
+    <UniversalLayout>
+      <YStack flex={1} backgroundColor="$background">
+        <ScrollView flex={1} padding="$4">
+          <YStack gap="$3">
+            {mockTasks.map((task) => (
+              <TaskItem key={task.id} task={task} />
+            ))}
+          </YStack>
+        </ScrollView>
+        <Button
+          position="absolute"
+          bottom={20}
+          left={20}
+          size="$6"
+          circular
+          icon={Plus}
+          backgroundColor="$green9"
+          pressStyle={{ scale: 0.9, backgroundColor: '$green10' }}
+          animation="bouncy"
+          onPress={() => {
+            /* Functionality to be added in a future story */
+          }}
+        />
+      </YStack>
+    </UniversalLayout>
   );
 }

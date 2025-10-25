@@ -1,5 +1,5 @@
-import { XStack, Input, Button } from 'tamagui';
-import { Send } from '@tamagui/lucide-icons';
+import type { JSX } from 'react';
+import { XStack, Input, Button, Send } from '@ybis/ui';
 import { type ChatInputProps } from './types';
 
 /**
@@ -18,7 +18,7 @@ export function ChatInput({
   onSend,
   placeholder = 'Type a message...',
   disabled = false,
-}: ChatInputProps) {
+}: ChatInputProps): JSX.Element {
   return (
     <XStack gap="$2" alignItems="center">
       <Input

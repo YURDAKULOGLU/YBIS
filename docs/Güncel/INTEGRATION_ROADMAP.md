@@ -44,7 +44,7 @@ Beta
 **Third-party:** ❌ No
 
 **Integrations:**
-1. ✅ **Firebase Auth** - Google Sign-In only
+1. ✅ **Expo Auth Session** - Google Sign-In only
 2. ✅ **Supabase** - PostgreSQL database + file storage
 3. ✅ **OpenAI GPT-4o-mini** - AI chat and summarization
 

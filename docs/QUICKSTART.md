@@ -83,10 +83,11 @@ apps/mobile/app/
 ├── (auth)/
 │   ├── _layout.tsx       ← Auth layout
 │   └── login.tsx         ← Login screen
-├── (tabs)/
-│   ├── _layout.tsx       ← Tab navigation
-│   ├── index.tsx         ← Home/Dashboard
-│   ├── chat.tsx          ← Chat interface
+├── (main)/               ← Main app layout group
+│   ├── _layout.tsx       ← Main layout with header
+│   ├── index.tsx         ← The widget-based dashboard screen
+│   ├── tasks.tsx         ← Dedicated tasks screen
+│   ├── notes.tsx         ← Dedicated notes screen
 │   └── settings.tsx      ← Settings screen
 └── +not-found.tsx        ← 404 screen
 ```

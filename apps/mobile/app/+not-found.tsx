@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Stack } from 'expo-router';
-import { YStack, H1, Text, Button } from 'tamagui';
+import { YStack, H1, Text, Button } from '@ybis/ui';
 
 /**
  * 404 Not Found Screen

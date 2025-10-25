@@ -21,7 +21,7 @@
 
 *   **Lazy Loading Strategy:** Follow the 3-Tier Lazy Loading system. Only read documents when necessary, using `QUICK_INDEX.md` as the primary guide for "when to read which file."
 *   **Command System:** Be aware of the YBIS command system (slash commands and agent commands) as detailed in `AI_SYSTEM_GUIDE.md`.
-*   **Dual-Write Rule:** Remember the mandatory DUAL-WRITE rule for `session-context.md` and `DEVELOPMENT_LOG.md`. Although a validation script (`validate-dual-write.py`) exists, manual adherence is crucial.
+
 *   **Documentation Map:** Refer to `documentation-map.yaml` for the registry of all documents and their relationships.
 
 ## 4. Communication and Interaction

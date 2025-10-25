@@ -51,6 +51,20 @@ sections:
     owner: scrum-master
     editors: [scrum-master]
 
+  - id: constitutional-compliance
+    title: "🏛️ Anayasa Uyum Kontrolü (ZORUNLU)"
+    type: bullet-list
+    instruction: |
+      Bu story'yi uygulamadan önce, ilgili anayasa prensiplerini ve bunlara nasıl uyulacağını belirtin.
+    template: |
+      *   **Prensip 1: [İlgili Prensip Adı, örn: UI İzolasyon Prensibi]**
+          *   **Uyum Planı:** [Bu story'de bu prensibe nasıl uyulacağını açıklayan kısa bir cümle, örn: "Tüm yeni UI bileşenleri, @ybis/ui paketi içinde oluşturulacaktır."]
+      *   **Prensip 2: [İlgili Prensip Adı, örn: Port Mimarisi]**
+          *   **Uyum Planı:** [Kısa açıklama]
+    elicit: true
+    owner: scrum-master
+    editors: [dev-agent]
+
   - id: tasks-subtasks
     title: Tasks / Subtasks
     type: bullet-list

@@ -4,7 +4,7 @@ import { Slot, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { TamaguiProvider } from 'tamagui';
+import { TamaguiProvider } from '@ybis/ui';
 import { Theme, useThemeStore } from '@ybis/theme';
 import config from '../tamagui.config';
 import { useMockAuth } from '../src/stores/useMockAuth';

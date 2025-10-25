@@ -81,7 +81,7 @@
   "@ybis/auth": {
     "version": "0.1.0",
     "dependencies": {
-      "@react-native-firebase/auth": "^21.5.0",  // ❌ Expo alternative'e geçilecek
+
       "@react-native-google-signin/google-signin": "^14.1.0"  // ❌ expo-auth-session kullanılacak
     }
   },

@@ -1,4 +1,5 @@
-import { Check, AlertCircle, Loader } from '@tamagui/lucide-icons';
+import type { JSX } from 'react';
+import { Check, AlertCircle, Loader } from '@ybis/ui';
 import { type MessageStatusProps } from './types';
 
 /**
@@ -9,7 +10,7 @@ import { type MessageStatusProps } from './types';
  * - sent: Checkmark
  * - error: Alert icon
  */
-export function MessageStatus({ status, size = 16 }: MessageStatusProps) {
+export function MessageStatus({ status, size = 16 }: MessageStatusProps): JSX.Element | null {
   if (!status) return null;
 
   switch (status) {

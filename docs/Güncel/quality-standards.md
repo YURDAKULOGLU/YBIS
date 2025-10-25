@@ -163,7 +163,7 @@ npm run lint      # Check only
 
 **Port Pattern Naming:**
 - **Interface:** `[Name]Port` (e.g., `AuthPort`, `ChatPort`)
-- **Adapter:** `[Provider][Name]Adapter` (e.g., `FirebaseAuthAdapter`, `OpenAIAdapter`)
+- **Adapter:** `[Provider][Name]Adapter` (e.g., `ExpoAuthAdapter`, `OpenAIAdapter`)
 
 ---
 
@@ -212,18 +212,18 @@ const styles = StyleSheet.create({
 
 **Service Files:**
 ```typescript
-// packages/auth/src/adapters/FirebaseAuthAdapter.ts
+// packages/auth/src/adapters/ExpoAuthAdapter.ts
 
 // Imports (grouped)
-import auth from '@react-native-firebase/auth';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import * as AuthSession from 'expo-auth-session';
+import * as WebBrowser from 'expo-web-browser';
 import type { AuthPort, User } from '@ybis/core';
 
 // Class
-export class FirebaseAuthAdapter implements AuthPort {
+export class ExpoAuthAdapter implements AuthPort {
   // Public methods first
-  async signInWithGoogle(): Promise<User> {
-    // Implementation
+  async signInWithOAuth(provider: 'google'): Promise<User> {
+    // Implementation using Expo Auth Session
   }
 
   async signOut(): Promise<void> {
@@ -231,7 +231,7 @@ export class FirebaseAuthAdapter implements AuthPort {
   }
 
   // Private methods last
-  private mapFirebaseUser(user: FirebaseUser): User {
+  private parseJWT(token: string): any {
     // Implementation
   }
 }
@@ -548,7 +548,7 @@ export const storageService = new StorageService(supabaseAdapter);
 - [ ] Create new adapter implementing port interface
 - [ ] Write integration tests for new adapter
 - [ ] Update environment variables
-- [ ] Deploy new adapter alongside old (dual-write if needed)
+- [ ] Deploy new adapter alongside old
 - [ ] Test new adapter in staging
 - [ ] Swap adapter in production (feature flag)
 - [ ] Monitor error rates
@@ -561,7 +561,7 @@ export const storageService = new StorageService(supabaseAdapter);
 **See `YBIS_PROJE_ANAYASASI.md` v2.0.0 for full port definitions and examples.**
 
 #### Tier 1: Core Ports (Phase 0)
-1. **AuthPort** - Firebase → Supabase/Custom
+1. **AuthPort** - Expo Auth → Supabase/Custom
 2. **ChatPort** - Gifted Chat → Custom UI
 3. **DatabasePort** - Supabase → Cloud SQL
 4. **LLMPort** - OpenAI → Multi-provider
@@ -1038,7 +1038,6 @@ export const TaskList = memo<TaskListProps>(({ tasks, onTaskPress }) => {
 SUPABASE_URL=
 SUPABASE_ANON_KEY=
 OPENAI_API_KEY=
-FIREBASE_PROJECT_ID=
 
 # .env (DO NOT commit)
 SUPABASE_URL=https://your-project.supabase.co
@@ -1189,7 +1188,7 @@ jobs:
 user.name = 'John';
 
 // ✅ GOOD: Explains why
-// Firebase Auth doesn't allow displayName updates via SDK,
+// AI-suggested change, needs user confirmation
 // so we update Supabase directly and sync back on next login
 await supabase.from('users').update({ display_name: newName });
 ```
@@ -1209,7 +1208,7 @@ await supabase.from('users').update({ display_name: newName });
  *
  * @example
  * ```typescript
- * const auth = new FirebaseAuthAdapter();
+ * const auth = new ExpoAuthAdapter();
  * const user = await auth.signInWithGoogle();
  * ```
  */

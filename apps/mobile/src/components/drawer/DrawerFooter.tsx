@@ -1,6 +1,5 @@
 import React from 'react';
-import { YStack, Text, Button, Separator } from '@ybis/ui';
-import { LogOut } from '@tamagui/lucide-icons';
+import { YStack, Text, Button, Separator, LogOut } from '@ybis/ui';
 
 /**
  * DrawerFooter Component

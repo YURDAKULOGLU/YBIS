@@ -43,7 +43,16 @@
       "Bash(pnpm -r --filter \"./packages/**\" build)",
       "Bash(pnpm store prune:*)",
       "Bash(npx expo install expo-blur expo-image)",
-      "Bash(pnpm add @react-native-async-storage/async-storage)"
+      "Bash(pnpm add @react-native-async-storage/async-storage)",
+      "Bash(pnpm run lint)",
+      "Bash(pnpm run type-check:*)",
+      "Bash(pnpm --filter @ybis/backend test:*)",
+      "Bash(pnpm list:*)",
+      "Bash(pnpm --filter @ybis/ui build:*)",
+      "Bash(pnpm build:*)",
+      "Bash(grep:*)",
+      "Bash(pnpm add:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []

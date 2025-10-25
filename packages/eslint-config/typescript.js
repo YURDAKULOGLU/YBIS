@@ -22,6 +22,10 @@ export default [
         project: true, // Auto-detect nearest tsconfig.json
         tsconfigRootDir: process.cwd(),
       },
+      globals: {
+        JSX: 'readonly',
+        React: 'readonly',
+      },
     },
     plugins: {
       '@typescript-eslint': tsPlugin,

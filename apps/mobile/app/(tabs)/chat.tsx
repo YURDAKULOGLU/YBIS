@@ -1,8 +1,9 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
-import { YStack, H2, Text, Card, XStack, Button } from '@ybis/ui';
-import { Plus } from '@tamagui/lucide-icons';
+import { YStack, H2, Button, Plus } from '@ybis/ui';
 import Logger from '@ybis/logging';
+import { ConversationItem } from '../../src/components/chat/ConversationItem';
+import { UniversalLayout } from '../../src/layouts/UniversalLayout';
 
 // Mock Data for the Conversation List
 const mockConversations = [
@@ -44,18 +45,7 @@ export default function ChatScreen(): React.ReactElement {
     Logger.info('ChatInboxScreen mounted', { type: 'LIFECYECLE' });
   }, []);
 
-  const handleConversationPress = (conversationId: string, title: string) => {
-    Logger.info('Conversation pressed', {
-      type: 'USER_ACTION',
-      component: 'ConversationList',
-      conversationId,
-      title,
-    });
-    // TODO: Navigate to the actual chat thread
-    // router.push(`/chat/${conversationId}`);
-  };
-
-  const handleNewChatPress = () => {
+  const handleNewChatPress = (): void => {
     Logger.info('New Chat button pressed', {
       type: 'USER_ACTION',
       component: 'FAB',
@@ -64,47 +54,28 @@ export default function ChatScreen(): React.ReactElement {
   };
 
   return (
-    <YStack flex={1} backgroundColor="$background">
-      <ScrollView>
-        <YStack padding="$4" gap="$3">
-          <H2>Sohbetler</H2>
-          {mockConversations.map((convo) => (
-            <Card 
-              key={convo.id} 
-              padding="$4" 
-              bordered 
-              pressStyle={{ scale: 0.98, backgroundColor: '$gray2' }}
-              animation="bouncy"
-              onPress={() => handleConversationPress(convo.id, convo.title)}
-            >
-              <XStack alignItems="center" justifyContent="space-between">
-                <YStack flex={1} gap="$1">
-                  <Text fontWeight="600" fontSize="$5" color="$color">
-                    {convo.title}
-                  </Text>
-                  <Text color="$gray11" fontSize="$3" numberOfLines={1} ellipsizeMode="tail">
-                    {convo.lastMessage}
-                  </Text>
-                </YStack>
-                <Text color="$gray10" fontSize="$2">
-                  {convo.timestamp}
-                </Text>
-              </XStack>
-            </Card>
-          ))}
-        </YStack>
-      </ScrollView>
-      <Button
-        size="$6"
-        circular
-        icon={Plus}
-        theme="blue"
-        elevation="$2"
-        position="absolute"
-        bottom="$4"
-        right="$4"
-        onPress={handleNewChatPress}
-      />
-    </YStack>
+    <UniversalLayout hideChatButton>
+      <YStack flex={1} backgroundColor="$background">
+        <ScrollView>
+          <YStack padding="$4" gap="$3">
+            <H2>Sohbetler</H2>
+            {mockConversations.map((convo) => (
+              <ConversationItem key={convo.id} conversation={convo} />
+            ))}
+          </YStack>
+        </ScrollView>
+        <Button
+          size="$6"
+          circular
+          icon={Plus}
+          theme="blue"
+          elevation="$2"
+          position="absolute"
+          bottom="$4"
+          right="$4"
+          onPress={handleNewChatPress}
+        />
+      </YStack>
+    </UniversalLayout>
   );
 }

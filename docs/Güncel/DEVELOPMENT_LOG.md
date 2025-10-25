@@ -19,9 +19,9 @@
 
 ---
 
-## 📅 Week 1: Setup & Infrastructure (Days 1-7)
+## 📅 Week 1: Setup & Infrastructure (Days 1-7) 
 
-### Day 1 - 2025-10-06 (Initial Setup)
+### Day 1 - 2025-10-06 (Initial Setup) 
 
 **Tasks Completed:**
 - [x] T001: Create root workspace with npm workspaces
@@ -1998,100 +1998,6 @@ Phase 3 (If MCP):
 - Etkinlik Ekle
 - Not Ekle
 - Flow Başlat
-- **Demo:** 🆕 Yeni Chat (shows regular prompts)
-- **Demo:** 🗑️ Tümünü Temizle (resets to onboarding)
-
-**4. Header Navigation:**
-- Left: Menu button (📋)
-- Center: "Home" title
-- Right: Notifications (🔔) + Profile (👤)
-
-**5. Slidable Widget Tabs:**
-- 4 tabs: Notes, Tasks, Calendar, Flows
-- Selected tab highlighted (blue background)
-- Widget area shows contextual content (placeholders for now)
-
-**Issues Fixed:**
-
-**Issue #20: Navigation Multiple Linking Warning**
-- **Problem:** `useNavigationContainerRef` caused "multiple NavigationContainers" warning
-- **Root Cause:** Expo Router manages its own NavigationContainer
-- **Solution:** Removed `useNavigationContainerRef` and `isNavigationReady` state
-- **Status:** ✅ Fixed
-
-**Issue #21: Platform.OS Conditionals (Zero-Tolerance Violation)**
-- **Problem:** Used `Platform.OS === 'ios' ? 'padding' : 'height'` in KeyboardAvoidingView
-- **Root Cause:** Temporary workaround instead of proper Android-specific config
-- **Context:** This is Android-only app (apps/mobile/), iOS will be separate (apps/mobile-ios/)
-- **Solution:** Removed Platform import, hardcoded Android values:
-  - `behavior="height"`
-  - `keyboardVerticalOffset={0}`
-- **Status:** ✅ Fixed - Zero-tolerance rule restored
-- **Note:** Monorepo structure: apps/mobile (Android) + apps/mobile-ios (future)
-
-**Issue #22: Bottom Tab Bar Still Taking Space**
-- **Problem:** Tab bar hidden but still occupied space at bottom
-- **Solution:** Added `height: 0` and `position: 'absolute'` to tabBarStyle
-- **Status:** ✅ Fixed - Input bar now at true bottom
-
-**Architecture Decision:**
-
-**AD-013: Remove Platform.OS Checks - Android-Only Mobile App**
-- **Date:** 2025-10-11
-- **Context:** Used Platform.OS conditionals for KeyboardAvoidingView
-- **Decision:** Remove all Platform.OS checks, use Android-specific values
-- **Rationale:**
-  - **Zero-Tolerance Rule:** No workarounds, no shortcuts, no Platform.OS
-  - **Monorepo Strategy:** apps/mobile = Android, apps/mobile-ios = iOS (separate)
-  - **Root Cause Fix:** Each platform has its own codebase
-  - **No Cross-Platform Logic:** Each app is platform-specific
-- **Alternatives Considered:**
-  - Keep Platform.OS checks (❌ violates zero-tolerance)
-  - Use react-native-web responsive (❌ not needed, Android-only)
-- **Consequences:**
-  - ✅ Zero-tolerance compliance
-  - ✅ Cleaner, simpler code
-  - ✅ No conditional branching
-  - ✅ Easier to maintain
-  - ✅ iOS will have separate app with iOS-specific config
-
-**AD-014: Chat-First Main Screen Design**
-- **Date:** 2025-10-11
-- **Context:** Needed main screen UI for AI-powered productivity app
-- **Decision:** Chat-first design with contextual widgets
-- **Rationale:**
-  - AI assistant is core feature
-  - Widget area (1/5 screen) for quick context
-  - Suggestion prompts for discoverability
-  - Bottom tab bar removed for more chat space
-- **Consequences:**
-  - ✅ AI chat always accessible
-  - ✅ More screen space for conversations
-  - ✅ Quick actions via + button
-  - ⚠️ Navigation needs alternative solution (future)
-
-**Statistics:**
-- Files Modified: 3
-- Lines Changed: ~350
-- UI Components: 6 (Header, Tabs, Widget, Chat, Prompts, Input)
-- Mock Responses: 8 (keyword-based)
-- TypeScript Errors Fixed: 3 (Separator unused, array access, Platform import)
-- Time Spent: ~2.5 hours
-
-**Key Learnings:**
-- ✅ Zero-tolerance rule enforced - no Platform.OS in Android-only app
-- ✅ Expo Router manages navigation, don't override with custom refs
-- ✅ Monorepo allows platform-specific apps (apps/mobile, apps/mobile-ios)
-- ✅ Suggestion prompts improve UX for new users
-- ✅ Mock AI responses good for UI testing without backend
-- ⚠️ Alt navigation solution needed (tabs removed, menu not implemented)
-
-**Next Steps:**
-- Implement widget content (mini calendar, task list, etc.)
-- Connect to LLMPort for real AI responses
-- Implement menu navigation
-- Add authentication flow
-- Test on real Android device (EAS Build)
 
 ---
 
@@ -2377,7 +2283,6 @@ Status:
 - **Related:** AD-021 (Token Optimization), AD-022 (Dual-Write Rule), AD-023 (Documentation Map)
 
 ---
-
 
 ### AD-024: Port Usage Criteria Clarification - No Overengineering
 - **Date:** 2025-10-12
@@ -3119,27 +3024,6 @@ headerStyle: {
 - ✅ Drawer menu safe area compliant
 - ✅ Platform-aware timing (iOS/Android have different keyboard speeds)
 
-**Files Modified:**
-1. `apps/mobile/app/_layout.tsx` - SafeAreaProvider, StatusBar transparent
-2. `apps/mobile/app/(tabs)/_layout.tsx` - Header safe area height
-3. `apps/mobile/app/(tabs)/index.tsx` - Keyboard-synced animations, chat bar absolute positioning
-4. `apps/mobile/app/components/DrawerMenu.tsx` - Safe area padding
-
-**Warnings Resolved:**
-- ❌ `setBackgroundColorAsync not supported with edge-to-edge` → ✅ Removed, use `setButtonStyleAsync` only
-- ❌ `Route "./components/DrawerMenu.tsx" missing default export` → ✅ Added default export
-
-**Quality Metrics:**
-- **Linter:** ✅ 0 errors (all modified files clean)
-- **Type-Check:** ✅ Passing (strict mode compliant)
-- **Animation Smoothness:** ✅ Perfect sync with native keyboard
-- **Safe Area Coverage:** ✅ Top, bottom, left, right all handled
-
-**Platform Compatibility:**
-- **iOS:** ✅ Keyboard duration ~250-300ms, animations sync perfectly
-- **Android:** ✅ Keyboard duration ~150-200ms, animations sync perfectly
-- **Edge-to-Edge:** ✅ Fully compatible with Expo SDK 54 defaults
-
 **Known Issues:**
 - Keyboard sync still not perfect according to user (requires further investigation)
 - User reported animations still lag behind keyboard (possible Metro cache issue?)
@@ -3343,7 +3227,7 @@ npx expo run:android
 - Port Architecture provides significant technical advantage
 
 **Implementation:**
-- ✅ **Competitor Analysis Document:** `docs/strategy/TRYMARTIN_COMPETITOR_ANALYSIS.md`
+- ✅ **Competitor Analysis Document:** `docs/strategy/TRY MARTIN_COMPETITOR_ANALYSIS.md`
   - SWOT analysis (TryMartin vs YBIS)
   - Feature comparison matrix
   - Market positioning analysis
@@ -3479,3 +3363,22 @@ npx expo run:android
 - ✅ Navigation structure ready for settings routing
 
 **Next Session Plan:** See `.YBIS_Dev/Veriler/next-session-settings-plan.md`
+
+### AD-038: Deprecation of Dual-Write Rule (AD-022) and Introduction of Command-Based Session Protocol
+- **Date:** 2025-10-12
+- **Context:** The manual "Dual-Write" rule (AD-022) between `session-context.md` and `DEVELOPMENT_LOG.md` is fragile, error-prone, and relies on agent discipline.
+- **Decision:** 
+    - AD-022 is officially deprecated.
+    - The process of session-end summarization and context-setting is now handled by a formal, command-based protocol.
+    - The new `/ybis:end_session` command will be the single point of action for ending a session.
+    - The new `/ybis:log-decision` command will be used to ensure "Living Documents" are updated when major architectural changes occur.
+- **Rationale:**
+  - Replaces a manual, fragile process with a standardized, automatable command.
+  - Reduces the risk of context desynchronization between `session-context.md` and `DEVELOPMENT_LOG.md`.
+  - Improves AI agent reliability and reduces cognitive overhead.
+  - Creates a more robust and maintainable documentation workflow.
+- **Impact:**
+  - All AI agents must be updated to use the new command protocol.
+  - `AGENTS.md` and other onboarding documents will be refactored to remove "Dual-Write" and include the new protocol.
+  - The system becomes more resilient to human/AI error.
+- **Related:** AD-022 (superseded)

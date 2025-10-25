@@ -1,34 +1,120 @@
 # YBIS Proje Anayasası
 
-**Version:** 3.1.0  
-**Last Updated:** 2025-10-12  
-**Status:** CANONICAL - Technical Constitution  
+**Version:** 4.0.0
+**Last Updated:** 2025-10-21
+**Status:** CANONICAL - Technical Constitution
+**Enforcement:** MANDATORY - CI/CD automated gates + Manual review
 
 **Cross-References:**
 - [Project Vision](vision/PROJECT_VISION.md) - Strategic foundation (product principles → architecture)
 - [Development Log](Güncel/DEVELOPMENT_LOG.md) - Architecture Decisions (AD-XXX)
 - [Competitive Strategy](strategy/COMPETITIVE_STRATEGY.md) - Moats → Tech advantages
 - [Product Roadmap](roadmap/PRODUCT_ROADMAP.md) - Timeline alignment
+- [Build Automation](strategy/BUILD_AUTOMATION_STRATEGY.md) - NX integration criteria
+- [Proposed Amendments](strategy/PROPOSED_CONSTITUTION_AMENDMENTS.md) - Future rules
 
 ---
 
-## 1. Amaç
+## 🚨 ENFORCEMENT NOTICE
 
-Bu anayasa, sadece YBIS projesi için geçerli olan, uyulması zorunlu teknik kuralları, mimari prensipleri ve kalite standartlarını tanımlar. Bu kurallar, `AI_GENEL_ANAYASA.md` dosyasındaki evrensel kuralları bu proje özelinde genişletir ve önceliklidir.
+```
+╔═══════════════════════════════════════════════════════════════╗
+║                    ZERO-TOLERANCE CONSTITUTION                ║
+║                                                               ║
+║  Bu anayasadaki EVERY SINGLE RULE is MANDATORY.              ║
+║  İhlal = PR BLOCKED = Code CANNOT merge to main             ║
+║                                                               ║
+║  Enforcement Layers:                                          ║
+║  1. ESLint (IDE) - Instant feedback                          ║
+║  2. Pre-commit hooks - Local gate                            ║
+║  3. CI/CD pipeline - Automated gate                          ║
+║  4. PR review - Manual gate (final)                          ║
+║                                                               ║
+║  NO EXCEPTIONS. NO "bu sefer geçirelim".                     ║
+║  NO "sonra düzeltiriz". FIX NOW or DON'T MERGE.             ║
+╚═══════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## 1. Amaç ve Kapsam
+
+Bu anayasa, YBIS projesi için **uyulması zorunlu** teknik kuralları, mimari prensipleri, kalite standartlarını ve **otomasyon gereksinimlerini** tanımlar.
+
+**Scope:**
+- ✅ Code quality (TypeScript, ESLint, testing)
+- ✅ Architecture (ports, abstractions, patterns)
+- ✅ Performance (bundle size, re-render, build times)
+- ✅ Security (data validation, error handling)
+- ✅ Developer Experience (build automation, tooling)
+
+Bu kurallar, `AI_GENEL_ANAYASA.md` dosyasındaki evrensel kuralları bu proje özelinde genişletir ve **önceliklidir**.
 
 ## 2. Kalite ve Güvenlik Emirleri (Zero-Tolerance)
 
 Bu bölümdeki kurallar tartışılamaz ve asla esnetilemez.
 
-- **TypeScript Katılığı:** TypeScript'in `strict` modu asla devre dışı bırakılamaz. `any` türü kesinlikle yasaktır. Belirsiz türler için `unknown` kullanılmalı ve tür koruması (type guard) ile daraltılmalıdır.
-- **ESLint Kuralları:** Projenin `.eslintrc.js` dosyasında tanımlı olan tüm kurallara uyulması zorunludur.
-- **Yasaklanmış Desenler:** `--force`, `--legacy-peer-deps` gibi komutlar; `@ts-ignore` gibi açıklamalar; ve Tamagui\'nin `f`, `ai`, `jc` gibi kısayol prop\'ları kesinlikle yasaktır.
-- **Otomatik Kural Denetimi Prensibi (Automated Rule Enforcement):** Bu anayasada tanımlanan ve otomatik olarak denetlenebilecek olan kritik kurallar (özellikle "UI İzolasyonu" ve "Yasaklanmış Desenler" gibi), statik kod analizi araçları (ESLint) kullanılarak birer kural setine dönüştürülmelidir. Örneğin, `apps/` klasörleri içinde `tamagui`'den doğrudan `import` yapılmasını yasaklayan özel bir ESLint kuralı yazılmalıdır. Bu kurallar, geliştirme ortamında (IDE) anında uyarı vermeli ve CI/CD sürecinde projenin derlenmesini engelleyerek "kırık" kodun ana branch'e birleşmesini imkansız hale getirmelidir.
+### 2.1 TypeScript Rules (MANDATORY)
+
+**❌ FORBIDDEN:**
+- `strict: false` - TypeScript strict mode MUST NEVER be disabled
+- `any` type - FORBIDDEN in all code (use `unknown` + type guards)
+- `skipLibCheck: true` - Hides real errors
+- `@ts-ignore` or `@ts-expect-error` - FORBIDDEN (fix the root cause)
+
+**✅ REQUIRED:**
+- All functions MUST have explicit return types
+- All parameters MUST be typed (no implicit any)
+- Use `type` imports: `import type { Foo } from 'bar'`
+
+**Enforcement:** ESLint + CI/CD (fails on violation)
+
+### 2.2 ESLint Rules (MANDATORY)
+
+**ALL** rules in `.eslintrc.js` MUST be followed. NO exceptions.
+
+**Zero Warnings Policy:**
+- Warnings = Errors (CI/CD treats warnings as failures)
+- PR cannot merge with ANY ESLint warnings
+
+**Enforcement:** Pre-commit hooks + CI/CD
+
+### 2.3 Forbidden Patterns (ABSOLUTE BAN)
+
+**❌ NEVER USE:**
+```bash
+npm install --force              # Breaks dependency tree
+npm install --legacy-peer-deps   # Masks compatibility issues
+```
+
+**❌ NEVER USE (Code):**
+```typescript
+// @ts-ignore                    # Ignores TypeScript errors
+bg="$blue5"                      # Tamagui shorthands (use backgroundColor)
+console.log()                    # Use Logger instead
+```
+
+**Violation = PR BLOCKED**
+
+### 2.4 Automated Rule Enforcement (CI/CD Gates)
+
+**MUST implement automated checks for:**
+1. **UI Isolation Check** - ESLint rule: No direct `tamagui` imports in `apps/`
+2. **Port Usage Check** - Custom lint rule: Detect direct vendor imports
+3. **Test Coverage Gate** - Block merge if coverage <80%
+4. **Bundle Size Gate** - Block merge if bundle exceeds limit
+5. **Type Safety Gate** - Block merge on ANY TypeScript error
+
+**Implementation Timeline:**
+- Phase 0: ESLint + TypeScript checks ✅
+- Phase 1: Custom ESLint rules (UI isolation, Port usage)
+- Phase 2: Bundle size + Coverage gates
+- Phase 3: Performance budgets (re-render, build time)
 
 ## 3. Mimari Prensipleri
 
 - **Port-by-Port Mimarisi (Criteria-Based):** **Sadece değiştirilebilir external bağımlılıklar** için port kullanılmalıdır. Port kullanım kriterleri:
-  - ✅ **Port Kullan:** External vendor/service (Supabase, OpenAI, Firebase), swap potential var, birden fazla alternatif mevcut, network call veya native kod
+  - ✅ **Port Kullan:** External vendor/service (Supabase, OpenAI), swap potential var, birden fazla alternatif mevcut, network call veya native kod
   - ❌ **Port Kullanma:** Internal app logic, framework part (React, Expo Router), single implementation, stable library (Zustand, i18next)
   - **Örnek (Port):** `DatabasePort` (Supabase → Cloud SQL), `LLMPort` (OpenAI → Anthropic), `AuthPort` (OAuth providers)
   - **Örnek (No Port):** Theme (Tamagui + zustand store), i18n (i18next), Navigation (Expo Router), State (Zustand)
@@ -44,12 +130,316 @@ Bu bölümdeki kurallar tartışılamaz ve asla esnetilemez.
     - **Doğru Çözüm ("Fix the Abstraction"):** `AuthPort` arayüzünü, sürecin iki fazını (UI hazırlığı ve mantık işlemi) yansıtacak şekilde `getOAuthRequestConfig()` ve `processOAuthResponse()` olarak iki metoda ayırmak. Bu, soyutlamayı temiz, test edilebilir ve teknolojiyle uyumlu hale getirir.
   - **Kural:** Belirtiyi implementasyonda değil, kök nedeni soyutlama katmanında çöz.
 
-## 4. Geliştirme Akışı Kuralları
+---
 
-- **Test Zorunluluğu:** Önemli değişiklikler içeren veya yeni bir özellik ekleyen her kod parçası, ilgili testlerle (birim, entegrasyon) birlikte sunulmalıdır. Kod, lint ve tür kontrolünden (`npm run lint`, `npm run type-check`) hatasız geçmeden tamamlanmış sayılmaz.
-- **Test Kapsamı Zorunluluğu (Test Coverage Mandate):** Her yeni özellik veya hata düzeltmesi, sadece test ile değil, aynı zamanda belirlenen minimum test kapsamı oranı (örneğin, `%80`) ile birlikte sunulmalıdır. Bu oran, CI/CD sürecinde otomatik olarak kontrol edilmeli ve ana branch'e birleştirilmesi engellenmelidir.
-- **Loglama ve Dokümantasyon:** Alınan önemli kararlar, yapılan sapmalar ve tamamlanan görevler, `docs/Güncel/DEVELOPMENT_LOG.md` dosyasına ve ilgili `.YBIS_Dev/Veriler/memory/session-context.md` dosyasına işlenmelidir.
-- **Hata Durumunda Durma:** Talimatlar çelişiyorsa, gerekli dosyalar eksikse veya bir doğrulama adımı (örn: testler) üst üste üç kez başarısız olursa, işlem durdurulmalı ve durum kullanıcıya bildirilmelidir.
+## 3.2 Ürün ve Kullanıcı Deneyimi Prensipleri
+
+### 3.2.1 Veri Odaklı İterasyon Prensibi ("Feedback Porn")
+- **Kural:** Özellikle Closed Beta fazı boyunca, kullanıcıların yaptığı her anlamlı etkileşim (buton tıklaması, ekran görüntülemesi vb.) standart bir formatta bir analiz olayı olarak kaydedilmelidir.
+- **Altyapı:** Bu işlem, `AnalyticsPort` arayüzü üzerinden, geliştirme ortamında konsola, beta'da ise PostHog gibi merkezi bir platforma gönderilerek yapılır.
+- **Gizlilik Şerhi:** Bu loglama, **asla** kullanıcının kişisel içeriğini (not metinleri, görev başlıkları vb.) içermez. Amaç, kullanıcı davranışını analiz ederek ürün kararlarını veriye dayandırmaktır.
+
+### 3.2.2 "Önce Çevrimdışı" Prensibi (Offline-First Principle)
+- **Kural:** Uygulama, internet bağlantısı olmadığında veya zayıf olduğunda bile temel işlevlerini (not alma, görev ekleme vb.) yerine getirebilmelidir.
+- **Uygulama:** Kullanıcı eylemleri anında arayüze yansıtılır ve cihazın yerel hafızasına kaydedilir. Bağlantı kurulduğunda, sistem arka planda sunucu ile otomatik olarak senkronize olur.
+- **Amaç:** Kesintisiz, hızlı ve güvenilir bir mobil deneyim sunmak.
+
+### 3.2.3 "Kullanıcıyı Asla Bekletme" Prensibi (Optimistic UI)
+- **Kural:** Zaman alabilecek hiçbir işlem (API isteği, AI işlemi vb.) kullanıcı arayüzünü kilitlememelidir.
+- **Uygulama:** Kullanıcı bir eylem gerçekleştirdiğinde, arayüz işlemin başarılı olacağını varsayarak anında güncellenir ("Optimistic UI"). İşlem arka planda devam eder. Eğer bir hata oluşursa, kullanıcıya bir "Geri Al" seçeneği sunularak durum düzeltilir.
+- **Amaç:** Uygulamanın her zaman akıcı ve anında tepki veriyor hissettirmesi.
+
+### 3.2.4 "Geri Alınabilir Eylemler" Prensibi (Reversible Actions)
+- **Kural:** Bir veriyi silmek gibi kritik ve geri döndürülemez eylemler, her zaman kullanıcıya kısa bir süre için geri alma imkanı sunmalıdır.
+- **Uygulama:** Bir öğe silindiğinde, veritabanından hemen kaldırılmaz, "silindi" olarak işaretlenir (soft delete). Arayüzde birkaç saniyeliğine "Geri Al" seçeneği sunan bir bildirim gösterilir.
+- **Amaç:** Yanlışlıkla yapılabilecek veri kayıplarını önlemek ve kullanıcıya güven vermek.
+
+---
+
+## 3.5 Performance Standards (MANDATORY LIMITS)
+
+### 3.5.1 Bundle Size Ceiling
+
+**❌ HARD LIMIT: Mobile bundle CANNOT exceed 10 MB (production)**
+
+**Enforcement:**
+```yaml
+CI/CD Gate:
+  - Build mobile app
+  - Measure bundle size
+  - IF size > 10MB → BLOCK PR
+  - Require bundle analysis report
+```
+
+**Every New Dependency MUST:**
+1. Be justified (cannot use existing solution?)
+2. Bundle impact analyzed (use `source-map-explorer`)
+3. Alternatives considered (lighter options?)
+4. Approved in PR review
+
+**Violation = PR BLOCKED until bundle reduced**
+
+### 3.5.2 Re-render Budget (Performance Optimization)
+
+**❌ FORBIDDEN: Unnecessary re-renders**
+
+**REQUIRED:**
+- Use `React.memo` for expensive components
+- Use `useMemo` for expensive calculations
+- Use `useCallback` for event handlers
+- Profile with React DevTools (no bariz issues)
+
+**PR Review MUST check:**
+- [ ] Performance profiler screenshots attached
+- [ ] No obvious re-render issues
+- [ ] Memoization used where appropriate
+
+**Enforcement:** Manual (PR review) + Profiler evidence required for complex components
+
+### 3.5.3 Build Time Budget
+
+**❌ HARD LIMIT: Full monorepo build CANNOT exceed 2 minutes**
+
+**Trigger for NX Migration:**
+```yaml
+IF any of:
+  - Full build > 2 minutes
+  - Package count > 5
+  - Team size > 1 developer
+  - Cache miss rate > 50%
+THEN:
+  - MUST implement NX
+  - MUST setup build caching
+  - MUST optimize dep graph
+```
+
+**Current Status:** Monitor (will implement when threshold reached)
+
+---
+
+## 3.6 Data Validation & API Security (MANDATORY)
+
+### 3.6.1 API Schema Mandate (Zod Validation)
+
+**❌ FORBIDDEN: Trust backend data "as is"**
+
+**REQUIRED: ALL API responses MUST be validated with Zod**
+
+```typescript
+// ❌ WRONG - Direct usage
+const userData = await api.getUser(id);
+setUser(userData); // Unsafe!
+
+// ✅ CORRECT - Validated
+import { z } from 'zod';
+
+const UserSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1),
+  email: z.string().email(),
+});
+
+const response = await api.getUser(id);
+const userData = UserSchema.parse(response); // Validates + throws on mismatch
+setUser(userData); // Safe!
+```
+
+**Implementation:**
+1. **All schemas in `@ybis/core/schemas`**
+2. **Validate at network boundary** (API layer, NOT components)
+3. **Log validation failures** (Sentry + Logger)
+4. **Graceful degradation** (show error UI, don't crash)
+
+**Enforcement:**
+- Custom ESLint rule: Detect direct API usage without validation
+- Code review: Check for schema validation
+- CI/CD: Require schema tests
+
+**Violation = PR BLOCKED**
+
+### 3.6.2 Input Sanitization
+
+**ALL user inputs MUST be sanitized before:**
+- Sending to backend
+- Rendering in UI
+- Storing locally
+
+**Use:** DOMPurify (web), validator.js (common patterns)
+
+---
+
+## 3.7 Build Automation & Tooling (Developer Experience)
+
+### 3.7.1 Pre-commit Hooks (MANDATORY)
+
+**MUST run before every commit:**
+```yaml
+Pre-commit checklist:
+  1. ESLint (auto-fix enabled)
+  2. TypeScript type check
+  3. Prettier (auto-format)
+  4. Test affected files
+```
+
+**Setup:** Husky + lint-staged (already configured ✅)
+
+### 3.7.2 Build Automation Strategy
+
+**Current (Phase 0):** Manual `pnpm build`
+
+**Future (NX Migration Criteria):**
+```yaml
+Implement NX when:
+  ✅ Build time > 2 minutes (current: <1 min)
+  ✅ Package count > 5 (current: 11 packages)
+  ⏳ Team size > 1 (current: solo)
+
+Decision: Implement NX in Phase 1 (multi-developer)
+```
+
+**Reference:** `docs/strategy/BUILD_AUTOMATION_STRATEGY.md`
+
+---
+
+## 4. Test Requirements (MANDATORY - NO EXCEPTIONS)
+
+### 4.1 Test Coverage Gates (CI/CD Enforced)
+
+**❌ HARD LIMITS:**
+```yaml
+Minimum Coverage (CANNOT merge if below):
+  - Overall: 80%
+  - Statements: 80%
+  - Branches: 75%
+  - Functions: 80%
+  - Lines: 80%
+```
+
+**Enforcement:** CI/CD blocks PR if coverage drops below thresholds
+
+### 4.2 Unit Test Requirements
+
+**MUST have unit tests for:**
+- ✅ All Port adapters (`@ybis/database`, `@ybis/llm`, etc.)
+- ✅ All business logic functions
+- ✅ All utility functions (`@ybis/core/utils`)
+- ✅ All custom hooks
+- ✅ All Zustand stores (actions + selectors)
+
+**Test file convention:**
+```
+src/
+  services/
+    UserService.ts
+    __tests__/
+      UserService.test.ts   # ✅ Co-located with source
+```
+
+**Framework:** Vitest (already configured ✅)
+
+### 4.3 Integration Test Requirements
+
+**MUST have integration tests for:**
+- ✅ API endpoints (backend routes)
+- ✅ Database operations (CRUD flows)
+- ✅ Port adapter integrations (mock external services)
+- ✅ Multi-step workflows (auth flow, data sync)
+
+**Example:**
+```typescript
+// Integration test: Auth flow
+describe('Auth Integration', () => {
+  it('should complete OAuth flow', async () => {
+    const config = await authPort.getOAuthRequestConfig('google');
+    const response = mockOAuthResponse();
+    const result = await authPort.processOAuthResponse(response);
+    expect(result.user).toBeDefined();
+  });
+});
+```
+
+### 4.4 E2E Test Requirements (Phase 1+)
+
+**Future requirement (NOT Phase 0):**
+- E2E tests with Detox (React Native)
+- Critical user flows (login, create task, send message)
+- Run on CI/CD for every PR
+
+**Current:** Manual testing OK for Phase 0
+
+### 4.5 What MUST Be Tested
+
+**Priority 1 (MUST have tests):**
+- Port adapters (database, LLM, auth, storage)
+- Business logic (task creation, message handling)
+- Data transformation (API → UI models)
+- Validation schemas (Zod)
+- Error handling paths
+
+**Priority 2 (SHOULD have tests):**
+- React components (complex logic only)
+- Custom hooks
+- Utility functions
+
+**Priority 3 (OPTIONAL):**
+- Simple presentational components
+- Type definitions (TypeScript handles this)
+- Configuration files
+
+### 4.6 Test Quality Standards
+
+**Tests MUST:**
+- [ ] Have descriptive names (`should create user when valid data provided`)
+- [ ] Test ONE thing per test case
+- [ ] Use AAA pattern (Arrange, Act, Assert)
+- [ ] Mock external dependencies (no real API calls)
+- [ ] Clean up after themselves (no test pollution)
+
+**Tests MUST NOT:**
+- ❌ Depend on test execution order
+- ❌ Share mutable state between tests
+- ❌ Make real network calls
+- ❌ Have hard-coded timeouts (use waitFor)
+
+### 4.7 Missing Test Coverage (Current Gaps)
+
+**As of 2025-10-21, we need tests for:**
+
+**Unit Tests Needed:**
+- [ ] `@ybis/ui` components (Button, Card, etc.) - Priority 3
+- [ ] `@ybis/chat` components - Priority 2
+- [ ] `@ybis/i18n` translation loading - Priority 2
+- [ ] `@ybis/theme` provider - Priority 3
+- [ ] `apps/mobile` screens - Priority 2 (complex logic only)
+- [ ] `apps/backend` routes - Priority 1
+
+**Integration Tests Needed:**
+- [ ] Backend API endpoints (`/api/llm/*`) - Priority 1
+- [ ] Auth flow (OAuth complete flow) - Priority 1
+- [ ] Database CRUD operations - Priority 1
+- [ ] Storage upload/download - Priority 1
+
+**E2E Tests Needed:**
+- [ ] Login flow (Phase 1)
+- [ ] Task creation flow (Phase 1)
+- [ ] Chat message flow (Phase 1)
+
+**Action Item:** Add these tests incrementally, starting with Priority 1
+
+### 4.8 CI/CD Test Gates
+
+**PR cannot merge unless:**
+```yaml
+✅ All tests pass (0 failures)
+✅ Coverage >= 80%
+✅ No test timeouts
+✅ No skipped tests (test.skip forbidden)
+✅ Test execution < 5 minutes
+```
+
+**Enforcement:** GitHub Actions (setup in Phase 1)
+
+---
 
 ## 5. Monorepo ve Paket Kuralları
 
@@ -76,7 +466,7 @@ Bu bölümdeki kurallar tartışılamaz ve asla esnetilemez.
 
 Aşağıdaki portlar Phase 0'da implement edilmelidir:
 
-1. **AuthPort** - OAuth provider swap (Expo Auth → Google → Firebase → Supabase Auth)
+1. **AuthPort** - OAuth provider swap (Expo Auth → Google → Supabase Auth)
 2. **DatabasePort** - Supabase PostgreSQL → Cloud SQL (gelecek)
 3. **LLMPort** - OpenAI → Anthropic → Gemini → Local LLM (multi-provider)
 4. **StoragePort** - Supabase Storage → GCS → S3 (vendor swap)
@@ -196,6 +586,13 @@ Aşağıdaki durumlarda dokümantasyon güncellemesi **zorunludur**:
 - **Prensip Değişikliği:** Yeni kalite kuralı, yasak desen → `YBIS_PROJE_ANAYASASI.md`
 - **Pattern Discovery:** Mobile-specific pattern bulundu → `REACT_NATIVE_PATTERNS.md` 🆕
 
+### 11.3 Dokümantasyon İçerik Standardı (Token-Verimli Özet Başlığı)
+
+- **Özet Başlığı Zorunluluğu:** Tüm büyük metin tabanlı dokümanlar (strateji, analiz, ham sohbet kayıtları, fikir taslakları vb.) token-verimli tarama ve hızlı bağlam sağlama amacıyla yapısal bir YAML "Özet Başlığı" ile başlamalıdır.
+- **Durum (Status) Alanı:** Her özet başlığı, dokümanın mevcut durumunu (`status: draft`, `idea`, `proposal`, `active`, `rejected`, `archived` vb.) açıkça belirtmelidir. Bu, dokümanın kesin karar olup olmadığını netleştirir.
+- **İçerik:** Başlık, durum, sahip, oluşturulma/güncellenme tarihi, kısa özet ve ana çıkarımlar gibi temel bilgileri içermelidir.
+- **Uygulama:** Bu standarda uygunluk, `/YBIS:add-summary-header` komutu kullanılarak sağlanmalıdır.
+
 ### 11.2 Dokümantasyon Güncelleme Workflow'u
 
 **Kullanılacak Workflow:** `.YBIS_Dev/Veriler/workflows/documentation-maintenance.yaml`
@@ -252,6 +649,23 @@ Aşağıdaki durumlarda dokümantasyon güncellemesi **zorunludur**:
 
 ## 11. Versiyonlama
 
-**Versiyon:** 3.2.0
-**Son Güncelleme:** 2025-10-12
-**Değişiklik:** Port kullanım kriterleri netleştirildi (criteria-based, no overengineering)
+**Versiyon:** 4.0.0
+**Son Güncelleme:** 2025-10-21
+**Değişiklik:** MAJOR UPDATE - Ultra-enforcing constitution
+
+**Yeni Eklenenler (v4.0.0):**
+- 🚨 Enforcement Notice (Zero-tolerance framework)
+- 📊 Performance Standards (Bundle size, Re-render, Build time)
+- 🔒 Data Validation & API Security (Zod mandate)
+- 🛠️ Build Automation & Tooling (NX criteria)
+- ✅ Comprehensive Test Requirements (Unit, Integration, E2E)
+- 📋 Test Coverage Gates (80% minimum)
+- 🎯 Missing Test Coverage Tracking
+
+**Breaking Changes:**
+- Warnings now treated as errors (CI/CD)
+- Bundle size hard limit enforced (10 MB)
+- Test coverage gates active
+- API validation mandatory (Zod)
+
+**Migration Required:** None (incremental enforcement)

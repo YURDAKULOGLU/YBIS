@@ -5,12 +5,15 @@
  */
 
 import type { Context, Next } from 'hono';
+import type { DatabasePort } from '@ybis/database';
+import type { LLMPort } from '@ybis/llm';
+import type { StoragePort } from '@ybis/storage';
 import { PortRegistry } from '../services/PortRegistry';
 
 /**
  * Middleware to inject ports into Hono context
  */
-export async function portsMiddleware(c: Context, next: Next) {
+export async function portsMiddleware(c: Context, next: Next): Promise<void> {
   const registry = PortRegistry.getInstance();
 
   // Attach ports to context
@@ -26,8 +29,8 @@ export async function portsMiddleware(c: Context, next: Next) {
  */
 declare module 'hono' {
   interface ContextVariableMap {
-    database: import('@ybis/database').DatabasePort;
-    llm: import('@ybis/llm').LLMPort;
-    storage: import('@ybis/storage').StoragePort;
+    database: DatabasePort;
+    llm: LLMPort;
+    storage: StoragePort;
   }
 }

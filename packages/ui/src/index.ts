@@ -1,30 +1,51 @@
-// @ybis/ui - Tamagui UI Components
-// Re-export Tamagui components for use in apps, following the Curated UI Export Principle.
-
 export {
-  // Hooks
-  useTheme,
-
-  // Components
-  Avatar,
-  Button,
-  Card,
-  H1,
-  H2,
-  H3,
-  Input,
-  ScrollView,
-  Separator,
-  Spinner,
-  Switch,
-  Text,
-  XStack,
-  YStack,
+    YStack,
+    XStack,
+    Text,
+    Card,
+    Button,
+    ScrollView,
+    Input,
+    H1,
+    H2,
+    H3,
+    Separator,
+    Switch,
+    useTheme,
+    Sheet,
+    Spinner,
+    Avatar,
+    TamaguiProvider,
 } from 'tamagui';
 
-// Re-export all icons from lucide-icons for convenience.
-// This still centralizes the dependency through @ybis/ui.
-export * from '@tamagui/lucide-icons';
+export { AvatarFallback } from 'tamagui';
+export type { ButtonProps } from 'tamagui';
 
+export {
+    Plus,
+    Send,
+    Calendar,
+    CheckSquare,
+    FileText,
+    Workflow,
+    Mic,
+    Menu,
+    Bell,
+    User,
+    LogOut,
+    Moon,
+    Globe,
+    Palette,
+    BrainCircuit,
+    DatabaseBackup,
+    Trash2,
+    Check,
+    Bot,
+    AlertCircle,
+    Loader,
+    Home,
+    MessageCircle,
+    Settings,
+} from '@tamagui/lucide-icons';
 
-
+export * from './settings';

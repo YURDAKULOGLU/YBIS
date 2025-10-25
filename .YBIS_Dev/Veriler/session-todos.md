@@ -143,11 +143,7 @@ Achievements:
     - Tier 1-4 mapping
     - Agent-specific guides
 
-21. ✅ **Dual-Write Rule** - session-context ↔ DEVELOPMENT_LOG
-    - Rule integrated in documentation-taxonomy.md
-    - Enforcement: MANDATORY
-    - Token benefit: 95% savings (~10K → ~500 tokens)
-    - Auto-sync on session updates
+
 
 ### Documentation System Upgrades
 

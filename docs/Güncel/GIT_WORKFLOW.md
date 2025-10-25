@@ -195,7 +195,7 @@ Before committing:
 - [ ] Run `pnpm run lint` (zero warnings)
 - [ ] Run `pnpm run test` (when tests exist)
 - [ ] Update DEVELOPMENT_LOG.md (if architecture decision)
-- [ ] Update session-context.md (dual-write rule)
+
 - [ ] Commit message follows convention
 - [ ] Staged files are relevant (no random changes)
 

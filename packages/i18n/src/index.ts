@@ -19,7 +19,7 @@ i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     resources,
-    lng: Localization.getLocales()[0]?.languageCode || 'en', // detect user language
+    lng: Localization.getLocales()[0]?.languageCode ?? 'en', // detect user language
     fallbackLng: 'en',
     compatibilityJSON: 'v4', // Updated for react-native
     interpolation: {
@@ -28,6 +28,9 @@ i18n
     react: {
       useSuspense: false, // Recommended for react-native
     },
+  })
+  .catch((error) => {
+    console.error('Failed to initialize i18n:', error);
   });
 
 export default i18n;

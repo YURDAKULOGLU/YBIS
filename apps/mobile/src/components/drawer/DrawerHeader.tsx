@@ -1,6 +1,5 @@
 import React from 'react';
-import { YStack, XStack, Text, Avatar } from '@ybis/ui';
-import { User } from '@tamagui/lucide-icons';
+import { YStack, XStack, Text, Avatar, User } from '@ybis/ui';
 
 /**
  * DrawerHeader Component

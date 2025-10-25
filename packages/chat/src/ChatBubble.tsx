@@ -1,5 +1,5 @@
-import { Card, Text, YStack, XStack } from 'tamagui';
-import { Bot, User } from '@tamagui/lucide-icons';
+import type { JSX } from 'react';
+import { Card, Text, YStack, XStack, Bot, User } from '@ybis/ui';
 import { type ChatBubbleProps } from './types';
 
 /**
@@ -11,7 +11,7 @@ import { type ChatBubbleProps } from './types';
  * - Timestamp
  * - Different styling for user vs AI messages
  */
-export function ChatBubble({ message, showAvatar = true }: ChatBubbleProps) {
+export function ChatBubble({ message, showAvatar = true }: ChatBubbleProps): JSX.Element {
   const isUser = message.sender === 'user';
 
   return (

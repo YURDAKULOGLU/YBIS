@@ -1,9 +1,63 @@
 # 🚀 AI Başlangıç Prosedürü v2.0 (Token-Optimized)
 
-**Version:** 2.0  
-**Last Updated:** 2025-10-12  
-**Purpose:** Hızlı context loading - Minimum token, maksimum bilgi  
+**Version:** 2.0
+**Last Updated:** 2025-10-21
+**Purpose:** Hızlı context loading - Minimum token, maksimum bilgi
 **Target:** <5K token başlangıç (eski: 20-30K)
+
+---
+
+## 📋 TL;DR - YENİ AI? İLK 30 SANİYEDE BUNU OKU!
+
+```
+🔴 BU DOSYAYI İLK KEZ Mİ OKUYORSUN?
+   ↓
+✋ DURDUR! Başka hiçbir şey yapma!
+   ↓
+📖 ŞU 7 DOSYAYI SIRAYLA OKU (TIER 1 - ZORUNLU):
+   1. .YBIS_Dev/AI_GENEL_ANAYASA.md
+   2. .YBIS_Dev/AI_CONTENT_CONVENTIONS.md
+   3. .YBIS_Dev/Veriler/memory/YBIS_CORE_PRINCIPLES.md
+   4. docs/YBIS_PROJE_ANAYASASI.md
+   5. .YBIS_Dev/Veriler/memory/session-context.md
+   6. .YBIS_Dev/Veriler/QUICK_INDEX.md
+   7. .YBIS_Dev/Veriler/YBIS_COMMAND_INDEX.md
+   ↓
+✅ 7 DOSYA OKUNDUKTAN SONRA:
+   - Sessizce paralel okuma yap (7 dosyayı tek mesajda)
+   - Okuma tamamlandığında: "✅ Context yüklendi - hazırım"
+   - Kullanıcıdan talimat bekleme, otomatik görev moduna geç
+   - TIER 2/3 dosyalarını ihtiyaç halinde lazy-load et
+
+⚠️ BU SIRALAMAYI ATLAMAK YASAK - HİÇBİR İSTİSNA YOK!
+```
+
+**NEDEN?** Bu 7 dosya olmadan: Anayasa ihlalleri, yanlış kararlar, duplicate work yaparsın!
+
+---
+
+## 🔴 CRITICAL: MANDATORY STARTUP PROCEDURE
+
+**⚠️ BU PROSEDÜR ZORUNLUDUR - HİÇBİR İSTİSNA YOK! ⚠️**
+
+```
+╔═══════════════════════════════════════════════════════════╗
+║  HER YENİ AI SESSION'DA TIER 1 TAMAMLANMADAN             ║
+║  HİÇBİR GÖREV YAPILMAZ!                                   ║
+║                                                           ║
+║  EĞER BU DOSYAYI İLK KEZ OKUYORSAN:                      ║
+║  1. DURDUR                                                ║
+║  2. TIER 1'i TAMAMEN OKU (aşağıda)                       ║
+║  3. ÖNCELİKLE TIER 1 DOSYALARINI YÜKLEYİP SONRA DEVAM ET ║
+║                                                           ║
+║  "Kullanıcı acil görev verdi" MAZERET DEĞİLDİR!         ║
+║  Önce TIER 1, sonra görev!                               ║
+╚═══════════════════════════════════════════════════════════╝
+```
+
+**NEDEN ZORUNLU?**
+- ❌ TIER 1 olmadan: Anayasa ihlalleri, yanlış kararlar, duplicate work
+- ✅ TIER 1 ile: Doğru bağlam, tutarlı davranış, verimli çalışma
 
 ---
 
@@ -12,7 +66,7 @@
 ### Token Karşılaştırma
 ```yaml
 # ESKI SİSTEM (v1.0)
-Zorunlu okuma: 7 dosya
+Zorunlu okuma: 10+ dosya
 - AI_GENEL_ANAYASA.md: 81 satır
 - YBIS_PROJE_ANAYASASI.md: 154 satır
 - DEVELOPMENT_GUIDELINES.md: 798 satır
@@ -23,53 +77,75 @@ Zorunlu okuma: 7 dosya
 TOPLAM: ~4500 satır = 20-30K token 😱
 
 # YENİ SİSTEM (v2.0)
-Zorunlu okuma: 4 dosya (optimize edilmiş)
-- AI_GENEL_ANAYASA.md: 81 satır
-- YBIS_PROJE_ANAYASASI.md: 150 satır (sadece özet)
-- session-context.md: 100 satır
-- QUICK_INDEX.md: 50 satır
-TOPLAM: ~400 satır = 3-5K token ✅
+Zorunlu okuma: 7 dosya (optimize edilmiş, lazy-loading)
+TIER 1 (Zorunlu):
+- AI_GENEL_ANAYASA.md: ~80 satır
+- AI_CONTENT_CONVENTIONS.md: ~100 satır
+- YBIS_CORE_PRINCIPLES.md: ~150 satır
+- YBIS_PROJE_ANAYASASI.md: ~170 satır
+- session-context.md: ~160 satır
+- QUICK_INDEX.md: ~100 satır
+- YBIS_COMMAND_INDEX.md: ~150 satır
+TOPLAM: ~900 satır = 3-5K token ✅
 TASARRUF: %80-85% 🎉
+
+TIER 2/3: Just-in-time loading (sadece gerektiğinde)
 ```
 
 ---
 
 ## 🎯 3-TIER LAZY LOADING SİSTEMİ
 
+---
+
+## 🏛️ ZORUNLU UYUM PROTOKOLÜ: Anayasa Kontrolü
+
+**Bu protokol, prensiplerin ihlal edilmesini sistemsel olarak engellemek için tasarlanmıştır.**
+
+1.  **Görev Başlangıcı:** Bir geliştirme görevine (`/ybis:implement` veya benzeri) başlamadan önce, AI agent **ZORUNLU** olarak görevin `story.md` dosyasını açar.
+
+2.  **Kontrol Bölümünü Doldurma:** Agent, story dosyasının en başında yer alan **"🏛️ Anayasa Uyum Kontrolü (ZORUNLU)"** bölümünü doldurur.
+    *   Bu görevle ilgili olan 2-3 temel anayasa prensibini (`YBIS_PROJE_ANAYASASI.md`'den) belirler.
+    *   Her prensibin altına, bu görevi uygularken o prensibe **nasıl uyacağını** net bir şekilde yazar.
+
+3.  **Uygulamaya Geçiş:** Bu bölüm doldurulmadan ve plana dahil edilmeden kodlama aşamasına **KESİNLİKLE** geçilemez.
+
+**Amaç:** Bu adım, anayasa prensiplerinin sadece okunup geçilen bir metin olmasını engeller ve her görevin başında aktif olarak düşünülmesini ve uygulanmasını garanti altına alır. Bu, "İzolasyon Prensibi" gibi kuralların ihlal edilmesinin önüne geçecektir.
+
+---
+
 ### **TIER 1: ZORUNLU START (Her Session - 5 dk)**
 
+---
+**⚠️ KURAL: HIZLI BAŞLANGIÇ İÇİN TÜM TIER-1 DOSYALARINI TEK SEFERDE, PARALEL OLARAK OKU! `read_many_files` aracını kullan.**
+---
+
+**🔴 BU DOSYALAR OKUNMADAN HİÇBİR GÖREV YAPILAMAZ! 🔴**
+
 ```yaml
-Okuma Sırası (sırayla):
-  1. .YBIS_Dev/AI_GENEL_ANAYASA.md
-     Amaç: Davranış kuralları, etik, sınırlar
-     Satır: 81
-     Token: ~400
+OKUMA SIRASI (TAM SIRAYLA - ATLANAMAZ):
 
-  2. docs/YBIS_PROJE_ANAYASASI.md
-     Amaç: Sections 1-8: Zero-tolerance + Port catalog (5 ports)
-     Satır: 172 total
-     Token: ~900
+[ ] 1. .YBIS_Dev/AI_GENEL_ANAYASA.md
+        ⚠️ MANDATORY - İlk dosya, önce bu!
+        Amaç: Davranış kuralları, etik, sınırlar
 
-  3. .YBIS_Dev/Veriler/memory/session-context.md
-     Amaç: "ŞU ANDA NE YAPIYORUZ?"
-     Satır: 100
-     Token: ~500
-     İçerik:
-       - Active focus (Week X, Task Y)
-       - Last 3 decisions (AD-XXX)
-       - Next steps (top 3)
-       - Blockers
+[ ] 2. .YBIS_Dev/AI_CONTENT_CONVENTIONS.md
+        ⚠️ MANDATORY - AI içerik formatı kuralları.
 
-  4. .YBIS_Dev/Veriler/QUICK_INDEX.md
-     Amaç: "Hangi dosyayı ne zaman okuyacağım?"
-     Satır: 50
-     Token: ~250
+[ ] 3. .YBIS_Dev/Veriler/memory/YBIS_CORE_PRINCIPLES.md
+        ⚠️ MANDATORY - Projenin temel mimari prensipleri.
 
-TOPLAM TIER 1: ~1550 token (hedef: <2K)
-SÜRESİ: 3-5 dakika
-SONUÇ: Agent görevine başlayabilir!
+[ ] 4. docs/YBIS_PROJE_ANAYASASI.md
+        ⚠️ MANDATORY - Projeye özel teknik kurallar.
 
-**ÖNEMLİ NOT:** TIER 1 tamamlandıktan sonra, YBIS sistem komutları ve iş akışları hakkında bilgi edinmek için `.YBIS_Dev/AI_SYSTEM_GUIDE.md` dosyasını okuyun.
+[ ] 5. .YBIS_Dev/Veriler/memory/session-context.md
+        ⚠️ MANDATORY - "ŞU ANDA NE YAPIYORUZ?"
+
+[ ] 6. .YBIS_Dev/Veriler/QUICK_INDEX.md
+        ⚠️ MANDATORY - "Hangi dosyayı ne zaman okuyacağım?"
+
+[ ] 7. .YBIS_Dev/Veriler/YBIS_COMMAND_INDEX.md
+        ⚠️ MANDATORY - "Hangi komutlar mevcut ve ne işe yarar?"
 
 ---
 
@@ -182,94 +258,91 @@ IF task.type == "planning" OR "strategy":
 
 ---
 
-## 🔄 DUAL-WRITE RULE (MANDATORY)
 
-### Session Context ↔ Development Log Sync
-
-**⚠️ HER session-context.md UPDATE'İNDE:**
-
-```yaml
-Step 1: Update session-context.md
-  - Active focus
-  - Recent decisions (AD-XXX)
-  - Next steps
-  - Max 100 lines!
-
-Step 2: Simultaneously update DEVELOPMENT_LOG.md
-  - Add Day X entry
-  - Tasks completed
-  - Architecture Decision (if AD-XXX created)
-  - Issues/blockers
-
-Step 3: Verify sync
-  - AD-XXX numbers match
-  - Dates match
-  - No duplicate info (context = summary, log = detail)
-```
-
-**Format Örnek:**
-
-```markdown
-# session-context.md (100 lines)
-## Recent Decisions (Last 3)
-### AD-021: Navigation Widget Design Finalized
-- Date: 2025-10-13
-- Decision: Minimalist cards with tap-to-detail
-- Details: See DEVELOPMENT_LOG.md#AD-021
-
----
-
-# DEVELOPMENT_LOG.md (simultaneously)
-### Day 6 - 2025-10-13
-
-**Tasks Completed:**
-- [x] T025: Widget component implementation
-- [x] T026: Navigation logic
-
-**Architecture Decisions:**
-### AD-021: Navigation Widget Design Finalized
-- **Date:** 2025-10-13
-- **Context:** Main screen needs minimal yet functional widgets
-- **Decision:** 
-  - Card-based design with priority/time/progress indicators
-  - Tap on widget → Task detail screen
-  - Swipe actions for quick updates
-- **Rationale:** Balances minimalism with functionality
-- **Impact:** Mobile UX, Widget component API
-- **Related:** AD-019 (widget-based navigation strategy)
-```
 
 ---
 
 
 ## ✅ BAŞLANGIÇ CHECKLİST (5 Dakika)
 
+**🔴 HER YENİ SESSION'DA BU CHECKLİST TAMAMLANMALI! 🔴**
+
 ```yaml
-[ ] 1. TIER 1 oku (4 dosya, <2K token)
-    [ ] AI_GENEL_ANAYASA.md
-    [ ] YBIS_PROJE_ANAYASASI.md (ilk 90 satır - sections 1-8)
-    [ ] session-context.md
-    [ ] QUICK_INDEX.md
+═══════════════════════════════════════════════════════════
+STEP 1: TIER 1 DOSYALARI OKU (ZORUNLU - ATLANAMAZ!)
+═══════════════════════════════════════════════════════════
+[ ] 1.1 Read .YBIS_Dev/AI_GENEL_ANAYASA.md
+        ⚠️ Tam dosyayı oku - 81 satır
+        ✓ Okunduktan sonra işaretle
 
-[ ] 2. SESSION STATE'i onayla
-    [ ] Active focus nedir?
-    [ ] Last 3 decision (AD-XXX)
-    [ ] Next steps (top 3)
-    [ ] Blocker var mı?
+[ ] 1.2 Read .YBIS_Dev/Veriler/memory/YBIS_CORE_PRINCIPLES.md
+        ⚠️ MANDATORY - Projenin temel mimari prensipleri.
+        ✓ Okunduktan sonra işaretle
 
-[ ] 3. ROLE'ü anla (QUICK_INDEX.md'den)
-    [ ] Ben hangi agent'ım? (Claude/Gemini/Cursor/Copilot)
-    [ ] Best-fit task'ım ne?
-    [ ] Hangi komutları kullanabilirim?
+[ ] 1.2 Read docs/YBIS_PROJE_ANAYASASI.md
+        ⚠️ Tam dosyayı oku - 172 satır
+        ✓ Okunduktan sonra işaretle
 
-[ ] 4. Proaktif Sağlık Kontrolü
-    [ ] session-context.md'de belirtilen anayasa ihlallerini veya blocker'ları gözden geçir.
-    [ ] Tespit edilen sorunları kullanıcıya raporla ve çözüm için bir sonraki adımı öner.
+[ ] 1.3 Read .YBIS_Dev/Veriler/memory/session-context.md
+        ⚠️ Tam dosyayı oku - ~100 satır
+        ✓ Okunduktan sonra işaretle
 
-[ ] 5. READY!
-    [ ] User'dan talimat bekle
-    [ ] Gerekli dosyaları TIER 2/3'ten lazy load et
-    [ ] DUAL-WRITE kuralını uygula
+[ ] 1.4 Read .YBIS_Dev/Veriler/QUICK_INDEX.md
+        ⚠️ MANDATORY - "Hangi dosyayı ne zaman okuyacağım?"
+        ✓ Okunduktan sonra işaretle
+
+[ ] 1.5 Read .YBIS_Dev/Veriler/YBIS_COMMAND_INDEX.md
+        ⚠️ MANDATORY - "Hangi komutlar mevcut ve ne işe yarar?"
+        ✓ Okunduktan sonra işaretle
+
+═══════════════════════════════════════════════════════════
+STEP 2: SESSION STATE'İ ONAYLA (TIER 1'den SONRA)
+═══════════════════════════════════════════════════════════
+[ ] 2.1 Active focus nedir?
+        session-context.md'den öğrendin ✓
+
+[ ] 2.2 Last 3 decision (AD-XXX) neler?
+        session-context.md'den öğrendin ✓
+
+[ ] 2.3 Next steps (top 3) neler?
+        session-context.md'den öğrendin ✓
+
+[ ] 2.4 Blocker var mı?
+        session-context.md'den kontrol ettin ✓
+
+═══════════════════════════════════════════════════════════
+STEP 3: ROLE'Ü ANLA (QUICK_INDEX.md'den)
+═══════════════════════════════════════════════════════════
+[ ] 3.1 Ben hangi agent'ım? (Claude/Gemini/Cursor/Copilot)
+        QUICK_INDEX.md'den öğrendin ✓
+
+[ ] 3.2 Best-fit task'ım ne?
+        QUICK_INDEX.md'den öğrendin ✓
+
+[ ] 3.3 Hangi komutları kullanabilirim?
+        YBIS_COMMAND_INDEX.md'den öğrendin ✓
+
+═══════════════════════════════════════════════════════════
+STEP 4: PROAKTIF SAĞLIK KONTROLÜ
+═══════════════════════════════════════════════════════════
+[ ] 4.1 session-context.md'deki anayasa ihlallerini gözden geçir
+        Var mı? Kullanıcıya raporla ✓
+
+[ ] 4.2 Tespit edilen blocker'ları kullanıcıya raporla
+        Çözüm öner ✓
+
+═══════════════════════════════════════════════════════════
+STEP 5: READY TO WORK!
+═══════════════════════════════════════════════════════════
+[ ] 5.1 Kısa bildirim: "✅ Context yüklendi - hazırım"
+        ✓ Kullanıcıya soru SORMA, bildirimi kısa tut
+
+[ ] 5.2 Kullanıcının talebini işleme koy
+        ✓ Görev geldiğinde TIER 2/3'ten lazy load et
+        ✓ Eğer kullanıcı "naber" gibi sohbet ediyorsa, doğal cevap ver
+
+⚠️⚠️⚠️ BU 5 STEP TAMAMLANMADAN GÖREV YAPILAMAZ! ⚠️⚠️⚠️
+⚠️ PROSEDÜR OTOMATİKTİR - KULLANICIYA "YAPAYIM MI?" SORMA! ⚠️
 ```
 
 ---
@@ -277,6 +350,12 @@ Step 3: Verify sync
 ## 🚨 YASAKLAR (Token İsrafı)
 
 ```yaml
+❌❌❌ EN BÜYÜK YASAK: TIER 1'İ ATLAMAK!
+  - TIER 1 okunmadan görev yapmak KESİNLİKLE YASAK!
+  - "Kullanıcı acil istiyor" mazeret değil!
+  - "Basit görev" mazeret değil!
+  - HİÇBİR İSTİSNA YOK - TIER 1 ZORUNLU!
+
 ❌ ASLA HEPSİNİ OKUMA:
   - DEVELOPMENT_LOG.md'nin tamamını okuma (2088 satır!)
   - Sadece ilgili AD-XXX'i grep/search et
@@ -292,6 +371,10 @@ Step 3: Verify sync
 ❌ EARLY OKUMA:
   - Implementation başlamadıysa DEVELOPMENT_GUIDELINES okuma
   - Komut gelmeden task.md okuma
+
+❌ PROSEDÜR ATLAMAK:
+  - TIER 1 → TIER 2 → TIER 3 sırası kesin!
+  - Atlama, başka yerden başlama yasak!
 ```
 
 ---

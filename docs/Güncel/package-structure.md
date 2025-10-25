@@ -687,7 +687,7 @@ apps/backend/
     "@hono/node-server": "^1.13.7",
     "openai": "^4.73.1",
     "@anthropic-ai/sdk": "^0.34.1",
-    "firebase-admin": "^13.0.1",
+
     "@supabase/supabase-js": "^2.47.10",
     "zod": "^3.24.1",
     "@ybis/core": "*",
@@ -1693,7 +1693,7 @@ export default i18n;
 | Tamagui + theme setup | 1 day | Expo scaffold |
 | i18next setup (TR+EN) | 1 day | - |
 | Tier 1 Ports implementation | 4 days | All packages |
-| Firebase Auth integration | 1 day | @ybis/auth |
+| Expo Auth integration | 1 day | @ybis/auth |
 | Supabase setup | 1 day | @ybis/database |
 | Gifted Chat integration | 0.5 day | @ybis/chat |
 | **TOTAL** | **10 days** | Infrastructure ready |
@@ -1734,7 +1734,7 @@ export default i18n;
 
 | Port | Current | Target | Trigger | Estimated Effort |
 |------|---------|--------|---------|------------------|
-| AuthPort | Firebase | Supabase/Custom | Open Beta launch | 2-3 days |
+| AuthPort | Expo Auth Session | Supabase/Custom | Open Beta launch | 2-3 days |
 | ChatPort | Gifted Chat | Custom UI | Web launch | 5-7 days |
 | DatabasePort | Supabase | Cloud SQL | >20K users (cost) | 3-5 days |
 | LLMPort | OpenAI only | Multi-provider | Rate limits OR cost | 2-3 days |
@@ -1750,7 +1750,7 @@ export default i18n;
 - [ ] All package.json files created
 - [ ] tsconfig.base.json paths configured
 - [ ] ESLint + Prettier configured
-- [ ] Firebase project created (Auth + FCM)
+
 - [ ] Supabase project created (Database + Storage)
 - [ ] OpenAI API key obtained
 - [ ] Vercel account created

@@ -18,7 +18,7 @@ YBIS roadmap'te 10+ external service integration planlanmış. Bu doküman, serv
 ## 📊 Planned Integrations by Phase
 
 ### Closed Beta (Existing)
-1. ✅ **Firebase Auth** - Google Sign-In (AuthPort)
+1. ✅ **Expo Auth Session** - Google Sign-In (AuthPort)
 2. ✅ **Supabase** - Database + Storage (DatabasePort, StoragePort)
 3. ✅ **OpenAI GPT-4o-mini** - LLM (LLMPort)
 
@@ -506,7 +506,7 @@ export async function summarizeRecentEmails(): Promise<EmailSummary[]> {
 ## 🎯 Integration Tiers
 
 ### Tier 1: Critical (Closed Beta)
-- ✅ Firebase Auth
+- ✅ Expo Auth Session
 - ✅ Supabase
 - ✅ OpenAI
 
@@ -644,11 +644,11 @@ YBIS integration strategy follows **progressive enhancement** philosophy:
 
 **Goal:** Fast time-to-market with 3 core integrations
 
-**Integration Count:** 3 (Firebase, Supabase, OpenAI)
+**Integration Count:** 3 (Expo Auth, Supabase, OpenAI)
 
 **Implementation:**
 - ✅ Port Architecture (AuthPort, DatabasePort, LLMPort, StoragePort)
-- ✅ Firebase Auth adapter
+- ✅ Expo Auth adapter
 - ✅ Supabase Database + Storage adapter
 - ✅ OpenAI LLM adapter
 - ✅ Basic error handling

@@ -16,14 +16,14 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@ybis/ui": ["../../packages/ui/src"],
-      "@ybis/core": ["../../packages/core/src"],
-      "@ybis/chat": ["../../packages/chat/src"],
-      "@ybis/auth": ["../../packages/auth/src"],
-      "@ybis/theme": ["../../packages/theme/src"],
-      "@ybis/i18n": ["../../packages/i18n/src"],
-      "@ybis/database": ["../../packages/database/src"],
-      "@ybis/llm": ["../../packages/llm/src"]
+      "@ybis/ui": ["../../packages/ui/dist"],
+      "@ybis/core": ["../../packages/core/dist"],
+      "@ybis/chat": ["../../packages/chat/dist"],
+      "@ybis/auth": ["../../packages/auth/dist"],
+      "@ybis/theme": ["../../packages/theme/dist"],
+      "@ybis/i18n": ["../../packages/i18n/dist"],
+      "@ybis/database": ["../../packages/database/dist"],
+      "@ybis/llm": ["../../packages/llm/dist"]
     }
   },
   "include": [
