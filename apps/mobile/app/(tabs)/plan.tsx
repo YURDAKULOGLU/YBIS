@@ -18,8 +18,8 @@ export default function PlanScreen(): React.ReactElement {
 
   return (
     <UniversalLayout>
-      {/* SafeAreaView: flex: 1, handles both top and bottom safe areas */}
-      <SafeAreaView edges={['top', 'bottom']} flex={1}>
+      {/* SafeAreaView: flex: 1, handles top safe area only (tab bar manages bottom) */}
+      <SafeAreaView edges={['top']} flex={1}>
         <Navbar title="Plan" />
 
         <H3 paddingHorizontal="$4" paddingTop="$4">Bugünkü Planım</H3>
