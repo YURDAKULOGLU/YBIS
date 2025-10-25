@@ -34,7 +34,26 @@
     "flows_title": "Aktif Workflow'lar",
     "dashboard_title": "Dashboard",
     "item_count": "{{count}} öğe",
-    "more_items": "+{{count}} daha..."
+    "more_items": "+{{count}} daha...",
+    "refresh": "Yenile",
+    "loading": "Veriler yükleniyor...",
+    "empty_unconfigured": "Veri kaynağı bağlanmadı. Ayarlardan entegrasyon ekleyin.",
+    "empty_default": "Bu panelde gösterilecek içerik bulunamadı.",
+    "provider_ybis_internal": "YBIS",
+    "badge_attention": "Dikkat",
+    "badge_ready": "Hazır",
+    "badge_info": "Bilgi",
+    "status": {
+      "pending": "Beklemede",
+      "in_progress": "Devam ediyor",
+      "completed": "Tamamlandı"
+    },
+    "prompts": {
+      "open_note": "\"{{title}}\" notunu aç",
+      "review_task": "\"{{title}}\" görevi üzerinde çalış",
+      "calendar_event": "\"{{title}}\" etkinliğini detaylandır",
+      "run_workflow": "\"{{title}}\" workflow'unu başlat"
+    }
   },
   "input": {
     "placeholder": "Mesaj yazın..."

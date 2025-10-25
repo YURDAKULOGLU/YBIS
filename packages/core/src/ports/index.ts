@@ -16,3 +16,9 @@ export * from './LLMPort';
 
 // Storage Port
 export * from './StoragePort';
+
+// Productivity Ports
+export * from './CalendarPort';
+export * from './TaskPort';
+export * from './NotePort';
+export * from './WorkflowPort';
