@@ -1,8 +1,7 @@
 import React from 'react';
 import {
-  YStack,
-  H2,
   H3,
+  YStack,
   ScrollView,
   Sheet,
   Button,
@@ -24,6 +23,8 @@ import { useMockAuth } from '../../src/stores/useMockAuth';
 import { useThemeStore } from '@ybis/theme';
 import { useTranslation } from 'react-i18next';
 import { UniversalLayout } from '../../src/layouts/UniversalLayout';
+import { Navbar } from '../../src/components/layout/Navbar';
+import { SafeAreaView } from '../../src/components/layout/SafeAreaView';
 
 /**
  * Settings Screen - Refined & Functional
@@ -42,7 +43,7 @@ export default function SettingsScreen(): React.ReactElement {
     }
   };
 
-  const changeLanguage = (lng: 'tr' | 'en') => {
+  const changeLanguage = (lng: 'tr' | 'en'): void => {
     void i18n.changeLanguage(lng);
     setSheetOpen(false);
   };
@@ -50,11 +51,13 @@ export default function SettingsScreen(): React.ReactElement {
   return (
     <UniversalLayout>
       <>
-        <YStack flex={1} backgroundColor="$background">
-          <ScrollView padding="$4" gap="$4">
-            <H2>{t('settings:title')}</H2>
+        {/* SafeAreaView: flex: 1, handles both top and bottom safe areas */}
+        <SafeAreaView edges={['top', 'bottom']} flex={1}>
+          <Navbar title={t('settings:title')} />
 
-            <UserInfoCard user={user} />
+          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+            <YStack padding="$4" gap="$4">
+              <UserInfoCard user={user} />
 
             <SettingsGroup icon={Palette} title={t('settings:appearance.title')}>
               <SettingsItem
@@ -94,9 +97,9 @@ export default function SettingsScreen(): React.ReactElement {
             </SettingsGroup>
 
             <AppInfoCard />
-
+            </YStack>
           </ScrollView>
-        </YStack>
+        </SafeAreaView>
 
         <Sheet
           modal

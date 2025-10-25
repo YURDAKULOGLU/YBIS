@@ -1,7 +1,10 @@
 import React from 'react';
-import { YStack, ScrollView, Button, Plus, H3 } from '@ybis/ui';
+import { YStack, ScrollView, Plus, H3, useTheme } from '@ybis/ui';
 import { EventItem } from '../../src/components/calendar/EventItem';
 import { UniversalLayout } from '../../src/layouts/UniversalLayout';
+import { Navbar } from '../../src/components/layout/Navbar';
+import { ActionButton } from '../../src/components/layout/ActionButton';
+import { SafeAreaView } from '../../src/components/layout/SafeAreaView';
 
 // Mock data as defined in the story
 const mockEvents = [
@@ -11,30 +14,30 @@ const mockEvents = [
 ];
 
 export default function PlanScreen(): React.ReactElement {
+  const theme = useTheme();
+
   return (
     <UniversalLayout>
-      <YStack flex={1} backgroundColor="$background">
+      {/* SafeAreaView: flex: 1, handles both top and bottom safe areas */}
+      <SafeAreaView edges={['top', 'bottom']} flex={1}>
+        <Navbar title="Plan" />
+
         <H3 paddingHorizontal="$4" paddingTop="$4">Bugünkü Planım</H3>
-        <ScrollView flex={1} padding="$4">
-          <YStack gap="$3">
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+          <YStack gap="$3" padding="$4">
             {mockEvents.map((event) => (
               <EventItem key={event.id} event={event} />
             ))}
           </YStack>
         </ScrollView>
-        <Button
-          position="absolute"
-          bottom={20}
-          left={20}
-          size="$6"
-          circular
-          icon={Plus}
-          backgroundColor="$orange9"
-          pressStyle={{ scale: 0.9, backgroundColor: '$orange10' }}
-          animation="bouncy"
-          onPress={() => { /* Functionality to be added in a future story */ }}
-        />
-      </YStack>
+      </SafeAreaView>
+
+      {/* ActionButton manages its own safe area positioning */}
+      <ActionButton
+        icon={Plus}
+        color={theme.orange9.val}
+        onPress={() => {}}
+      />
     </UniversalLayout>
   );
 }

@@ -52,7 +52,10 @@
       "Bash(pnpm build:*)",
       "Bash(grep:*)",
       "Bash(pnpm add:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git commit:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm update:*)"
     ],
     "deny": [],
     "ask": []

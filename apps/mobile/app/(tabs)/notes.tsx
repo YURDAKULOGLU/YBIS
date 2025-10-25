@@ -1,7 +1,10 @@
 import React from 'react';
-import { YStack, ScrollView, Button, Plus } from '@ybis/ui';
+import { YStack, ScrollView, Plus, useTheme } from '@ybis/ui';
 import { NoteItem } from '../../src/components/notes/NoteItem';
 import { UniversalLayout } from '../../src/layouts/UniversalLayout';
+import { Navbar } from '../../src/components/layout/Navbar';
+import { ActionButton } from '../../src/components/layout/ActionButton';
+import { SafeAreaView } from '../../src/components/layout/SafeAreaView';
 
 // Mock data as defined in the story
 const mockNotes = [
@@ -11,29 +14,29 @@ const mockNotes = [
 ];
 
 export default function NotesScreen(): React.ReactElement {
+  const theme = useTheme();
+
   return (
     <UniversalLayout>
-      <YStack flex={1} backgroundColor="$background">
-        <ScrollView flex={1} padding="$4">
-          <YStack gap="$3">
+      {/* SafeAreaView: flex: 1, handles both top and bottom safe areas */}
+      <SafeAreaView edges={['top', 'bottom']} flex={1}>
+        <Navbar title="Notlar" />
+
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+          <YStack gap="$3" padding="$4">
             {mockNotes.map((note) => (
               <NoteItem key={note.id} note={note} />
             ))}
           </YStack>
         </ScrollView>
-        <Button
-          position="absolute"
-          bottom={20}
-          left={20}
-          size="$6"
-          circular
-          icon={Plus}
-          backgroundColor="$purple9"
-          pressStyle={{ scale: 0.9, backgroundColor: '$purple10' }}
-          animation="bouncy"
-          onPress={() => { /* Functionality to be added in a future story */ }}
-        />
-      </YStack>
+      </SafeAreaView>
+
+      {/* ActionButton manages its own safe area positioning */}
+      <ActionButton
+        icon={Plus}
+        color={theme.purple9.val}
+        onPress={() => {}}
+      />
     </UniversalLayout>
   );
 }

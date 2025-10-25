@@ -154,6 +154,14 @@ console.log()                    # Use Logger instead
 - **Uygulama:** Bir öğe silindiğinde, veritabanından hemen kaldırılmaz, "silindi" olarak işaretlenir (soft delete). Arayüzde birkaç saniyeliğine "Geri Al" seçeneği sunan bir bildirim gösterilir.
 - **Amaç:** Yanlışlıkla yapılabilecek veri kayıplarını önlemek ve kullanıcıya güven vermek.
 
+### 3.2.5 "Düşünceli Kullanıcı Deneyimi" Prensibi (Thoughtful UX Principle)
+- **Kural:** Uygulama, kullanıcının içinde bulunabileceği her duruma (ilk kullanım, veri olmaması, yüklenme, hata) karşı hazırlıklı olmalı ve net bir geri bildirim sağlamalıdır.
+- **Uygulama:**
+    1.  **Boş Durumlar (Empty States):** Bir listenin (örn: görevler) boş olması durumunda, kullanıcıya yol gösterici bir mesaj ve eyleme çağrı ("İlk görevinizi ekleyin") sunulmalıdır.
+    2.  **Yüklenme Durumları (Loading States):** Veri beklenirken, içeriğin yerini belli eden "iskelet" (skeleton) bileşenler veya belirgin bir yüklenme göstergesi kullanılmalıdır.
+    3.  **Geri Bildirim (Feedback):** Başarılı bir işlemden sonra (örn: not kaydedildi) veya bir hatayla karşılaşıldığında (örn: internet bağlantısı yok) kullanıcıya anlık, anlaşılır ve eyleme geçirilebilir mesajlar gösterilmelidir.
+- **Amaç:** Kullanıcının uygulamanın her anında ne olduğunu anlamasını sağlamak, belirsizliği ortadan kaldırmak ve güven hissini pekiştirmek.
+
 ---
 
 ## 3.5 Performance Standards (MANDATORY LIMITS)

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, Animated, TouchableWithoutFeedback, Dimensions, StyleSheet, Easing } from 'react-native';
-import { YStack, Separator, Home, MessageCircle, CheckSquare, Settings } from '@ybis/ui';
+import { YStack, Separator, Settings } from '@ybis/ui';
 import { useRouter, usePathname } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,9 +11,13 @@ import { DrawerNavItem } from './DrawerNavItem';
 import { DrawerFooter } from './DrawerFooter';
 
 /**
- * Drawer Menu Component - Side Navigation
+ * Drawer Menu Component - Secondary Navigation
  *
- * Professional side drawer with:
+ * Philosophy: "Tabs for primary, Drawer for secondary"
+ * - Primary navigation (Home, Tasks, Notes, Plan, Chat) → Bottom tabs
+ * - Secondary actions (Settings, Profile, Help, Logout) → Drawer
+ *
+ * Features:
  * - Fast slide animation (180ms) with smooth easing curve
  * - Glassmorphism backdrop
  * - Proper state management (no spawn bug)
@@ -22,8 +26,6 @@ import { DrawerFooter } from './DrawerFooter';
  * Animation:
  * - Easing.out(Easing.cubic) for natural deceleration
  * - 180ms duration (fast + smooth)
- *
- * Future: Swipe gesture support deferred (needs proper implementation)
  */
 
 interface DrawerMenuProps {
@@ -109,12 +111,13 @@ function DrawerMenu({ open, onOpenChange }: DrawerMenuProps): React.ReactElement
     onOpenChange(false);
   };
 
-  // Navigation items configuration
+  // Secondary navigation items (Settings, Profile, Help)
+  // Primary navigation (Home, Tasks, Notes, etc.) is now in bottom tabs
   const navItems = [
-    { path: '/(tabs)', label: 'Home', icon: <Home size={20} /> },
-    { path: '/(tabs)/chat', label: 'Chat', icon: <MessageCircle size={20} /> },
-    { path: '/(tabs)/tasks', label: 'Tasks', icon: <CheckSquare size={20} /> },
-    { path: '/(tabs)/settings', label: 'Settings', icon: <Settings size={20} /> },
+    { path: '/(tabs)/settings', label: 'Ayarlar', icon: <Settings size={20} /> },
+    // Future: Profile, Help, About pages
+    // { path: '/(tabs)/profile', label: 'Profil', icon: <User size={20} /> },
+    // { path: '/(tabs)/help', label: 'Yardım', icon: <HelpCircle size={20} /> },
   ];
 
   return (

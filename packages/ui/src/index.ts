@@ -19,7 +19,13 @@ export {
 } from 'tamagui';
 
 export { AvatarFallback } from 'tamagui';
-export type { ButtonProps } from 'tamagui';
+export type {
+    ButtonProps,
+    YStackProps,
+    XStackProps,
+    ScrollViewProps,
+    TextProps,
+} from 'tamagui';
 
 export {
     Plus,

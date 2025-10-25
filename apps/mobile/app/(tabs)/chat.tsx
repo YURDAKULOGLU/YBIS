@@ -1,9 +1,12 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
-import { YStack, H2, Button, Plus } from '@ybis/ui';
+import { YStack, Plus } from '@ybis/ui';
 import Logger from '@ybis/logging';
 import { ConversationItem } from '../../src/components/chat/ConversationItem';
 import { UniversalLayout } from '../../src/layouts/UniversalLayout';
+import { Navbar } from '../../src/components/layout/Navbar';
+import { ActionButton } from '../../src/components/layout/ActionButton';
+import { SafeAreaView } from '../../src/components/layout/SafeAreaView';
 
 // Mock Data for the Conversation List
 const mockConversations = [
@@ -54,28 +57,22 @@ export default function ChatScreen(): React.ReactElement {
   };
 
   return (
-    <UniversalLayout hideChatButton>
-      <YStack flex={1} backgroundColor="$background">
-        <ScrollView>
+    <UniversalLayout>
+      {/* SafeAreaView: flex: 1, handles both top and bottom safe areas */}
+      <SafeAreaView edges={['top', 'bottom']} flex={1}>
+        <Navbar title="Sohbetler" />
+
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
           <YStack padding="$4" gap="$3">
-            <H2>Sohbetler</H2>
             {mockConversations.map((convo) => (
               <ConversationItem key={convo.id} conversation={convo} />
             ))}
           </YStack>
         </ScrollView>
-        <Button
-          size="$6"
-          circular
-          icon={Plus}
-          theme="blue"
-          elevation="$2"
-          position="absolute"
-          bottom="$4"
-          right="$4"
-          onPress={handleNewChatPress}
-        />
-      </YStack>
+      </SafeAreaView>
+
+      {/* ActionButton manages its own safe area positioning */}
+      <ActionButton icon={Plus} onPress={handleNewChatPress} />
     </UniversalLayout>
   );
 }

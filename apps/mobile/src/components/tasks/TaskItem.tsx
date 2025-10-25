@@ -12,7 +12,7 @@ interface TaskItemProps {
   task: Task;
 }
 
-function getStatusPill(status: Task['status']) {
+function getStatusPill(status: Task['status']): React.ReactElement | null {
   const style = {
     paddingVertical: '$1',
     paddingHorizontal: '$2',
