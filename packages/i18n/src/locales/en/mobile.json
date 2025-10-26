@@ -34,7 +34,26 @@
     "flows_title": "Active Workflows",
     "dashboard_title": "Dashboard",
     "item_count": "{{count}} items",
-    "more_items": "+{{count}} more..."
+    "more_items": "+{{count}} more...",
+    "refresh": "Refresh",
+    "loading": "Loading data...",
+    "empty_unconfigured": "No data source connected. Configure integrations to populate this panel.",
+    "empty_default": "Nothing to show here yet.",
+    "provider_ybis_internal": "YBIS",
+    "badge_attention": "Attention",
+    "badge_ready": "Ready",
+    "badge_info": "Info",
+    "status": {
+      "pending": "Pending",
+      "in_progress": "In Progress",
+      "completed": "Completed"
+    },
+    "prompts": {
+      "open_note": "Open the note \"{{title}}\"",
+      "review_task": "Work on the task \"{{title}}\"",
+      "calendar_event": "Review the event \"{{title}}\"",
+      "run_workflow": "Run the workflow \"{{title}}\""
+    }
   },
   "input": {
     "placeholder": "Type a message..."
