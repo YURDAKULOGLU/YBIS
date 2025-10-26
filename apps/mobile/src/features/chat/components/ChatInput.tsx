@@ -14,6 +14,7 @@ interface ChatInputProps {
   handleVoiceRecord: () => void;
   handleQuickActionPress: () => void;
   onLayout: (event: LayoutChangeEvent) => void;
+  isSending: boolean;
 }
 
 export function ChatInput({
@@ -23,10 +24,13 @@ export function ChatInput({
   handleVoiceRecord,
   handleQuickActionPress,
   onLayout,
+  isSending,
 }: ChatInputProps): React.ReactElement {
   const { t } = useTranslation('mobile');
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+
+  const disabled = isSending;
 
   return (
     <YStack
@@ -47,6 +51,7 @@ export function ChatInput({
           pressStyle={{ scale: 0.92, backgroundColor: '$gray4' }}
           animation="bouncy"
           onPress={handleQuickActionPress}
+          disabled={disabled}
         />
 
         <TextInput
@@ -60,12 +65,14 @@ export function ChatInput({
             paddingVertical: 10,
             fontSize: 16,
             color: theme.color?.val,
+            opacity: disabled ? 0.6 : 1,
           }}
           placeholder={t('input.placeholder')}
           placeholderTextColor={theme.gray10?.val}
           value={inputText}
           onChangeText={setInputText}
           onSubmitEditing={handleSendMessage}
+          editable={!disabled}
         />
 
         <YStack width={48} height={48} alignItems="center" justifyContent="center">
@@ -80,6 +87,7 @@ export function ChatInput({
               pressStyle={{ scale: 0.88, backgroundColor: '$blue10' }}
               animation="bouncy"
               onPress={handleSendMessage}
+              disabled={disabled}
             />
           ) : (
             <Button
@@ -92,6 +100,7 @@ export function ChatInput({
               pressStyle={{ scale: 0.88, backgroundColor: '$blue9' }}
               animation="bouncy"
               onPress={handleVoiceRecord}
+              disabled={disabled}
             />
           )}
         </YStack>
