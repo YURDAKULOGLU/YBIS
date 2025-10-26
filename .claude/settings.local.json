@@ -55,7 +55,10 @@
       "Bash(ls:*)",
       "Bash(git commit:*)",
       "Bash(pnpm test:*)",
-      "Bash(pnpm update:*)"
+      "Bash(pnpm update:*)",
+      "Bash(git merge-base:*)",
+      "Bash(xargs git diff:*)",
+      "Bash(git merge:*)"
     ],
     "deny": [],
     "ask": []
