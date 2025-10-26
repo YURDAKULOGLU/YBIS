@@ -48,7 +48,7 @@ export async function fetchWidgetSnapshot(signal?: AbortSignal): Promise<WidgetS
     });
     baseUrl = DEFAULT_API_BASE_URL;
     metadataSource = 'unconfigured';
-    metadataMessage = 'API tabanı yapılandırılmadı; yerel varsayılan kullanılıyor.';
+    metadataMessage = 'API taban yapılandırılmadı; yerel varsayılan kullanılıyor.';
   }
 
   const response = await fetch(`${baseUrl}/api/orchestration/snapshot`, {
