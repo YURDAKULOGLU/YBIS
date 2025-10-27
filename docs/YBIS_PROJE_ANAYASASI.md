@@ -1,17 +1,20 @@
+---
+title: "YBIS Proje Anayasası"
+description: "YBIS projesi için uyulması zorunlu teknik kuralları, mimari prensipleri, kalite standartlarını ve otomasyon gereksinimlerini tanımlar."
+version: "4.0.0"
+status: "active"
+owner: "@ybis-master"
+last_updated: "2025-10-21"
+tags: ["anayasa", "kural", "mimari", "kalite", "standartlar"]
+related_docs:
+  - "./vision/PROJECT_VISION.md"
+  - "./Güncel/DEVELOPMENT_LOG.md"
+  - "./strategy/COMPETITIVE_STRATEGY.md"
+  - "./roadmap/PRODUCT_ROADMAP.md"
+  - "./strategy/BUILD_AUTOMATION_STRATEGY.md"
+  - "./strategy/PROPOSED_CONSTITUTION_AMENDMENTS.md"
+---
 # YBIS Proje Anayasası
-
-**Version:** 4.0.0
-**Last Updated:** 2025-10-21
-**Status:** CANONICAL - Technical Constitution
-**Enforcement:** MANDATORY - CI/CD automated gates + Manual review
-
-**Cross-References:**
-- [Project Vision](vision/PROJECT_VISION.md) - Strategic foundation (product principles → architecture)
-- [Development Log](Güncel/DEVELOPMENT_LOG.md) - Architecture Decisions (AD-XXX)
-- [Competitive Strategy](strategy/COMPETITIVE_STRATEGY.md) - Moats → Tech advantages
-- [Product Roadmap](roadmap/PRODUCT_ROADMAP.md) - Timeline alignment
-- [Build Automation](strategy/BUILD_AUTOMATION_STRATEGY.md) - NX integration criteria
-- [Proposed Amendments](strategy/PROPOSED_CONSTITUTION_AMENDMENTS.md) - Future rules
 
 ---
 

@@ -1,0 +1,57 @@
+[
+  {
+    "id": "analyst",
+    "title": "Business Analyst",
+    "description": "Use for market research, brainstorming, competitive analysis, creating project briefs, initial project discovery, and documenting existing projects (brownfield)."
+  },
+  {
+    "id": "architect",
+    "title": "Architect",
+    "description": "Use for system design, architecture documents, technology selection, API design, and infrastructure planning."
+  },
+  {
+    "id": "dev",
+    "title": "Full Stack Developer",
+    "description": "Use for code implementation, debugging, refactoring, and development best practices."
+  },
+  {
+    "id": "doc-generator",
+    "title": "Documentation Generator",
+    "description": "Generates documentation from code or other artifacts. (Note: This agent's definition file seems to be a duplicate of 'dev.md' but is treated as a unique agent)."
+  },
+  {
+    "id": "pm",
+    "title": "Product Manager",
+    "description": "Use for creating PRDs, product strategy, feature prioritization, roadmap planning, and stakeholder communication."
+  },
+  {
+    "id": "po",
+    "title": "Product Owner",
+    "description": "Use for backlog management, story refinement, acceptance criteria, sprint planning, and prioritization decisions."
+  },
+  {
+    "id": "qa",
+    "title": "Test Architect & Quality Advisor",
+    "description": "Use for comprehensive test architecture review, quality gate decisions, and code improvement."
+  },
+  {
+    "id": "sm",
+    "title": "Scrum Master",
+    "description": "Use for story creation, epic management, retrospectives in party-mode, and agile process guidance."
+  },
+  {
+    "id": "ux-expert",
+    "title": "UX Expert",
+    "description": "Use for UI/UX design, wireframes, prototypes, front-end specifications, and user experience optimization."
+  },
+  {
+    "id": "ybis-master",
+    "title": "YBIS Master Task Executor",
+    "description": "Use when you need comprehensive expertise across all domains or for running one-off tasks without a specific persona."
+  },
+  {
+    "id": "ybis-orchestrator",
+    "title": "YBIS Master Orchestrator",
+    "description": "Use for workflow coordination, multi-agent tasks, and when unsure which specialist to consult."
+  }
+]

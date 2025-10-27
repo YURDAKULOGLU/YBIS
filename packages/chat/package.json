@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "react": "19.1.0",
-    "react-native": "0.81.4",
+    "react-native": "0.81.5",
     "tamagui": "^1.135.0",
     "@tamagui/lucide-icons": "^1.135.0"
   },
@@ -23,6 +23,6 @@
   },
   "peerDependencies": {
     "react": "19.1.0",
-    "react-native": "0.81.4"
+    "react-native": "0.81.5"
   }
 }

@@ -27,6 +27,12 @@ export type {
     TextProps,
 } from 'tamagui';
 
+// React Native Safe Area Context (isolation layer)
+export { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+
+// i18next Provider (isolation layer)
+export { I18nextProvider } from 'react-i18next';
+
 export {
     Plus,
     Send,

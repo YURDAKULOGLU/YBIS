@@ -62,6 +62,7 @@
     // Interop Constraints
     // ========================================
     "forceConsistentCasingInFileNames": true,
+    // Keep lib check disabled: React Native's bundled globals conflict with DOM typings and break builds if toggled.
     "skipLibCheck": true,
 
     // ========================================

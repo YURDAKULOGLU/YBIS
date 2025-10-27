@@ -58,7 +58,15 @@
       "Bash(pnpm update:*)",
       "Bash(git merge-base:*)",
       "Bash(xargs git diff:*)",
-      "Bash(git merge:*)"
+      "Bash(git merge:*)",
+      "Bash(npx expo install react-native-keyboard-controller)",
+      "Bash(pnpm run build)",
+      "Bash(npx expo:*)",
+      "Bash(npx expo-doctor:*)",
+      "Read(//c/Windows/System32/drivers/etc/**)",
+      "Bash(pnpm config:*)",
+      "Bash(curl -v https://api.expo.dev)",
+      "Bash(git clean:*)"
     ],
     "deny": [],
     "ask": []

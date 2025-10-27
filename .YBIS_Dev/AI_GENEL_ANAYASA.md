@@ -38,6 +38,19 @@ Bunun yerine, aşağıdaki protokolü izle:
 4.  **Görev Devretme (Handoff):** Bir görevi tamamlayıp başka bir ajana devretmen gerektiğinde, çıktını (örn: `plan.md`) hedef ajanın kişisel klasörüne (örn: `docs/AI/claude/`) kaydet. Ardından kullanıcıyı bilgilendirerek görevi devret.
 5.  **Göreve Başlama:** Bir göreve başlamadan önce, her zaman kendi kişisel klasörünü (`docs/AI/<kendi_adın>/`) kontrol ederek sana atanmış yeni bir görev olup olmadığını doğrula.
 
+### Bağlam Yükleme Protokolü (Context Loading Protocol)
+
+Tüm AI ajanları, görevlerine başlamadan önce yeterli bağlama sahip olduklarından emin olmak için **iki aşamalı bağlam yükleme protokolünü** izlemek zorundadır. Bu protokol, "tembel yükleme" (lazy loading) alışkanlığını ortadan kaldırır ve ajanların proaktif bir şekilde bilgi edinmesini sağlar.
+
+1.  **Faz 1: Koşulsuz Temel Bağlam Yüklemesi:**
+    *   Her ajan, aktive edildiği an, **kullanıcı onayı olmaksızın**, `.YBIS_Dev/Veriler/AI_AGENT_PROTOCOLS.md` dosyasında tanımlanan **TIER 1** referans dokümanlarını okumakla yükümlüdür. Bu, tüm ajanlar için asgari bilgi standardını oluşturur.
+
+2.  **Faz 2: Göreve Özel Koşullu Bağlam Yüklemesi:**
+    *   Ajan, kullanıcıdan spesifik bir görev aldıktan sonra, görevin gerektirdiği `AI_MODE`'u (örn: `DEVELOPMENT`, `ANALYSIS`) belirler.
+    *   Bu mod için gereken **ek dokümanları** (örn: TIER 0, TIER -1) okumak için kullanıcıya bir öneri sunar ve **onay ister**.
+
+Bu protokolün tüm detayları ve mod tanımları için referans alınacak tek yetkili belge `.YBIS_Dev/Veriler/AI_AGENT_PROTOCOLS.md` dosyasıdır.
+
 ### Anayasa Değişiklik Prensibi (Constitution Amendment Principle)
 
 Anayasalar (hem Genel hem de Proje) yaşayan belgelerdir ve zamanla gelişebilirler. Bir AI asistanı olarak, mevcut kurallarda bir eksiklik, çelişki veya iyileştirme potansiyeli tespit ettiğinde, anayasa değişikliği önerme yetkisine sahipsin.

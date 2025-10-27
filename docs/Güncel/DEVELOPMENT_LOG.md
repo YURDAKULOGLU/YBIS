@@ -3382,3 +3382,52 @@ npx expo run:android
   - `AGENTS.md` and other onboarding documents will be refactored to remove "Dual-Write" and include the new protocol.
   - The system becomes more resilient to human/AI error.
 - **Related:** AD-022 (superseded)
+
+### AD-039: Modern Keyboard Handling with react-native-keyboard-controller
+- **Date:** 2025-10-26
+- **Context:** Mobile chat screen had keyboard handling issues - chat input positioning was incorrect (too high), widget animations were broken, and manual animation code with hardcoded values (TAB_BAR_HEIGHT = 60) was error-prone.
+- **Problem:**
+  - Manual `useKeyboardAnimations` hook with hardcoded tab bar height
+  - `setTimeout` anti-pattern for scroll behavior
+  - Chat input used absolute positioning with manual `Animated.Value` management
+  - Widget height animation manually controlled
+  - No automatic tab bar height detection
+- **Decision:**
+  - Adopted `react-native-keyboard-controller` (v1.18.5) as the industry-standard solution
+  - Removed manual animation code and hardcoded magic numbers
+  - Applied "Fix the Abstraction, No Patch" principle (YBIS_PROJE_ANAYASASI.md §3.0)
+  - Did NOT create KeyboardPort - stable library, framework-level concern (similar to Tamagui, i18next)
+- **Implementation:**
+  1. Installed `react-native-keyboard-controller@1.18.5` (Expo SDK 54 compatible)
+  2. Added `KeyboardProvider` to root layout (`app/_layout.tsx`)
+  3. Refactored main chat screen (`app/(tabs)/index.tsx`):
+     - Replaced `Animated.ScrollView` with `KeyboardAwareScrollView`
+     - Removed manual `widgetAnimatedHeight` and `inputBarAnimatedBottom` animations
+     - Removed `scrollPaddingBottom` calculations
+     - Simplified ChatInput to natural flow layout (removed absolute positioning)
+  4. Deleted obsolete `useKeyboardAnimations` hook
+  5. Made ChatInput `onLayout` prop optional (backward compatible)
+- **Rationale:**
+  - Industry standard library with native-like performance
+  - Automatic tab bar height detection (no hardcoded values)
+  - Smooth keyboard animations out of the box
+  - Reduced code complexity (removed ~85 lines of manual animation code)
+  - Aligns with "Build for Scale, Ship Minimal" - use proven solutions
+- **Impact:**
+  - ✅ Chat input now correctly positioned above tab bar
+  - ✅ Widget animations smooth and automatic
+  - ✅ Zero hardcoded values or magic numbers
+  - ✅ Reduced maintenance burden
+  - ✅ Better user experience (native-like keyboard handling)
+- **Files Changed:**
+  - `apps/mobile/app/_layout.tsx` - Added KeyboardProvider
+  - `apps/mobile/app/(tabs)/index.tsx` - Refactored to use KeyboardAwareScrollView
+  - `apps/mobile/src/features/chat/components/ChatInput.tsx` - Made onLayout optional
+  - `apps/mobile/src/features/chat/hooks/useKeyboardAnimations.ts` - DELETED
+  - `apps/mobile/package.json` - Added react-native-keyboard-controller dependency
+- **Testing:**
+  - ✅ TypeScript type-check passed
+  - ✅ ESLint passed (0 errors)
+  - ✅ Build successful (all packages)
+  - ⏳ Manual mobile testing pending
+- **Related:** Anayasa §3.0 (Fix the Abstraction), Architecture.md line 84 (Keyboard Handling)
