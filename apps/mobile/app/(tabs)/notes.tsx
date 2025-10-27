@@ -22,7 +22,7 @@ export default function NotesScreen(): React.ReactElement {
       <SafeAreaView edges={['top']} flex={1}>
         <Navbar title="Notlar" />
 
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
           <YStack gap="$3" padding="$4">
             {mockNotes.map((note) => (
               <NoteItem key={note.id} note={note} />
