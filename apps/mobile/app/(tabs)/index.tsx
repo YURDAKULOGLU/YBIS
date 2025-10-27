@@ -18,7 +18,11 @@ export default function MainScreen(): React.ReactElement {
   const { t } = useTranslation('mobile');
   const { height: screenHeight } = useWindowDimensions();
   const [keyboardShown, setKeyboardShown] = useState(false);
-  const [chatInputHeight, setChatInputHeight] = useState(80); // Default estimated height
+  // The default value of 80 is chosen as an initial estimate for chat input height.
+  // This value is based on typical design guidelines for input fields on mobile devices,
+  // and ensures that the layout does not break before the actual height is measured.
+  // Actual heights may vary depending on device and font size, and will be updated on layout.
+  const [chatInputHeight, setChatInputHeight] = useState(80);
 
   useEffect(() => {
     const showListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardShown(true));
