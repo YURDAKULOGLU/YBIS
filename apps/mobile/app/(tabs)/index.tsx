@@ -1,14 +1,14 @@
 import React, { useState, useRef, useCallback, useMemo } from 'react';
-import { YStack } from '@ybis/ui';
-import { Animated, useWindowDimensions } from 'react-native';
+import { YStack, ScrollView } from '@ybis/ui';
+import { KeyboardAvoidingView, Platform, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useKeyboard } from '@react-native-community/hooks';
 import { Calendar, CheckSquare, FileText, Workflow } from '@ybis/ui';
 import Logger from '@ybis/logging';
 import { UniversalLayout } from '../../src/layouts/UniversalLayout';
 import { SafeAreaView } from '../../src/components/layout/SafeAreaView';
 import type { Tab, TabType, SuggestionPrompt } from '../../src/features/chat/types';
 import { useChat } from '../../src/features/chat/hooks/useChat';
-import { useKeyboardAnimations } from '../../src/features/chat/hooks/useKeyboardAnimations';
 import { ChatInput } from '../../src/features/chat/components/ChatInput';
 import { MessageList } from '../../src/features/chat/components/MessageList';
 import { SuggestionPrompts } from '../../src/features/chat/components/SuggestionPrompts';
@@ -18,24 +18,17 @@ import { WidgetTabs } from '../../src/features/chat/components/WidgetTabs';
 export default function MainScreen(): React.ReactElement {
   const { t } = useTranslation('mobile');
   const { height: screenHeight } = useWindowDimensions();
+  const keyboard = useKeyboard();
 
   const { messages, inputText, isFirstSession, setInputText, handleSendMessage, handlePromptClick } = useChat();
 
   const [selectedTab, setSelectedTab] = useState<TabType>('notes');
-  const [inputBarHeight, setInputBarHeight] = useState(0);
 
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<ScrollView>(null);
   const widgetHeight = useMemo(() => screenHeight * 0.2, [screenHeight]);
 
-  const { widgetAnimatedHeight, inputBarAnimatedBottom, scrollPaddingBottom } = useKeyboardAnimations(
-    widgetHeight,
-    inputBarHeight,
-    scrollViewRef
-  );
-
   const handleContentSizeChange = useCallback(() => {
-    const scrollView = scrollViewRef.current as { scrollToEnd?: (options: { animated: boolean }) => void } | null;
-    scrollView?.scrollToEnd?.({ animated: true });
+    setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
   }, []);
 
   const handleVoiceRecord = useCallback(() => {
@@ -85,52 +78,44 @@ export default function MainScreen(): React.ReactElement {
   return (
     <UniversalLayout>
       <SafeAreaView edges={['top']} flex={1}>
-        <YStack flex={1} backgroundColor="$background">
-          <WidgetTabs tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={0}
+        >
+          <YStack flex={1} backgroundColor="$background">
+            <WidgetTabs tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 
-          <Animated.View style={{ height: widgetAnimatedHeight, overflow: 'hidden' }}>
-            <YStack height={widgetHeight} padding="$2">
-              <Widget selectedTab={selectedTab} />
-            </YStack>
-          </Animated.View>
+            {!keyboard.keyboardShown && (
+              <YStack height={widgetHeight} padding="$2">
+                <Widget selectedTab={selectedTab} />
+              </YStack>
+            )}
 
-          <Animated.ScrollView
-            ref={scrollViewRef}
-            style={{ flex: 1 }}
-            contentContainerStyle={{
-              flexGrow: 1,
-              paddingBottom: scrollPaddingBottom,
-            }}
-            onContentSizeChange={handleContentSizeChange}
-            keyboardShouldPersistTaps="handled"
-          >
-            {chatContent}
-          </Animated.ScrollView>
-
-          <Animated.View
-            style={{
-              position: 'absolute',
-              bottom: inputBarAnimatedBottom,
-              left: 0,
-              right: 0,
-              backgroundColor: 'transparent',
-            }}
-          >
-            <ChatInput
-              inputText={inputText}
-              setInputText={setInputText}
-              handleSendMessage={handleSendMessage}
-              handleVoiceRecord={handleVoiceRecord}
-              handleQuickActionPress={handleQuickActionPress}
-              onLayout={(event) => {
-                const { height } = event.nativeEvent.layout;
-                if (height > 0 && height !== inputBarHeight) {
-                  setInputBarHeight(height);
-                }
+            <ScrollView
+              ref={scrollViewRef}
+              flex={1}
+              contentContainerStyle={{
+                flexGrow: 1,
+                paddingBottom: 20,
               }}
-            />
-          </Animated.View>
-        </YStack>
+              onContentSizeChange={handleContentSizeChange}
+              keyboardShouldPersistTaps="handled"
+            >
+              {chatContent}
+            </ScrollView>
+
+            <YStack paddingBottom="$0">
+              <ChatInput
+                inputText={inputText}
+                setInputText={setInputText}
+                handleSendMessage={handleSendMessage}
+                handleVoiceRecord={handleVoiceRecord}
+                handleQuickActionPress={handleQuickActionPress}
+              />
+            </YStack>
+          </YStack>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </UniversalLayout>
   );

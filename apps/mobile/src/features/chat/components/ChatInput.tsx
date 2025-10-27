@@ -2,7 +2,6 @@ import React from 'react';
 import { TextInput } from 'react-native';
 import { YStack, XStack, Button, useTheme } from '@ybis/ui';
 import { Plus, Send, Mic } from '@ybis/ui';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
 import type { LayoutChangeEvent } from 'react-native';
@@ -13,7 +12,7 @@ interface ChatInputProps {
   handleSendMessage: () => void;
   handleVoiceRecord: () => void;
   handleQuickActionPress: () => void;
-  onLayout: (event: LayoutChangeEvent) => void;
+  onLayout?: (event: LayoutChangeEvent) => void;
 }
 
 export function ChatInput({
@@ -26,12 +25,10 @@ export function ChatInput({
 }: ChatInputProps): React.ReactElement {
   const { t } = useTranslation('mobile');
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
 
   return (
     <YStack
       padding="$3"
-      paddingBottom={insets.bottom > 0 ? insets.bottom : '$4'}
       borderTopWidth={1}
       borderColor="$gray5"
       backgroundColor="$background"

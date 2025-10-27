@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Tabs } from 'expo-router';
-import { useTheme, Home, MessageCircle, CheckSquare, FileText, Calendar, Settings } from '@ybis/ui';
+import { useTheme, Home, MessageCircle, CheckSquare, FileText, Calendar, Settings, useSafeAreaInsets } from '@ybis/ui';
 import { useTranslation } from 'react-i18next';
 import { DrawerMenu } from '../../src/components/drawer/DrawerMenu';
 import { DrawerContext } from '../../src/contexts/DrawerContext';
@@ -29,6 +29,7 @@ export default function TabLayout(): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation('mobile');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const drawerContextValue = useMemo(
     () => ({
@@ -43,12 +44,12 @@ export default function TabLayout(): React.ReactElement {
       <Tabs
         screenOptions={{
           headerShown: false,
+          tabBarHideOnKeyboard: true,
           tabBarStyle: {
             backgroundColor: theme.background.val,
             borderTopColor: theme.gray5.val,
             borderTopWidth: 1,
-            height: 60,
-            paddingBottom: 8,
+            paddingBottom: Math.max(insets.bottom, 8),
             paddingTop: 8,
           },
           tabBarActiveTintColor: theme.blue9.val,

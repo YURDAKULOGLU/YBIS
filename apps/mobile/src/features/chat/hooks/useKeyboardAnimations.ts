@@ -2,6 +2,10 @@ import { useEffect, useRef } from 'react';
 import { Animated, Keyboard } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+// Tab bar dimensions (matching _layout.tsx)
+const TAB_BAR_HEIGHT = 60;
+const TAB_BAR_PADDING = 16; // paddingTop (8) + paddingBottom (8)
+
 interface UseKeyboardAnimationsReturn {
   widgetAnimatedHeight: Animated.Value;
   inputBarAnimatedBottom: Animated.Value;
@@ -14,15 +18,19 @@ export function useKeyboardAnimations(
   scrollViewRef: React.RefObject<unknown>
 ): UseKeyboardAnimationsReturn {
   const insets = useSafeAreaInsets();
+
+  // Chat input base position = tab bar height + padding + safe area
+  const baseBottom = TAB_BAR_HEIGHT + TAB_BAR_PADDING + insets.bottom;
+
   const widgetAnimatedHeight = useRef(new Animated.Value(widgetHeight)).current;
-  const inputBarAnimatedBottom = useRef(new Animated.Value(insets.bottom)).current;
+  const inputBarAnimatedBottom = useRef(new Animated.Value(baseBottom)).current;
   const scrollPaddingBottom = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (inputBarHeight > 0) {
-      scrollPaddingBottom.setValue(inputBarHeight + insets.bottom);
+      scrollPaddingBottom.setValue(inputBarHeight + baseBottom);
     }
-  }, [inputBarHeight, scrollPaddingBottom, insets.bottom]);
+  }, [inputBarHeight, scrollPaddingBottom, baseBottom]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (event) => {
@@ -63,12 +71,12 @@ export function useKeyboardAnimations(
           useNativeDriver: false,
         }),
         Animated.timing(inputBarAnimatedBottom, {
-          toValue: insets.bottom,
+          toValue: baseBottom,
           duration: keyboardDuration,
           useNativeDriver: false,
         }),
         Animated.timing(scrollPaddingBottom, {
-          toValue: inputBarHeight + insets.bottom,
+          toValue: inputBarHeight + baseBottom,
           duration: keyboardDuration,
           useNativeDriver: false,
         }),
@@ -79,7 +87,7 @@ export function useKeyboardAnimations(
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
     };
-  }, [widgetAnimatedHeight, inputBarAnimatedBottom, scrollPaddingBottom, widgetHeight, inputBarHeight, scrollViewRef, insets.bottom]);
+  }, [widgetAnimatedHeight, inputBarAnimatedBottom, scrollPaddingBottom, widgetHeight, inputBarHeight, scrollViewRef, baseBottom]);
 
   return { widgetAnimatedHeight, inputBarAnimatedBottom, scrollPaddingBottom };
 }
