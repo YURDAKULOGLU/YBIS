@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { YStack, ScrollView } from '@ybis/ui';
-import { useWindowDimensions, Keyboard, Animated, type LayoutChangeEvent } from 'react-native';
+import { KeyboardAvoidingView, Platform, useWindowDimensions, Keyboard, Animated, type LayoutChangeEvent } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Calendar, CheckSquare, FileText, Workflow } from '@ybis/ui';
 import Logger from '@ybis/logging';
@@ -123,40 +123,47 @@ export default function MainScreen(): React.ReactElement {
   return (
     <UniversalLayout>
       <SafeAreaView edges={['top']} flex={1}>
-        <YStack flex={1} backgroundColor="$background">
-          <WidgetTabs tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={0}
+          enabled={Platform.OS === 'ios'}
+        >
+          <YStack flex={1} backgroundColor="$background">
+            <WidgetTabs tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 
-          {/* Animated widget with smooth collapse/expand */}
-          <Animated.View style={{ height: widgetAnimatedHeight, overflow: 'hidden' }}>
-            <YStack height={widgetHeight} padding="$2">
-              <Widget selectedTab={selectedTab} />
+            {/* Animated widget with smooth collapse/expand */}
+            <Animated.View style={{ height: widgetAnimatedHeight, overflow: 'hidden' }}>
+              <YStack height={widgetHeight} padding="$2">
+                <Widget selectedTab={selectedTab} />
+              </YStack>
+            </Animated.View>
+
+            <ScrollView
+              ref={scrollViewRef}
+              flex={1}
+              contentContainerStyle={{
+                flexGrow: 1,
+                paddingBottom: chatInputHeight + CHAT_INPUT_BUFFER_SPACING,
+              }}
+              onContentSizeChange={handleContentSizeChange}
+              keyboardShouldPersistTaps="handled"
+            >
+              {chatContent}
+            </ScrollView>
+
+            <YStack>
+              <ChatInput
+                inputText={inputText}
+                setInputText={setInputText}
+                handleSendMessage={handleSendMessage}
+                handleVoiceRecord={handleVoiceRecord}
+                handleQuickActionPress={handleQuickActionPress}
+                onLayout={handleChatInputLayout}
+              />
             </YStack>
-          </Animated.View>
-
-          <ScrollView
-            ref={scrollViewRef}
-            flex={1}
-            contentContainerStyle={{
-              flexGrow: 1,
-              paddingBottom: chatInputHeight + CHAT_INPUT_BUFFER_SPACING,
-            }}
-            onContentSizeChange={handleContentSizeChange}
-            keyboardShouldPersistTaps="handled"
-          >
-            {chatContent}
-          </ScrollView>
-
-          <YStack>
-            <ChatInput
-              inputText={inputText}
-              setInputText={setInputText}
-              handleSendMessage={handleSendMessage}
-              handleVoiceRecord={handleVoiceRecord}
-              handleQuickActionPress={handleQuickActionPress}
-              onLayout={handleChatInputLayout}
-            />
           </YStack>
-        </YStack>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </UniversalLayout>
   );
