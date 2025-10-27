@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { YStack, ScrollView } from '@ybis/ui';
-import { KeyboardAvoidingView, Platform, useWindowDimensions, Keyboard } from 'react-native';
+import { KeyboardAvoidingView, Platform, useWindowDimensions, Keyboard, type LayoutChangeEvent } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Calendar, CheckSquare, FileText, Workflow } from '@ybis/ui';
 import Logger from '@ybis/logging';
@@ -18,6 +18,7 @@ export default function MainScreen(): React.ReactElement {
   const { t } = useTranslation('mobile');
   const { height: screenHeight } = useWindowDimensions();
   const [keyboardShown, setKeyboardShown] = useState(false);
+  const [chatInputHeight, setChatInputHeight] = useState(80); // Default estimated height
 
   useEffect(() => {
     const showListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardShown(true));
@@ -38,6 +39,11 @@ export default function MainScreen(): React.ReactElement {
 
   const handleContentSizeChange = useCallback(() => {
     setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
+  }, []);
+
+  const handleChatInputLayout = useCallback((event: LayoutChangeEvent) => {
+    const { height } = event.nativeEvent.layout;
+    setChatInputHeight(height);
   }, []);
 
   const handleVoiceRecord = useCallback(() => {
@@ -106,7 +112,7 @@ export default function MainScreen(): React.ReactElement {
               flex={1}
               contentContainerStyle={{
                 flexGrow: 1,
-                paddingBottom: 20,
+                paddingBottom: chatInputHeight + 8, // Include chat input height + small buffer
               }}
               onContentSizeChange={handleContentSizeChange}
               keyboardShouldPersistTaps="handled"
@@ -114,13 +120,14 @@ export default function MainScreen(): React.ReactElement {
               {chatContent}
             </ScrollView>
 
-            <YStack paddingBottom="$0">
+            <YStack>
               <ChatInput
                 inputText={inputText}
                 setInputText={setInputText}
                 handleSendMessage={handleSendMessage}
                 handleVoiceRecord={handleVoiceRecord}
                 handleQuickActionPress={handleQuickActionPress}
+                onLayout={handleChatInputLayout}
               />
             </YStack>
           </YStack>
