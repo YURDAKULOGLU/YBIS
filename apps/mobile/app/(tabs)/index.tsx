@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { YStack, ScrollView } from '@ybis/ui';
-import { KeyboardAvoidingView, Platform, useWindowDimensions, Keyboard, type LayoutChangeEvent } from 'react-native';
+import { KeyboardAvoidingView, Platform, useWindowDimensions, Keyboard, Animated, type LayoutChangeEvent } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Calendar, CheckSquare, FileText, Workflow } from '@ybis/ui';
 import Logger from '@ybis/logging';
@@ -14,36 +14,62 @@ import { SuggestionPrompts } from '../../src/features/chat/components/Suggestion
 import { Widget } from '../../src/features/chat/components/Widget';
 import { WidgetTabs } from '../../src/features/chat/components/WidgetTabs';
 
+// Constants for better maintainability
+const CHAT_INPUT_BUFFER_SPACING = 8;
+const WIDGET_HEIGHT_PERCENTAGE = 0.2;
+
 export default function MainScreen(): React.ReactElement {
   const { t } = useTranslation('mobile');
   const { height: screenHeight } = useWindowDimensions();
-  const [keyboardShown, setKeyboardShown] = useState(false);
   // The default value of 80 is chosen as an initial estimate for chat input height.
   // This value is based on typical design guidelines for input fields on mobile devices,
   // and ensures that the layout does not break before the actual height is measured.
   // Actual heights may vary depending on device and font size, and will be updated on layout.
   const [chatInputHeight, setChatInputHeight] = useState(80);
 
+  // Animated value for smooth widget transitions
+  const widgetAnimatedHeight = useRef(new Animated.Value(screenHeight * WIDGET_HEIGHT_PERCENTAGE)).current;
+  const widgetHeight = useMemo(() => screenHeight * WIDGET_HEIGHT_PERCENTAGE, [screenHeight]);
+
   useEffect(() => {
-    const showListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardShown(true));
-    const hideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardShown(false));
+    const showListener = Keyboard.addListener('keyboardDidShow', () => {
+      // Smoothly collapse widget when keyboard opens
+      Animated.timing(widgetAnimatedHeight, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: false,
+      }).start();
+    });
+    
+    const hideListener = Keyboard.addListener('keyboardDidHide', () => {
+      // Smoothly expand widget when keyboard closes
+      Animated.timing(widgetAnimatedHeight, {
+        toValue: widgetHeight,
+        duration: 250,
+        useNativeDriver: false,
+      }).start();
+    });
     
     return () => {
       showListener.remove();
       hideListener.remove();
     };
-  }, []);
+  }, [widgetAnimatedHeight, widgetHeight]);
 
   const { messages, inputText, isFirstSession, setInputText, handleSendMessage, handlePromptClick } = useChat();
 
   const [selectedTab, setSelectedTab] = useState<TabType>('notes');
 
   const scrollViewRef = useRef<ScrollView>(null);
-  const widgetHeight = useMemo(() => screenHeight * 0.2, [screenHeight]);
+  const shouldAutoScroll = useRef(true);
 
+  // Only auto-scroll when new messages are added (not on keyboard events)
   const handleContentSizeChange = useCallback(() => {
-    setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
-  }, []);
+    if (shouldAutoScroll.current && messages.length > 0) {
+      // Immediate scroll without animation to avoid jumping
+      scrollViewRef.current?.scrollToEnd({ animated: false });
+    }
+  }, [messages.length]);
 
   const handleChatInputLayout = useCallback((event: LayoutChangeEvent) => {
     const { height } = event.nativeEvent.layout;
@@ -105,18 +131,19 @@ export default function MainScreen(): React.ReactElement {
           <YStack flex={1} backgroundColor="$background">
             <WidgetTabs tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 
-            {!keyboardShown && (
+            {/* Animated widget with smooth collapse/expand */}
+            <Animated.View style={{ height: widgetAnimatedHeight, overflow: 'hidden' }}>
               <YStack height={widgetHeight} padding="$2">
                 <Widget selectedTab={selectedTab} />
               </YStack>
-            )}
+            </Animated.View>
 
             <ScrollView
               ref={scrollViewRef}
               flex={1}
               contentContainerStyle={{
                 flexGrow: 1,
-                paddingBottom: chatInputHeight + 8, // Include chat input height + small buffer
+                paddingBottom: chatInputHeight + CHAT_INPUT_BUFFER_SPACING,
               }}
               onContentSizeChange={handleContentSizeChange}
               keyboardShouldPersistTaps="handled"

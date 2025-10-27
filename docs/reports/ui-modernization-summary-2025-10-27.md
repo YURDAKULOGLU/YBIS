@@ -16,7 +16,7 @@ Successfully modernized the YBIS mobile app UI to eliminate jumping/animation is
 ## Problems Identified
 
 Based on analysis of:
-- `ui bug raporu 2025-10-24.md`
+- `ui bug report 2025-10-24.md`
 - `mobile_app_review_codex_2025-10-27.md`
 - `session_summary_codex_2025-10-27.md`
 - User feedback: "appimin arayüzünde jumpingler vs vs var"
