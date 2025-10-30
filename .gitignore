@@ -28,6 +28,11 @@ Thumbs.db
 # Expo
 .expo/
 .expo-shared/
+apps/mobile/app.json
+
+# Native folders (Expo managed workflow)
+apps/mobile/ios/
+apps/mobile/android/
 
 # Android
 *.apk

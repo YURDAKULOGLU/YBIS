@@ -7,7 +7,8 @@
     "declarationMap": true,
     "composite": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "types": ["react"]
+    "jsx": "react-native",
+    "skipLibCheck": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "dist"],

@@ -1,0 +1,73 @@
+{
+  "onboarding": {
+    "prompt1_title": "Let's Get Started!",
+    "prompt1_desc": "Welcome to YBIS. How can I help you?",
+    "prompt2_title": "Demo Mode",
+    "prompt2_desc": "Test all features",
+    "prompt3_title": "Start Chat",
+    "prompt3_desc": "Chat with AI assistant"
+  },
+  "prompts": {
+    "newNote_title": "Create new note",
+    "newNote_desc": "Quickly add a note",
+    "todayTasks_title": "Today's tasks",
+    "todayTasks_desc": "View to-do list",
+    "checkCalendar_title": "Check calendar",
+    "checkCalendar_desc": "See today's events",
+    "createWorkflow_title": "Create workflow",
+    "createWorkflow_desc": "Set up automated workflow",
+    "createReport_title": "Create report",
+    "createReport_desc": "Perform data analysis",
+    "setGoal_title": "Set goal",
+    "setGoal_desc": "Add new goals"
+  },
+  "tabs": {
+    "home": "Home",
+    "tasks": "Tasks",
+    "notes": "Notes",
+    "plan": "Plan",
+    "chat": "Chat",
+    "settings": "Settings",
+    "notes_old": "Notes",
+    "tasks_old": "Tasks",
+    "calendar": "Calendar",
+    "flows": "Flows"
+  },
+  "widget": {
+    "notes_title": "Recent Notes",
+    "tasks_title": "Today's Tasks",
+    "calendar_title": "Today's Events",
+    "flows_title": "Active Workflows",
+    "dashboard_title": "Dashboard",
+    "item_count": "{{count}} items",
+    "more_items": "+{{count}} more..."
+  },
+  "input": {
+    "placeholder": "Type a message..."
+  },
+  "quickActions": {
+    "addTask": "Add Task",
+    "addEvent": "Add Event",
+    "addNote": "Add Note",
+    "startFlow": "Start Flow",
+    "newChat": "🆕 New Chat",
+    "clearAll": "🗑️ Clear All"
+  },
+  "mockResponses": {
+    "greeting": "Hello! Welcome to YBIS Demo Mode! 🚀\n\nI can help you with:\n• 📝 Note creation\n• ✅ Task management\n• 📅 Calendar planning\n• 🔄 Workflow creation\n\nWhat would you like to do?",
+    "demoInfo": "Demo Mode active! 🎯\n\nYou can test these features:\n• Chat interface (currently using)\n• Tab navigation (Notes, Tasks, Calendar, Flows)\n• Widget area (mini summary above)\n• Quick actions (+ button)\n\nWhich feature would you like to try?",
+    "createNote": "📝 Note Creation\n\nNote creation is simulated in demo mode:\n\n✅ Note title: \"{{userText}}\"\n✅ Content: Demo content\n✅ Date: {{date}}\n\nIn the real app, this note will be saved to the database.",
+    "createTask": "✅ Task Management\n\nTask creation in demo mode:\n\n📋 Task: \"{{userText}}\"\n⏰ Date: {{date}}\n🎯 Priority: Medium\n📊 Status: Pending\n\nTask created successfully! (Demo)",
+    "createEvent": "📅 Calendar Management\n\nEvent creation in demo mode:\n\n📅 Event: \"{{userText}}\"\n🕐 Time: {{time}}\n📆 Date: {{date}}\n📍 Location: Demo Location\n\nEvent added to calendar! (Demo)",
+    "createWorkflow": "🔄 Workflow Creation\n\nWorkflow in demo mode:\n\n🔧 Workflow: \"{{userText}}\"\n⚡ Trigger: Manual\n🎯 Target: Automated process\n📊 Status: Active\n\nWorkflow created successfully! (Demo)",
+    "help": "🆘 YBIS Demo Help\n\n📱 **Main Features:**\n• Tab navigation (Notes, Tasks, Calendar, Flows)\n• Widget area (summary above)\n• Chat interface (currently using)\n• Quick actions (+ button)\n\n🎯 **Demo Commands:**\n• \"create note\" - Note simulation\n• \"add task\" - Task simulation\n• \"plan event\" - Calendar simulation\n• \"start workflow\" - Flow simulation\n\n💡 **Tip:** Change tabs to see different widgets!",
+    "status": "🤖 AI Assistant Status\n\n✅ **System:** Online\n✅ **Demo Mode:** Active\n✅ **Features:** All simulated\n✅ **Performance:** Optimal\n\nHow can I help you?",
+    "thanks": "You're welcome! 😊\n\nWould you like to explore more features in YBIS Demo Mode?\n\n💡 **Suggestions:**\n• Change tabs\n• Press + button\n• Try different commands\n\nHow else can I help?",
+    "goodbye": "Goodbye! 👋\n\nIf you liked YBIS Demo Mode, you can also try the real app!\n\n🚀 **Next Steps:**\n• Real data connection\n• Advanced AI features\n• Mobile optimization\n\nHave a great day!",
+    "context_note": "📝 Note Mode\n\nWould you like to create a note about \"{{userText}}\"?\n\nIn demo mode, this note will be simulated and saved to the database in the real app.",
+    "context_task": "✅ Task Mode\n\nWould you like to create a task for \"{{userText}}\"?\n\nIn demo mode, this task will be simulated and added to the task list in the real app.",
+    "context_calendar": "📅 Calendar Mode\n\nWould you like to plan an event for \"{{userText}}\"?\n\nIn demo mode, this event will be simulated and added to the calendar in the real app.",
+    "context_workflow": "🔄 Workflow Mode\n\nWould you like to create a workflow for \"{{userText}}\"?\n\nIn demo mode, this workflow will be simulated and run as an automated process in the real app.",
+    "context_default": "I understand. How can I help you with \"{{userText}}\"?"
+  }
+}

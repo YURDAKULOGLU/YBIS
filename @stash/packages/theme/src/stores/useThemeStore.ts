@@ -1,0 +1,92 @@
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { expoSecureStorage } from '../adapters/expoSecureStorage';
+
+/**
+ * Theme Store
+ *
+ * Build for Scale, Ship Minimal:
+ * - Phase 0: light, dark (shipped)
+ * - Phase 1+: custom themes (infrastructure ready)
+ *
+ * Multi-theme support without port (internal logic, not vendor swap):
+ * - Adding new themes doesn't require code changes (just add to availableThemes)
+ * - Tamagui handles theme rendering
+ * - Store just manages current selection
+ *
+ * Storage:
+ * - expo-secure-store via custom adapter (Expo managed workflow compatible)
+ * - More secure than AsyncStorage (Keychain/EncryptedSharedPreferences)
+ */
+
+// Phase 0: Light + Dark only
+// Phase 1+: Add custom1, custom2, etc. to this type
+export type ThemeName = 'light' | 'dark';
+
+export interface ThemeStore {
+  /**
+   * Current active theme
+   * Default: 'light'
+   */
+  currentTheme: ThemeName;
+
+  /**
+   * Available themes in this phase
+   * Phase 0: ['light', 'dark']
+   * Phase 1+: ['light', 'dark', 'custom1', 'custom2', ...]
+   */
+  availableThemes: readonly ThemeName[];
+
+  /**
+   * Set current theme
+   * @param theme - Theme name to activate
+   */
+  setTheme: (theme: ThemeName) => void;
+
+  /**
+   * Toggle between light and dark (convenience method)
+   */
+  toggleTheme: () => void;
+}
+
+/**
+ * Zustand store with expo-secure-store persistence
+ *
+ * Why zustand (not ported):
+ * - Already portable (works everywhere)
+ * - Stable API
+ * - No vendor lock-in
+ * - Swap to Redux/Context is trivial if needed
+ *
+ * Why expo-secure-store (not AsyncStorage):
+ * - Expo managed workflow compatible
+ * - More secure storage (Keychain on iOS, EncryptedSharedPreferences on Android)
+ * - No native linking required
+ */
+export const useThemeStore = create<ThemeStore>()(
+  persist(
+    (set, get) => ({
+      // Default theme
+      currentTheme: 'light',
+
+      // Phase 0: Ship minimal (light + dark)
+      availableThemes: ['light', 'dark'] as const,
+
+      // Set theme
+      setTheme: (theme: ThemeName) => {
+        set({ currentTheme: theme });
+      },
+
+      // Toggle between light and dark
+      toggleTheme: () => {
+        const current = get().currentTheme;
+        const newTheme = current === 'light' ? 'dark' : 'light';
+        set({ currentTheme: newTheme });
+      },
+    }),
+    {
+      name: 'ybis-theme-storage', // SecureStore key
+      storage: createJSONStorage(() => expoSecureStorage),
+    }
+  )
+);

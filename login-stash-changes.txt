@@ -1,0 +1,201 @@
+diff --git a/apps/mobile/app/(auth)/login.tsx b/apps/mobile/app/(auth)/login.tsx
+index d8616d7..3d9be84 100644
+--- a/apps/mobile/app/(auth)/login.tsx
++++ b/apps/mobile/app/(auth)/login.tsx
+@@ -1,41 +1,63 @@
+ import React, { useState } from 'react';
+-import { YStack, H1, Text, Button, Spinner } from '@ybis/ui';
++import { YStack, XStack, H1, H3, Text, Button, Input, Spinner } from '@ybis/ui';
+ import { StatusBar } from 'expo-status-bar';
+ import { useRouter } from 'expo-router';
+-import { useMockAuth } from '../../src/stores/useMockAuth';
++import { useAuth } from '../../src/contexts/useAuth';
++import { Alert } from 'react-native';
+ 
+ /**
+- * Login Screen
++ * Login Screen - Supabase Auth
+  *
+- * DEMO MODE: Bypass authentication for UI testing
+- * Real Google OAuth will be implemented in Story 2.1 (Supabase Auth)
++ * Closed Beta: Email/Password + Google OAuth
+  *
+  * Features:
+- * - Demo login button (instant access)
+- * - Google OAuth button (placeholder, coming in Story 2.1)
++ * - Email/Password sign in
++ * - Google OAuth (optional)
++ * - Link to signup
+  */
+ export default function LoginScreen(): React.ReactElement {
+   const router = useRouter();
+-  const { loginDemo } = useMockAuth();
+-  const [isLoading, setIsLoading] = useState(false);
++  const { signInWithEmail, signInWithGoogle, loading, error, clearError } = useAuth();
++  
++  const [email, setEmail] = useState('');
++  const [password, setPassword] = useState('');
++  const [isSubmitting, setIsSubmitting] = useState(false);
++
++  const handleEmailLogin = async (): Promise<void> => {
++    if (!email || !password) {
++      Alert.alert('Error', 'Please enter email and password');
++      return;
++    }
++
++    setIsSubmitting(true);
++    clearError();
+ 
+-  const handleDemoLogin = async (): Promise<void> => {
+-    setIsLoading(true);
+     try {
+-      await loginDemo();
+-      // Manual navigation (state may already be authenticated)
+-      router.replace('/(tabs)');
+-    } catch (error) {
+-      console.error('Demo login failed:', error);
++      await signInWithEmail({ email, password });
++      // Auth state change will handle navigation
++    } catch (err) {
++      Alert.alert(
++        'Login Failed',
++        err instanceof Error ? err.message : 'Please check your credentials'
++      );
+     } finally {
+-      setIsLoading(false);
++      setIsSubmitting(false);
++    }
++  };
++
++  const handleGoogleSignIn = async (): Promise<void> => {
++    try {
++      await signInWithGoogle();
++    } catch (err) {
++      Alert.alert(
++        'Google Sign In',
++        'Google OAuth will be available soon'
++      );
+     }
+   };
+ 
+-  const handleGoogleSignIn = (): void => {
+-    // TODO: Implement Google OAuth in Story 2.1
+-    // Will use expo-auth-session + expo-web-browser + Supabase Auth
+-    // console.log('Google Sign In clicked - Implementation pending (Story 2.1)');
++  const navigateToSignup = (): void => {
++    router.push('/(auth)/signup');
+   };
+ 
+   return (
+@@ -53,44 +75,101 @@ export default function LoginScreen(): React.ReactElement {
+       <YStack alignItems="center" gap="$2">
+         <H1 color="$color">YBIS</H1>
+         <Text color="$gray11" fontSize="$4">
+-          Your Business Intelligence System
++          Welcome Back
+         </Text>
+       </YStack>
+ 
+-      {/* Demo Mode Button (UI Testing) */}
+-      <YStack gap="$3" width={280}>
++      {/* Login Form */}
++      <YStack gap="$4" width="100%" maxWidth={320}>
++        <H3 color="$color" textAlign="center">Sign In</H3>
++
++        {/* Email Input */}
++        <Input
++          placeholder="Email"
++          value={email}
++          onChangeText={setEmail}
++          keyboardType="email-address"
++          autoCapitalize="none"
++          autoCorrect={false}
++          size="$5"
++        />
++
++        {/* Password Input */}
++        <Input
++          placeholder="Password"
++          value={password}
++          onChangeText={setPassword}
++          secureTextEntry
++          autoCapitalize="none"
++          autoCorrect={false}
++          size="$5"
++        />
++
++        {/* Sign In Button */}
+         <Button
+           size="$5"
+           theme="green"
+-          onPress={() => { void handleDemoLogin(); }}
+-          disabled={isLoading}
+-          icon={isLoading ? <Spinner /> : undefined}
++          onPress={() => { void handleEmailLogin(); }}
++          disabled={isSubmitting || loading}
++          icon={isSubmitting || loading ? <Spinner /> : undefined}
+         >
+-          {isLoading ? 'Loading...' : 'Enter Demo Mode'}
++          {isSubmitting || loading ? 'Signing In...' : 'Sign In'}
+         </Button>
+ 
+-        {/* Google Sign In Button (Coming Soon) */}
++        {/* Divider */}
++        <XStack alignItems="center" gap="$3" marginVertical="$2">
++          <YStack flex={1} height={1} backgroundColor="$gray6" />
++          <Text color="$gray10" fontSize="$2">OR</Text>
++          <YStack flex={1} height={1} backgroundColor="$gray6" />
++        </XStack>
++
++        {/* Google Sign In Button */}
+         <Button
+           size="$5"
+           theme="blue"
+-          onPress={handleGoogleSignIn}
++          onPress={() => { void handleGoogleSignIn(); }}
+           disabled
+           opacity={0.5}
+         >
+-          Sign in with Google
++          Sign in with Google (Coming Soon)
+         </Button>
++
++        {/* Sign Up Link */}
++        <XStack justifyContent="center" gap="$2" marginTop="$4">
++          <Text color="$gray11" fontSize="$3">
++            Don't have an account?
++          </Text>
++          <Text
++            color="$green10"
++            fontSize="$3"
++            fontWeight="bold"
++            onPress={navigateToSignup}
++            cursor="pointer"
++          >
++            Sign Up
++          </Text>
++        </XStack>
+       </YStack>
+ 
++      {/* Error Display */}
++      {error && (
++        <YStack
++          backgroundColor="$red4"
++          padding="$3"
++          borderRadius="$4"
++          width="100%"
++          maxWidth={320}
++        >
++          <Text color="$red11" fontSize="$2" textAlign="center">
++            {error}
++          </Text>
++        </YStack>
++      )}
++
+       {/* Info Text */}
+-      <YStack alignItems="center" gap="$2" marginTop="$8">
+-        <Text color="$green10" fontSize="$3" fontWeight="bold">
+-          DEMO MODE ACTIVE
+-        </Text>
+-        <Text color="$gray10" fontSize="$2" textAlign="center">
+-          Use "Enter Demo Mode" to explore the app

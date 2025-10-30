@@ -1,0 +1,51 @@
+import type { ExpoConfig, ConfigContext } from 'expo/config';
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
+  name: 'YBIS',
+  slug: 'ybis',
+  version: '0.1.0',
+  orientation: 'portrait',
+  scheme: 'ybis',
+  userInterfaceStyle: 'automatic',
+  splash: {
+    resizeMode: 'contain',
+    backgroundColor: '#0a7ea4',
+  },
+  assetBundlePatterns: ['**/*'],
+  ios: {
+    supportsTablet: true,
+    bundleIdentifier: 'com.ybis.app',
+    buildNumber: '1',
+    infoPlist: {
+      NSCameraUsageDescription: 'YBIS needs camera access for document scanning (future feature)',
+      NSPhotoLibraryUsageDescription: 'YBIS needs photo library access for attachments',
+    },
+  },
+  android: {
+    package: 'com.ybis.app',
+    versionCode: 1,
+    permissions: ['RECEIVE_BOOT_COMPLETED', 'VIBRATE'],
+    adaptiveIcon: {
+      backgroundColor: '#0a7ea4',
+    },
+  },
+  web: {
+    bundler: 'metro',
+  },
+  plugins: ['expo-router', 'expo-font', 'expo-secure-store', 'expo-notifications'],
+  experiments: {
+    typedRoutes: true,
+  },
+  extra: {
+    router: {
+      origin: false,
+    },
+    eas: {
+      projectId: 'a839b8e5-7de2-439c-9f6e-169bf138fd22',
+    },
+    // Supabase configuration (from .env.local)
+    supabaseUrl: process.env['SUPABASE_URL'],
+    supabaseAnonKey: process.env['SUPABASE_PUBLISHABLE_KEY'],
+  },
+});

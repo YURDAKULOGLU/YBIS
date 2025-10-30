@@ -5,6 +5,9 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "jsx": "react-native",
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
