@@ -1144,6 +1144,28 @@ _[Key learnings from launch prep]_
 
 ## 🎉 Milestones Reached
 
+### Session End — 2025-10-30 (Checkout/Stash Review & Docs Sync)
+
+**Summary:**
+- `@stash/` oluşturuldu ve `stash-files.txt` kapsamındaki dosyalar kopyalandı (arşiv amaçlı)
+- Fark analizi raporu eklendi: `docs/reports/checkout-diff-report-2025-10-30.md`
+- `apps/mobile/app/(auth)/login.tsx` mevcut sürüm doğrulandı (Demo Mode + geliştirilmiş hata/loading yönetimi)
+- `apps/mobile/app/(tabs)/index.tsx` mevcut sürüm doğrulandı (dinamik chat input yüksekliği, keyboard animasyonu, theme ile renkler)
+- Stash içeriğindeki encoding bozulmaları (emoji/punkt) tespit edildi; merge edilmedi
+
+**Decisions:**
+- Mevcut login ve chat ekranı çözümleri korunacak (stash’tan doğrudan merge yok)
+- Checkout ödeme akışı henüz implement edilmedi; PaymentPort + Clerk/Stripe adapter planı doğrulandı
+
+**Artifacts:**
+- `@stash/` klasörü (tam referans)
+- `docs/reports/checkout-diff-report-2025-10-30.md`
+
+**Next:**
+1) Node 20.18.x kurulumu + smoke test (Expo Go)
+2) PaymentPort taslağı (interface + adapter iskeleti)
+3) Stash encoding normalization (arşiv iyileştirmesi)
+
 - [x] **Expo SDK 54 Migration Complete!** ✅ (2025-10-06)
   - React 19.1.0 + RN 0.81.4
   - 1546 packages installed
