@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { YStack, XStack, Text, Card, Button, useTheme } from '@ybis/ui';
 import { Plus } from '@ybis/ui';
 import { useTranslation } from 'react-i18next';
+import Logger from '@ybis/logging';
 import type { TabType } from '../types';
 
 interface InteractiveWidgetProps {
@@ -82,10 +84,20 @@ export function InteractiveWidget({ selectedTab, height }: InteractiveWidgetProp
 
   const widgetData = getWidgetData();
 
-  const handleQuickAdd = (): void => {
+  const handleQuickAdd = async (): Promise<void> => {
     if (quickInput.trim()) {
+      // Haptic feedback on add
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      
       // TODO: Implement actual add logic via AI or direct API
-      // Logger.info(`Adding to ${selectedTab}:`, quickInput);
+      Logger.info('Quick add item', { 
+        type: 'USER_ACTION', 
+        tab: selectedTab, 
+        content: quickInput 
+      });
+      
+      // Success haptic
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setQuickInput('');
     }
   };
@@ -140,7 +152,9 @@ export function InteractiveWidget({ selectedTab, height }: InteractiveWidgetProp
                 placeholderTextColor={theme.gray10?.val}
                 value={quickInput}
                 onChangeText={setQuickInput}
-                onSubmitEditing={handleQuickAdd}
+                onSubmitEditing={() => {
+                  void handleQuickAdd();
+                }}
                 returnKeyType="done"
               />
               <Button
@@ -151,7 +165,9 @@ export function InteractiveWidget({ selectedTab, height }: InteractiveWidgetProp
                 borderWidth={0}
                 pressStyle={{ scale: 0.92, backgroundColor: '$blue10' }}
                 animation="bouncy"
-                onPress={handleQuickAdd}
+                onPress={() => {
+                  void handleQuickAdd();
+                }}
                 disabled={!quickInput.trim()}
                 opacity={quickInput.trim() ? 1 : 0.5}
               />
