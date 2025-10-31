@@ -3,36 +3,39 @@ import React, {
   useCallback,
   useMemo,
   useEffect,
+  useState,
 } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
   View,
+  useWindowDimensions,
   type ListRenderItemInfo,
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
-  type LayoutChangeEvent,
-  type ViewStyle,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import {
   YStack,
   useTheme,
+  Calendar,
+  CheckSquare,
+  FileText,
+  Workflow,
 } from '@ybis/ui';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { ChatBubble, type Message } from '@ybis/chat';
 import Logger from '@ybis/logging';
 import { UniversalLayout } from '../../src/layouts/UniversalLayout';
 import { SafeAreaView } from '../../src/components/layout/SafeAreaView';
 import { Navbar } from '../../src/components/layout/Navbar';
-import type { SuggestionPrompt } from '../../src/features/chat/types';
+import type { Tab, TabType, SuggestionPrompt } from '../../src/features/chat/types';
 import { useChat } from '../../src/features/chat/hooks/useChat';
 import { ChatInput } from '../../src/features/chat/components/ChatInput';
 import { SuggestionPrompts } from '../../src/features/chat/components/SuggestionPrompts';
+import { InteractiveWidget } from '../../src/features/chat/components/InteractiveWidget';
+import { WidgetTabs } from '../../src/features/chat/components/WidgetTabs';
 
-const NAVBAR_HEIGHT = 56;
+const WIDGET_HEIGHT_PERCENTAGE = 0.3; // 30% of screen height
 
 /**
  * Main Chat Screen - Clean, Standard Chat Interface
@@ -45,8 +48,10 @@ const NAVBAR_HEIGHT = 56;
  */
 export default function MainScreen(): React.ReactElement {
   const { t } = useTranslation('mobile');
-  const insets = useSafeAreaInsets();
   const theme = useTheme();
+  const { height: screenHeight } = useWindowDimensions();
+
+  const widgetHeight = screenHeight * WIDGET_HEIGHT_PERCENTAGE;
 
   const {
     messages,
@@ -57,8 +62,8 @@ export default function MainScreen(): React.ReactElement {
     handlePromptClick,
   } = useChat();
 
+  const [selectedTab, setSelectedTab] = useState<TabType>('notes');
   const flatListRef = useRef<FlatList<Message>>(null);
-  const [chatInputHeight, setChatInputHeight] = useState(80);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -89,6 +94,13 @@ export default function MainScreen(): React.ReactElement {
     { id: '6', icon: '🏅', title: t('prompts.setGoal_title'), description: t('prompts.setGoal_desc') },
   ], [t]);
 
+  const tabs: Tab[] = useMemo(() => [
+    { key: 'notes', label: t('tabs.notes'), icon: FileText },
+    { key: 'tasks', label: t('tabs.tasks'), icon: CheckSquare },
+    { key: 'calendar', label: t('tabs.calendar'), icon: Calendar },
+    { key: 'flows', label: t('tabs.flows'), icon: Workflow },
+  ], [t]);
+
   const renderMessage = useCallback(
     ({ item }: ListRenderItemInfo<Message>) => (
       <View style={{ marginBottom: 12 }}>
@@ -109,32 +121,6 @@ export default function MainScreen(): React.ReactElement {
 
   const keyExtractor = useCallback((item: Message) => item.id, []);
 
-  const handleScroll = useCallback((_event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    // Auto-scroll is now always enabled for new messages
-  }, []);
-
-  const headerSpacerHeight = useMemo(() => 
-    insets.top + NAVBAR_HEIGHT + WIDGET_TAB_BAR_HEIGHT + widgetHeight + 8,
-  [insets.top, widgetHeight]);
-
-  const renderHeader = useCallback(() => (
-    <View style={{ height: headerSpacerHeight }} />
-  ), [headerSpacerHeight]);
-
-  const contentContainerStyle = useMemo<ViewStyle>(() => {
-    const justifyContent: ViewStyle['justifyContent'] = messages.length === 0 ? 'flex-start' : 'flex-end';
-    return {
-      flexGrow: 1,
-      justifyContent,
-      paddingHorizontal: 16,
-      paddingBottom: chatInputHeight + 16,
-    };
-  }, [messages.length, chatInputHeight]);
-
-  const handleMeasuredChatInput = useCallback((event: LayoutChangeEvent) => {
-    setChatInputHeight(event.nativeEvent.layout.height);
-  }, []);
-
   const handleSend = useCallback(() => {
     handleSendMessage();
   }, [handleSendMessage]);
@@ -142,37 +128,19 @@ export default function MainScreen(): React.ReactElement {
   return (
     <UniversalLayout>
       <StatusBar style="auto" />
-      <YStack flex={1}>
-        {/* Status bar background */}
-        <YStack
-          position="absolute"
-          top={0}
-          left={0}
-          right={0}
-          height={insets.top}
-          backgroundColor={theme.background.val}
-          zIndex={300}
-        />
+      
+      {/* INDUSTRY STANDARD LAYOUT - Simple flex, no absolute positioning */}
+      <SafeAreaView edges={['top']} flex={1}>
         
-        <YStack
-          position="absolute"
-          top={insets.top}
-          left={0}
-          right={0}
-          zIndex={200}
-          backgroundColor={theme.background.val}
-        >
+        {/* 1. Header Section */}
+        <YStack backgroundColor={theme.background.val}>
           <Navbar title={t('tabs.chat')} />
           <WidgetTabs tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
         </YStack>
 
-        <YStack
-          position="absolute"
-          top={insets.top + NAVBAR_HEIGHT + WIDGET_TAB_BAR_HEIGHT}
-          left={0}
-          right={0}
-          zIndex={100}
-          height={widgetHeight}
+        {/* 2. Widget Section - Fixed height, no scroll */}
+        <YStack 
+          height={widgetHeight} 
           backgroundColor={theme.background.val}
           borderBottomWidth={1}
           borderBottomColor={theme.gray5.val}
@@ -180,43 +148,43 @@ export default function MainScreen(): React.ReactElement {
           <InteractiveWidget selectedTab={selectedTab} height={widgetHeight} />
         </YStack>
 
+        {/* 3. Chat Section - Flex 1, with keyboard handling */}
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={0}
         >
-          <SafeAreaView edges={['bottom']} flex={1}>
-            <YStack flex={1} backgroundColor="$background">
-              <FlatList
-                ref={flatListRef}
-                data={messages}
-                renderItem={renderMessage}
-                keyExtractor={keyExtractor}
-                ListHeaderComponent={renderHeader}
-                ListEmptyComponent={renderEmptyComponent}
-                contentContainerStyle={contentContainerStyle}
-                keyboardShouldPersistTaps="handled"
-                onScroll={handleScroll}
-                scrollEventThrottle={16}
-                showsVerticalScrollIndicator={false}
-              />
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            renderItem={renderMessage}
+            keyExtractor={keyExtractor}
+            ListEmptyComponent={renderEmptyComponent}
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: messages.length === 0 ? 'flex-start' : 'flex-end',
+              paddingHorizontal: 16,
+              paddingTop: 16,
+              paddingBottom: 16,
+            }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          />
 
-              <ChatInput
-                inputText={inputText}
-                setInputText={setInputText}
-                handleSendMessage={handleSend}
-                handleVoiceRecord={() => {
-                  Logger.info('Voice record triggered');
-                }}
-                handleQuickActionPress={() => {
-                  Logger.info('Quick actions placeholder triggered');
-                }}
-                onLayout={handleMeasuredChatInput}
-              />
-            </YStack>
-          </SafeAreaView>
+          {/* 4. Input Bar - Rises with keyboard automatically */}
+          <ChatInput
+            inputText={inputText}
+            setInputText={setInputText}
+            handleSendMessage={handleSend}
+            handleVoiceRecord={() => {
+              Logger.info('Voice record triggered');
+            }}
+            handleQuickActionPress={() => {
+              Logger.info('Quick actions placeholder triggered');
+            }}
+          />
         </KeyboardAvoidingView>
-      </YStack>
+      </SafeAreaView>
     </UniversalLayout>
   );
 }
