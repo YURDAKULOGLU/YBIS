@@ -58,6 +58,8 @@ export {
     Home,
     MessageCircle,
     Settings,
+    ChevronDown,
+    ChevronUp,
 } from '@tamagui/lucide-icons';
 
 export * from './settings';

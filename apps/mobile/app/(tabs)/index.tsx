@@ -11,16 +11,28 @@ import {
   Platform,
   View,
   useWindowDimensions,
+  Keyboard,
+  Pressable,
   type ListRenderItemInfo,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import {
   YStack,
+  XStack,
+  Text,
   useTheme,
   Calendar,
   CheckSquare,
   FileText,
   Workflow,
+  ChevronDown,
+  ChevronUp,
 } from '@ybis/ui';
 import { useTranslation } from 'react-i18next';
 import { ChatBubble, type Message } from '@ybis/chat';
@@ -36,22 +48,23 @@ import { InteractiveWidget } from '../../src/features/chat/components/Interactiv
 import { WidgetTabs } from '../../src/features/chat/components/WidgetTabs';
 
 const WIDGET_HEIGHT_PERCENTAGE = 0.3; // 30% of screen height
+const WIDGET_COLLAPSED_HEIGHT = 48; // Just enough for the toggle bar
 
 /**
- * Main Chat Screen - Clean, Standard Chat Interface
+ * Main Chat Screen - Collapsible Widget Pattern
  * 
- * Simplified design without overlaying widgets for better UX:
- * - Clean chat interface with proper keyboard handling
- * - No widget overlay complexity
- * - Proper space allocation for messages
- * - Smooth scrolling and animations
+ * Industry standard approach with collapsible widget:
+ * - Widget collapses when keyboard opens (automatic)
+ * - Toggle button to manually collapse/expand
+ * - Clean separation, no wiggling or jumping
+ * - Reliable keyboard handling
  */
 export default function MainScreen(): React.ReactElement {
   const { t } = useTranslation('mobile');
   const theme = useTheme();
   const { height: screenHeight } = useWindowDimensions();
 
-  const widgetHeight = screenHeight * WIDGET_HEIGHT_PERCENTAGE;
+  const widgetExpandedHeight = screenHeight * WIDGET_HEIGHT_PERCENTAGE;
 
   const {
     messages,
@@ -63,11 +76,15 @@ export default function MainScreen(): React.ReactElement {
   } = useChat();
 
   const [selectedTab, setSelectedTab] = useState<TabType>('notes');
+  const [isWidgetExpanded, setIsWidgetExpanded] = useState(true);
   const flatListRef = useRef<FlatList<Message>>(null);
+  
+  // Animated height for smooth collapse/expand
+  const widgetHeight = useSharedValue(widgetExpandedHeight);
 
+  // Auto-scroll on new messages
   useEffect(() => {
     if (messages.length > 0) {
-      // Always scroll to end when new messages arrive
       const timer = setTimeout(() => {
         flatListRef.current?.scrollToEnd({ animated: true });
       }, 100);
@@ -75,6 +92,49 @@ export default function MainScreen(): React.ReactElement {
     }
     return undefined;
   }, [messages.length]);
+
+  // Auto-collapse widget when keyboard opens
+  useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => {
+        setIsWidgetExpanded(false);
+        widgetHeight.value = withTiming(WIDGET_COLLAPSED_HEIGHT, {
+          duration: 250,
+          easing: Easing.out(Easing.ease),
+        });
+      }
+    );
+
+    const keyboardWillHide = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => {
+        // Don't auto-expand when keyboard closes - user decides
+      }
+    );
+
+    return () => {
+      keyboardWillShow.remove();
+      keyboardWillHide.remove();
+    };
+  }, [widgetHeight]);
+
+  // Toggle widget collapse/expand
+  const toggleWidget = useCallback(() => {
+    const newExpanded = !isWidgetExpanded;
+    setIsWidgetExpanded(newExpanded);
+    widgetHeight.value = withTiming(
+      newExpanded ? widgetExpandedHeight : WIDGET_COLLAPSED_HEIGHT,
+      {
+        duration: 300,
+        easing: Easing.out(Easing.ease),
+      }
+    );
+  }, [isWidgetExpanded, widgetHeight, widgetExpandedHeight]);
+
+  const widgetAnimatedStyle = useAnimatedStyle(() => ({
+    height: widgetHeight.value,
+  }));
 
   const onboardingPrompts = useMemo<SuggestionPrompt[]>(() => [
     {
@@ -138,15 +198,50 @@ export default function MainScreen(): React.ReactElement {
           <WidgetTabs tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
         </YStack>
 
-        {/* 2. Widget Section - Fixed height, no scroll */}
-        <YStack 
-          height={widgetHeight} 
-          backgroundColor={theme.background.val}
-          borderBottomWidth={1}
-          borderBottomColor={theme.gray5.val}
+        {/* 2. Collapsible Widget Section */}
+        <Animated.View 
+          style={[
+            {
+              backgroundColor: theme.background.val,
+              borderBottomWidth: 1,
+              borderBottomColor: theme.gray5.val,
+              overflow: 'hidden',
+            },
+            widgetAnimatedStyle,
+          ]}
         >
-          <InteractiveWidget selectedTab={selectedTab} height={widgetHeight} />
-        </YStack>
+          {/* Toggle Bar */}
+          <Pressable onPress={toggleWidget}>
+            <XStack
+              paddingHorizontal="$3"
+              paddingVertical="$2"
+              backgroundColor={theme.gray2.val}
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Text fontSize="$3" fontWeight="600" color="$color">
+                {tabs.find(t => t.key === selectedTab)?.label ?? 'Widget'}
+              </Text>
+              <YStack>
+                {isWidgetExpanded ? (
+                  <ChevronUp size={20} color={theme.color.val} />
+                ) : (
+                  <ChevronDown size={20} color={theme.color.val} />
+                )}
+              </YStack>
+            </XStack>
+          </Pressable>
+          
+          {/* Widget Content - Only visible when expanded */}
+          {isWidgetExpanded && (
+            <YStack flex={1}>
+              <InteractiveWidget 
+                selectedTab={selectedTab} 
+                height={widgetExpandedHeight - WIDGET_COLLAPSED_HEIGHT} 
+              />
+            </YStack>
+          )}
+        </Animated.View>
 
         {/* 3. Chat Section - Flex 1, with keyboard handling */}
         <KeyboardAvoidingView
