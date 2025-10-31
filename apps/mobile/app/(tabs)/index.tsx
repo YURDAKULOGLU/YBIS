@@ -8,7 +8,6 @@ import React, {
 import {
   Animated,
   FlatList,
-  Keyboard,
   KeyboardAvoidingView,
   Platform,
   View,
@@ -38,7 +37,7 @@ import type { Tab, TabType, SuggestionPrompt } from '../../src/features/chat/typ
 import { useChat } from '../../src/features/chat/hooks/useChat';
 import { ChatInput } from '../../src/features/chat/components/ChatInput';
 import { SuggestionPrompts } from '../../src/features/chat/components/SuggestionPrompts';
-import { Widget } from '../../src/features/chat/components/Widget';
+import { InteractiveWidget } from '../../src/features/chat/components/InteractiveWidget';
 import { WidgetTabs } from '../../src/features/chat/components/WidgetTabs';
 
 const NAVBAR_HEIGHT = 56;
@@ -52,7 +51,6 @@ export default function MainScreen(): React.ReactElement {
   const { height: screenHeight } = useWindowDimensions();
 
   const widgetHeight = screenHeight * WIDGET_HEIGHT_PERCENTAGE;
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false);
 
   const {
     messages,
@@ -68,29 +66,10 @@ export default function MainScreen(): React.ReactElement {
   const [userHasScrolled, setUserHasScrolled] = useState(false);
   const [chatInputHeight, setChatInputHeight] = useState(80);
 
+  // Widget is now self-contained and handles its own keyboard
+  // No need for global keyboard listeners
   const widgetHeightAnim = useRef(new Animated.Value(widgetHeight)).current;
-
-  useEffect(() => {
-    const showListener = Keyboard.addListener('keyboardDidShow', () => {
-      setIsKeyboardVisible(true);
-    });
-    const hideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setIsKeyboardVisible(false);
-    });
-
-    return () => {
-      showListener.remove();
-      hideListener.remove();
-    };
-  }, []);
-
-  useEffect(() => {
-    Animated.timing(widgetHeightAnim, {
-      toValue: isKeyboardVisible ? 0 : widgetHeight,
-      duration: 250,
-      useNativeDriver: false,
-    }).start();
-  }, [isKeyboardVisible, widgetHeight, widgetHeightAnim]);
+  const widgetOpacityAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     if (messages.length > 0 && !userHasScrolled) {
@@ -210,13 +189,14 @@ export default function MainScreen(): React.ReactElement {
             right: 0,
             zIndex: 100,
             height: widgetHeightAnim,
+            opacity: widgetOpacityAnim,
             overflow: 'hidden',
             backgroundColor: theme.background.val,
             borderBottomWidth: 1,
             borderBottomColor: theme.gray5.val,
           }}
         >
-          <Widget selectedTab={selectedTab} />
+          <InteractiveWidget selectedTab={selectedTab} height={widgetHeight} />
         </Animated.View>
 
         <KeyboardAvoidingView
