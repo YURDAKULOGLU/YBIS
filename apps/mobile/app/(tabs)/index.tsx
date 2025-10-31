@@ -17,6 +17,7 @@ import {
   type LayoutChangeEvent,
   type ViewStyle,
 } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import {
   YStack,
   useTheme,
@@ -155,7 +156,19 @@ export default function MainScreen(): React.ReactElement {
 
   return (
     <UniversalLayout>
+      <StatusBar style="auto" />
       <YStack flex={1}>
+        {/* Status bar background */}
+        <YStack
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          height={insets.top}
+          backgroundColor={theme.background.val}
+          zIndex={300}
+        />
+        
         <YStack
           position="absolute"
           top={insets.top}
