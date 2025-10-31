@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import type { Href } from 'expo-router';
 import { YStack, XStack, H1, H3, Text, Button, Input, Spinner } from '@ybis/ui';
 import { useAuth } from '../../src/contexts/useAuth';
 import { useMockAuth } from '../../src/stores/useMockAuth';
