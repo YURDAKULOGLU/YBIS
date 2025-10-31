@@ -28,7 +28,8 @@ export function ChatInput({
 
   return (
     <YStack
-      padding="$3"
+      paddingHorizontal="$3"
+      paddingVertical="$2"
       borderTopWidth={1}
       borderColor="$gray5"
       backgroundColor="$background"
