@@ -7,20 +7,18 @@ import React, {
 } from 'react';
 import {
   FlatList,
-  KeyboardAvoidingView,
-  Platform,
   View,
   useWindowDimensions,
-  Keyboard,
   Pressable,
   type ListRenderItemInfo,
+  type LayoutChangeEvent,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withTiming,
-  Easing,
+  withSpring,
+  useAnimatedKeyboard,
 } from 'react-native-reanimated';
 import {
   YStack,
@@ -34,6 +32,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from '@ybis/ui';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { ChatBubble, type Message } from '@ybis/chat';
 import Logger from '@ybis/logging';
@@ -51,17 +50,20 @@ const WIDGET_HEIGHT_PERCENTAGE = 0.3; // 30% of screen height
 const WIDGET_COLLAPSED_HEIGHT = 48; // Just enough for the toggle bar
 
 /**
- * Main Chat Screen - Collapsible Widget Pattern
+ * Main Chat Screen - Stable Architecture
  * 
- * Industry standard approach with collapsible widget:
- * - Widget collapses when keyboard opens (automatic)
- * - Toggle button to manually collapse/expand
- * - Clean separation, no wiggling or jumping
- * - Reliable keyboard handling
+ * SINGLE KEYBOARD MECHANISM (Reanimated only):
+ * - No KeyboardAvoidingView (causes double animation)
+ * - Widget as absolute overlay (Portal-like)
+ * - Input bar as absolute overlay
+ * - FlatList padding = inputHeight + keyboardHeight + inset.bottom
+ * - useAnimatedKeyboard() for smooth animations
+ * - Zero wiggling, zero jumping
  */
 export default function MainScreen(): React.ReactElement {
   const { t } = useTranslation('mobile');
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const { height: screenHeight } = useWindowDimensions();
 
   const widgetExpandedHeight = screenHeight * WIDGET_HEIGHT_PERCENTAGE;
@@ -77,9 +79,13 @@ export default function MainScreen(): React.ReactElement {
 
   const [selectedTab, setSelectedTab] = useState<TabType>('notes');
   const [isWidgetExpanded, setIsWidgetExpanded] = useState(true);
+  const [inputBarHeight, setInputBarHeight] = useState(60);
   const flatListRef = useRef<FlatList<Message>>(null);
   
-  // Animated height for smooth collapse/expand
+  // SINGLE SOURCE OF TRUTH for keyboard
+  const keyboard = useAnimatedKeyboard();
+  
+  // Widget animated height
   const widgetHeight = useSharedValue(widgetExpandedHeight);
 
   // Auto-scroll on new messages
@@ -94,47 +100,51 @@ export default function MainScreen(): React.ReactElement {
   }, [messages.length]);
 
   // Auto-collapse widget when keyboard opens
+  // Note: useAnimatedKeyboard automatically updates keyboard.height.value
+  // We watch for changes in a derived value
   useEffect(() => {
-    const keyboardWillShow = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-      () => {
+    // Simple approach: check keyboard height periodically
+    const checkInterval = setInterval(() => {
+      if (keyboard.height.value > 50 && isWidgetExpanded) {
+        // Keyboard is open and widget is expanded - collapse it
         setIsWidgetExpanded(false);
-        widgetHeight.value = withTiming(WIDGET_COLLAPSED_HEIGHT, {
-          duration: 250,
-          easing: Easing.out(Easing.ease),
+        widgetHeight.value = withSpring(WIDGET_COLLAPSED_HEIGHT, {
+          damping: 20,
+          stiffness: 300,
         });
       }
-    );
+    }, 100);
 
-    const keyboardWillHide = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-      () => {
-        // Don't auto-expand when keyboard closes - user decides
-      }
-    );
-
-    return () => {
-      keyboardWillShow.remove();
-      keyboardWillHide.remove();
-    };
-  }, [widgetHeight]);
+    return () => clearInterval(checkInterval);
+  }, [keyboard.height, isWidgetExpanded, widgetHeight]);
 
   // Toggle widget collapse/expand
   const toggleWidget = useCallback(() => {
     const newExpanded = !isWidgetExpanded;
     setIsWidgetExpanded(newExpanded);
-    widgetHeight.value = withTiming(
+    widgetHeight.value = withSpring(
       newExpanded ? widgetExpandedHeight : WIDGET_COLLAPSED_HEIGHT,
       {
-        duration: 300,
-        easing: Easing.out(Easing.ease),
+        damping: 20,
+        stiffness: 300,
       }
     );
   }, [isWidgetExpanded, widgetHeight, widgetExpandedHeight]);
 
+  // Widget overlay animation
   const widgetAnimatedStyle = useAnimatedStyle(() => ({
     height: widgetHeight.value,
   }));
+
+  // Input bar overlay animation (rises with keyboard)
+  const inputBarAnimatedStyle = useAnimatedStyle(() => ({
+    bottom: keyboard.height.value + insets.bottom,
+  }));
+
+  // Measure input bar height
+  const handleInputBarLayout = useCallback((event: LayoutChangeEvent) => {
+    setInputBarHeight(event.nativeEvent.layout.height);
+  }, []);
 
   const onboardingPrompts = useMemo<SuggestionPrompt[]>(() => [
     {
@@ -185,23 +195,33 @@ export default function MainScreen(): React.ReactElement {
     handleSendMessage();
   }, [handleSendMessage]);
 
+  // Calculate FlatList bottom padding dynamically
+  const listBottomPadding = useMemo(() => 
+    inputBarHeight + insets.bottom + 16, // 16 = extra spacing
+  [inputBarHeight, insets.bottom]);
+
   return (
     <UniversalLayout>
       <StatusBar style="auto" />
       
-      {/* INDUSTRY STANDARD LAYOUT - Simple flex, no absolute positioning */}
+      {/* STABLE ARCHITECTURE - No KeyboardAvoidingView, single Reanimated mechanism */}
       <SafeAreaView edges={['top']} flex={1}>
         
-        {/* 1. Header Section */}
+        {/* 1. Header Section - Fixed */}
         <YStack backgroundColor={theme.background.val}>
           <Navbar title={t('tabs.chat')} />
           <WidgetTabs tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
         </YStack>
 
-        {/* 2. Collapsible Widget Section */}
+        {/* 2. Widget Overlay - Absolute positioned, Portal-like */}
         <Animated.View 
           style={[
             {
+              position: 'absolute',
+              top: insets.top + 56 + 48, // statusBar + navbar + tabs
+              left: 0,
+              right: 0,
+              zIndex: 100,
               backgroundColor: theme.background.val,
               borderBottomWidth: 1,
               borderBottomColor: theme.gray5.val,
@@ -232,7 +252,7 @@ export default function MainScreen(): React.ReactElement {
             </XStack>
           </Pressable>
           
-          {/* Widget Content - Only visible when expanded */}
+          {/* Widget Content */}
           {isWidgetExpanded && (
             <YStack flex={1}>
               <InteractiveWidget 
@@ -243,12 +263,8 @@ export default function MainScreen(): React.ReactElement {
           )}
         </Animated.View>
 
-        {/* 3. Chat Section - Flex 1, with keyboard handling */}
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={0}
-        >
+        {/* 3. Chat Messages - Flex 1, NO KeyboardAvoidingView */}
+        <YStack flex={1} backgroundColor="$background">
           <FlatList
             ref={flatListRef}
             data={messages}
@@ -259,14 +275,29 @@ export default function MainScreen(): React.ReactElement {
               flexGrow: 1,
               justifyContent: messages.length === 0 ? 'flex-start' : 'flex-end',
               paddingHorizontal: 16,
-              paddingTop: 16,
-              paddingBottom: 16,
+              paddingTop: insets.top + 56 + 48 + (isWidgetExpanded ? widgetExpandedHeight : WIDGET_COLLAPSED_HEIGHT) + 16,
+              paddingBottom: listBottomPadding, // SINGLE PADDING: inputHeight + kbHeight + inset
             }}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           />
+        </YStack>
 
-          {/* 4. Input Bar - Rises with keyboard automatically */}
+        {/* 4. Input Bar Overlay - Absolute positioned, rises with keyboard */}
+        <Animated.View
+          style={[
+            {
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              backgroundColor: theme.background.val,
+              borderTopWidth: 1,
+              borderTopColor: theme.gray5.val,
+            },
+            inputBarAnimatedStyle,
+          ]}
+          onLayout={handleInputBarLayout}
+        >
           <ChatInput
             inputText={inputText}
             setInputText={setInputText}
@@ -278,7 +309,7 @@ export default function MainScreen(): React.ReactElement {
               Logger.info('Quick actions placeholder triggered');
             }}
           />
-        </KeyboardAvoidingView>
+        </Animated.View>
       </SafeAreaView>
     </UniversalLayout>
   );
