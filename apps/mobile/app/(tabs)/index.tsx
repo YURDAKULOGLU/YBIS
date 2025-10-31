@@ -1,5 +1,4 @@
 import React, {
-  useState,
   useRef,
   useCallback,
   useMemo,
@@ -10,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   View,
-  useWindowDimensions,
   type ListRenderItemInfo,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
@@ -21,10 +19,6 @@ import { StatusBar } from 'expo-status-bar';
 import {
   YStack,
   useTheme,
-  Calendar,
-  CheckSquare,
-  FileText,
-  Workflow,
 } from '@ybis/ui';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -33,24 +27,26 @@ import Logger from '@ybis/logging';
 import { UniversalLayout } from '../../src/layouts/UniversalLayout';
 import { SafeAreaView } from '../../src/components/layout/SafeAreaView';
 import { Navbar } from '../../src/components/layout/Navbar';
-import type { Tab, TabType, SuggestionPrompt } from '../../src/features/chat/types';
+import type { SuggestionPrompt } from '../../src/features/chat/types';
 import { useChat } from '../../src/features/chat/hooks/useChat';
 import { ChatInput } from '../../src/features/chat/components/ChatInput';
 import { SuggestionPrompts } from '../../src/features/chat/components/SuggestionPrompts';
-import { InteractiveWidget } from '../../src/features/chat/components/InteractiveWidget';
-import { WidgetTabs } from '../../src/features/chat/components/WidgetTabs';
 
 const NAVBAR_HEIGHT = 56;
-const WIDGET_TAB_BAR_HEIGHT = 48;
-const WIDGET_HEIGHT_PERCENTAGE = 0.3; // 30% of screen height
 
+/**
+ * Main Chat Screen - Clean, Standard Chat Interface
+ * 
+ * Simplified design without overlaying widgets for better UX:
+ * - Clean chat interface with proper keyboard handling
+ * - No widget overlay complexity
+ * - Proper space allocation for messages
+ * - Smooth scrolling and animations
+ */
 export default function MainScreen(): React.ReactElement {
   const { t } = useTranslation('mobile');
   const insets = useSafeAreaInsets();
   const theme = useTheme();
-  const { height: screenHeight } = useWindowDimensions();
-
-  const widgetHeight = screenHeight * WIDGET_HEIGHT_PERCENTAGE;
 
   const {
     messages,
@@ -61,12 +57,8 @@ export default function MainScreen(): React.ReactElement {
     handlePromptClick,
   } = useChat();
 
-  const [selectedTab, setSelectedTab] = useState<TabType>('notes');
   const flatListRef = useRef<FlatList<Message>>(null);
   const [chatInputHeight, setChatInputHeight] = useState(80);
-
-  // Widget stays visible, no collapse animation
-  // Chat rises with KeyboardAvoidingView
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -95,13 +87,6 @@ export default function MainScreen(): React.ReactElement {
     { id: '4', icon: '⚙️', title: t('prompts.createWorkflow_title'), description: t('prompts.createWorkflow_desc') },
     { id: '5', icon: '📊', title: t('prompts.createReport_title'), description: t('prompts.createReport_desc') },
     { id: '6', icon: '🏅', title: t('prompts.setGoal_title'), description: t('prompts.setGoal_desc') },
-  ], [t]);
-
-  const tabs: Tab[] = useMemo(() => [
-    { key: 'notes', label: t('tabs.notes'), icon: FileText },
-    { key: 'tasks', label: t('tabs.tasks'), icon: CheckSquare },
-    { key: 'calendar', label: t('tabs.calendar'), icon: Calendar },
-    { key: 'flows', label: t('tabs.flows'), icon: Workflow },
   ], [t]);
 
   const renderMessage = useCallback(
