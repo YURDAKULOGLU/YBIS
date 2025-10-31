@@ -6,7 +6,6 @@ import React, {
   useEffect,
 } from 'react';
 import {
-  Animated,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -63,23 +62,21 @@ export default function MainScreen(): React.ReactElement {
 
   const [selectedTab, setSelectedTab] = useState<TabType>('notes');
   const flatListRef = useRef<FlatList<Message>>(null);
-  const [userHasScrolled, setUserHasScrolled] = useState(false);
   const [chatInputHeight, setChatInputHeight] = useState(80);
 
-  // Widget is now self-contained and handles its own keyboard
-  // No need for global keyboard listeners
-  const widgetHeightAnim = useRef(new Animated.Value(widgetHeight)).current;
-  const widgetOpacityAnim = useRef(new Animated.Value(1)).current;
+  // Widget stays visible, no collapse animation
+  // Chat rises with KeyboardAvoidingView
 
   useEffect(() => {
-    if (messages.length > 0 && !userHasScrolled) {
+    if (messages.length > 0) {
+      // Always scroll to end when new messages arrive
       const timer = setTimeout(() => {
         flatListRef.current?.scrollToEnd({ animated: true });
       }, 100);
       return () => clearTimeout(timer);
     }
     return undefined;
-  }, [messages.length, userHasScrolled]);
+  }, [messages.length]);
 
   const onboardingPrompts = useMemo<SuggestionPrompt[]>(() => [
     {
@@ -120,31 +117,22 @@ export default function MainScreen(): React.ReactElement {
       isFirstSession={isFirstSession}
       onboardingPrompts={onboardingPrompts}
       regularPrompts={regularPrompts}
-      handlePromptClick={(prompt) => {
-        setUserHasScrolled(false);
-        handlePromptClick(prompt);
-      }}
+      handlePromptClick={handlePromptClick}
     />
   ), [isFirstSession, onboardingPrompts, regularPrompts, handlePromptClick]);
 
   const keyExtractor = useCallback((item: Message) => item.id, []);
 
-  const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
-    const distanceFromBottom = contentSize.height - contentOffset.y - layoutMeasurement.height;
-    setUserHasScrolled(distanceFromBottom > 50);
+  const handleScroll = useCallback((_event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    // Auto-scroll is now always enabled for new messages
   }, []);
 
-  const headerSpacerHeight = useMemo(() => widgetHeightAnim.interpolate({
-    inputRange: [0, widgetHeight],
-    outputRange: [
-      insets.top + NAVBAR_HEIGHT + WIDGET_TAB_BAR_HEIGHT + 8,
-      insets.top + NAVBAR_HEIGHT + WIDGET_TAB_BAR_HEIGHT + widgetHeight + 8,
-    ],
-  }), [widgetHeightAnim, widgetHeight, insets.top]);
+  const headerSpacerHeight = useMemo(() => 
+    insets.top + NAVBAR_HEIGHT + WIDGET_TAB_BAR_HEIGHT + widgetHeight + 8,
+  [insets.top, widgetHeight]);
 
   const renderHeader = useCallback(() => (
-    <Animated.View style={{ height: headerSpacerHeight }} />
+    <View style={{ height: headerSpacerHeight }} />
   ), [headerSpacerHeight]);
 
   const contentContainerStyle = useMemo<ViewStyle>(() => {
@@ -162,7 +150,6 @@ export default function MainScreen(): React.ReactElement {
   }, []);
 
   const handleSend = useCallback(() => {
-    setUserHasScrolled(false);
     handleSendMessage();
   }, [handleSendMessage]);
 
@@ -181,28 +168,24 @@ export default function MainScreen(): React.ReactElement {
           <WidgetTabs tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
         </YStack>
 
-        <Animated.View
-          style={{
-            position: 'absolute',
-            top: insets.top + NAVBAR_HEIGHT + WIDGET_TAB_BAR_HEIGHT,
-            left: 0,
-            right: 0,
-            zIndex: 100,
-            height: widgetHeightAnim,
-            opacity: widgetOpacityAnim,
-            overflow: 'hidden',
-            backgroundColor: theme.background.val,
-            borderBottomWidth: 1,
-            borderBottomColor: theme.gray5.val,
-          }}
+        <YStack
+          position="absolute"
+          top={insets.top + NAVBAR_HEIGHT + WIDGET_TAB_BAR_HEIGHT}
+          left={0}
+          right={0}
+          zIndex={100}
+          height={widgetHeight}
+          backgroundColor={theme.background.val}
+          borderBottomWidth={1}
+          borderBottomColor={theme.gray5.val}
         >
           <InteractiveWidget selectedTab={selectedTab} height={widgetHeight} />
-        </Animated.View>
+        </YStack>
 
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         >
           <SafeAreaView edges={['bottom']} flex={1}>
             <YStack flex={1} backgroundColor="$background">

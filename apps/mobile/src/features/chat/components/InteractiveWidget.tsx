@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { TextInput } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { YStack, XStack, Text, Card, Button, useTheme } from '@ybis/ui';
 import { Plus } from '@ybis/ui';
@@ -103,23 +103,15 @@ export function InteractiveWidget({ selectedTab, height }: InteractiveWidgetProp
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ height, flex: 1 }}
-    >
-      <ScrollView 
-        style={{ flex: 1 }}
-        contentContainerStyle={{ padding: 12 }}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <YStack height={height} padding="$3">
+      <Card
+        flex={1}
+        padding="$3"
+        backgroundColor="$gray2"
+        borderWidth={1}
+        borderColor="$gray5"
+        borderRadius="$4"
       >
-        <Card
-          padding="$3"
-          backgroundColor="$gray2"
-          borderWidth={1}
-          borderColor="$gray5"
-          borderRadius="$4"
-        >
           <YStack gap="$3">
             {/* Header */}
             <XStack alignItems="center" gap="$2">
@@ -204,7 +196,6 @@ export function InteractiveWidget({ selectedTab, height }: InteractiveWidgetProp
             </YStack>
           </YStack>
         </Card>
-      </ScrollView>
-    </KeyboardAvoidingView>
+    </YStack>
   );
 }

@@ -102,27 +102,26 @@ export default function LoginScreen(): React.ReactElement {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-    >
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: 'center',
-          padding: 16,
-        }}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <YStack flex={1} backgroundColor="$background">
+      <StatusBar style="auto" />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
       >
-        <YStack
-          flex={1}
-          alignItems="center"
-          justifyContent="center"
-          gap="$6"
-          backgroundColor="$background"
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <StatusBar style="auto" />
+          <YStack
+            alignItems="center"
+            justifyContent="center"
+            gap="$6"
+          >
 
       {/* App Logo/Title */}
       <YStack alignItems="center" gap="$2">
@@ -255,5 +254,6 @@ export default function LoginScreen(): React.ReactElement {
         </YStack>
       </ScrollView>
     </KeyboardAvoidingView>
+    </YStack>
   );
 }
