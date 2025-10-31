@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import type { Href } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import { YStack, XStack, H1, H3, Text, Button, Input, Spinner } from '@ybis/ui';
 import { useAuth } from '../../src/contexts/useAuth';
 import { useMockAuth } from '../../src/stores/useMockAuth';
+import Logger from '@ybis/logging';
 
 /**
  * Login Screen - Hybrid (Supabase Auth + Demo Mode)
@@ -36,11 +37,20 @@ export default function LoginScreen(): React.ReactElement {
   const handleDemoLogin = async (): Promise<void> => {
     setDemoError(null);
     setIsDemoLoading(true);
+    
+    // Haptic feedback on button press
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
     try {
       await loginDemo();
+      // Success haptic
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Logger.info('Demo login successful', { type: 'AUTH' });
       router.replace('/(tabs)');
     } catch (err) {
-      console.error('Demo login failed:', err);
+      // Error haptic
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Logger.error('Demo login failed', err instanceof Error ? err : new Error(String(err)), { type: 'AUTH' });
       setDemoError('Demo Mode login failed. Please try again.');
     } finally {
       setIsDemoLoading(false);
@@ -49,19 +59,25 @@ export default function LoginScreen(): React.ReactElement {
 
   const handleEmailLogin = async (): Promise<void> => {
     if (!email || !password) {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       Alert.alert('Missing Information', 'Please enter both email and password.');
       return;
     }
 
     setIsAuthSubmitting(true);
     clearError();
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
       await signInWithEmail({ email, password });
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Logger.info('Email login successful', { type: 'AUTH', email });
       router.replace('/(tabs)');
     } catch (err) {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       const message =
         err instanceof Error ? err.message : 'Please check your credentials and try again.';
+      Logger.error('Email login failed', err instanceof Error ? err : new Error(String(err)), { type: 'AUTH' });
       Alert.alert('Sign In Failed', message);
     } finally {
       setIsAuthSubmitting(false);
@@ -69,10 +85,14 @@ export default function LoginScreen(): React.ReactElement {
   };
 
   const handleGoogleSignIn = async (): Promise<void> => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
       await signInWithGoogle();
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Logger.info('Google sign-in successful', { type: 'AUTH' });
     } catch (err) {
-      console.error('Google sign-in is not yet available:', err);
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      Logger.warn('Google sign-in not yet available', { type: 'AUTH', message: String(err) });
       Alert.alert('Google Sign-In', 'Google OAuth integration will be available soon.');
     }
   };
@@ -82,15 +102,26 @@ export default function LoginScreen(): React.ReactElement {
   };
 
   return (
-    <YStack
-      flex={1}
-      alignItems="center"
-      justifyContent="center"
-      gap="$6"
-      padding="$4"
-      backgroundColor="$background"
-    >
+    <YStack flex={1} backgroundColor="$background">
       <StatusBar style="auto" />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <YStack
+            alignItems="center"
+            justifyContent="center"
+            gap="$6"
+          >
 
       {/* App Logo/Title */}
       <YStack alignItems="center" gap="$2">
@@ -214,12 +245,15 @@ export default function LoginScreen(): React.ReactElement {
         </YStack>
       )}
 
-      {/* Info Text */}
-      <YStack alignItems="center" gap="$2" marginTop="$6">
-        <Text color="$gray10" fontSize="$2" textAlign="center">
-          Closed Beta • Supabase Auth & Demo Mode
-        </Text>
-      </YStack>
+          {/* Info Text */}
+          <YStack alignItems="center" gap="$2" marginTop="$6">
+            <Text color="$gray10" fontSize="$2" textAlign="center">
+              Closed Beta • Supabase Auth & Demo Mode
+            </Text>
+          </YStack>
+        </YStack>
+      </ScrollView>
+    </KeyboardAvoidingView>
     </YStack>
   );
 }

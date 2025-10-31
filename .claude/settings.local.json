@@ -66,7 +66,9 @@
       "Read(//c/Windows/System32/drivers/etc/**)",
       "Bash(pnpm config:*)",
       "Bash(curl -v https://api.expo.dev)",
-      "Bash(git clean:*)"
+      "Bash(git clean:*)",
+      "Bash(pnpm --filter @ybis/mobile run lint)",
+      "Bash(pnpm --filter @ybis/mobile run type-check:*)"
     ],
     "deny": [],
     "ask": []

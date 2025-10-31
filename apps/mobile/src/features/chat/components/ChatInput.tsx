@@ -28,7 +28,8 @@ export function ChatInput({
 
   return (
     <YStack
-      padding="$3"
+      paddingHorizontal="$3"
+      paddingVertical="$2"
       borderTopWidth={1}
       borderColor="$gray5"
       backgroundColor="$background"
@@ -57,12 +58,17 @@ export function ChatInput({
             paddingVertical: 10,
             fontSize: 16,
             color: theme.color?.val,
+            maxHeight: 120, // Limit height for multiline
           }}
           placeholder={t('input.placeholder')}
           placeholderTextColor={theme.gray10?.val}
           value={inputText}
           onChangeText={setInputText}
           onSubmitEditing={handleSendMessage}
+          multiline
+          textAlignVertical="center"
+          returnKeyType="send"
+          blurOnSubmit={false}
         />
 
         <YStack width={48} height={48} alignItems="center" justifyContent="center">

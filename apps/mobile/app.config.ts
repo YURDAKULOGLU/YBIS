@@ -29,6 +29,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     adaptiveIcon: {
       backgroundColor: '#0a7ea4',
     },
+    softwareKeyboardLayoutMode: 'resize',
   },
   web: {
     bundler: 'metro',

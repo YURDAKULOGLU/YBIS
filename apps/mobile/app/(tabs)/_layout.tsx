@@ -44,7 +44,7 @@ export default function TabLayout(): React.ReactElement {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarHideOnKeyboard: true,
+          tabBarHideOnKeyboard: false,
           tabBarStyle: {
             backgroundColor: theme.background.val,
             borderTopColor: theme.gray5.val,
