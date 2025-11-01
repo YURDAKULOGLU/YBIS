@@ -62,7 +62,7 @@ export default function ChatScreen(): React.ReactElement {
       <SafeAreaView edges={['top']} flex={1}>
         <Navbar title="Sohbetler" />
 
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
           <YStack padding="$4" gap="$3">
             {mockConversations.map((convo) => (
               <ConversationItem key={convo.id} conversation={convo} />

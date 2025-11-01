@@ -55,7 +55,7 @@ export default function SettingsScreen(): React.ReactElement {
         <SafeAreaView edges={['top']} flex={1}>
           <Navbar title={t('settings:title')} />
 
-          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
             <YStack padding="$4" gap="$4">
               <UserInfoCard user={user} />
 

@@ -23,7 +23,7 @@ export default function PlanScreen(): React.ReactElement {
         <Navbar title="Plan" />
 
         <H3 paddingHorizontal="$4" paddingTop="$4">Bugünkü Planım</H3>
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, paddingBottom: 80 }}>
           <YStack gap="$3" padding="$4">
             {mockEvents.map((event) => (
               <EventItem key={event.id} event={event} />
